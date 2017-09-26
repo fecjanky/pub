@@ -44,9 +44,8 @@
 % use a multiple column layout for up to three different
 % affiliations
 \author{\IEEEauthorblockN{Ferenc Nandor Janky}
-\IEEEauthorblockA{AITIA International Inc.\\
-Telecommunication Division\\Budapest, Hungary\\
-Email: \{pvarga, lkovacs, tothfalusi\}@aitia.ai}
+\IEEEauthorblockA{Dept. of Telecommunications and MediaInformatics\\Technical University of Budapest\\Budapest, Hungary\\
+Email: fecjanky@gmail.com}
 }
 
 
@@ -56,7 +55,12 @@ Email: \{pvarga, lkovacs, tothfalusi\}@aitia.ai}
 
 \begin{abstract}
 \boldmath
-this is the abstract
+The handling of connectionless networking protocol messages with low memory utilization could be achieved effectively by using FPGAs. When lower level protocols are implemented in such way, they will provide fast and predictable service characteristics for their upper layer protocols. The perturbation of their software implemented variants such as delay and jitter could be eliminated using the pure hardware implementaion of the operation. One of the key factors of the mentioned side effects is the hosting operating system’s scheduling algorithm.
+The purpose of this \dots was to design a generalized approach for implementing protocols using FPGA hardware, and to validate the theory by implementing an application layer protocol using the resulting framework.
+The OSI Basic Reference Model is a remarkable guideline as a design basis for setting the boundaries of such framework, because it’s purpose is to provides a common basis for the coordination of standards development for the purpose of systems interconnetion.
+As a result of this work the designed framework has been described in VHDL. It follows the basic principles of the OSI reference presenting a general toolkit for handling  PDUs and IDUs beside these features it also provides solutions for other frequently reappearing tasks in the aid of convenient and smoother implementation of various systems interconnecting protocols.
+To verify the design a partial implementation of SNMP and various other lower layer protocols have been implemented which was interconnected with with other link, network and transport layer hardware and software products from 3rd party vendors. The conformance testing of the SNMP implementation had been carried out with a couple of network management software.
+
 \end{abstract}
 
 
@@ -96,17 +100,33 @@ this is the abstract
 % `is single quoted' , ``is double qouted"
 
 
-\section{Introduction}
+\section{Introduction}\label{sec:Introduction}
 
 some introdcution
+
+\section{Motivation}\label{sec:Motivation}
 
 \section{Related Work}\label{sec:RelatedWork}
 
 here I should introduce some related works
 
+\section{Internal Design}\label{sec:Internal Design}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=9cm]{figures_raw/protlayer_2.pdf}
+    \caption{Schematic drawing of a Protocol layer modul}
+    \label{fig:proto_layer_sch}
+\end{figure}
+
+\section{Implementation}\label{sec:Implementation}
+
+\section{Verification}
+
+
 \section{Conclusion}
 
-And summarize with a nice conclusion
+And summarize with a nice conclusion\cite{Williams_Web_Workload_Characterization_10_Years}
 
 \section{Acknowledgement}
 We would like to thank to all of our colleagues and students who contributed to the success of our project
