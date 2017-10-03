@@ -2,7 +2,6 @@
 %% (requires IEEEtran.cls version 1.7 or later) with an IEEE conference paper.
 \documentclass[conference]{IEEEtran}
 
-
 % *** GRAPHICS RELATED PACKAGES ***
 %\usepackage[pdftex]{graphicx}
 \usepackage{graphicx}
@@ -17,7 +16,6 @@
 %\hyphenation{}
 
 \usepackage{xcolor}
-
 
 \newcommand\note[1]{\textcolor{red}{#1}}
 % \renewcommand\note[1]{} % uncomment this line to hide notes
@@ -88,34 +86,27 @@ Email: fecjanky@gmail.com}
 
 \begin{abstract}
 \boldmath
-The handling of connectionless networking protocol messages with low memory utilization could be achieved effectively by using FPGAs. When lower level protocols are implemented in such way, they will provide fast and predictable service characteristics for their upper layer protocols. The perturbation of their software implemented variants such as delay and jitter could be eliminated using the pure hardware implementaion of the operation. One of the key factors of the mentioned side effects is the hosting operating system’s scheduling algorithm.
-The purpose of this \dots was to design a generalized approach for implementing protocols using FPGA hardware, and to validate the theory by implementing an application layer protocol using the resulting framework.
-The OSI Basic Reference Model is a remarkable guideline as a design basis for setting the boundaries of such framework, because it’s purpose is to provides a common basis for the coordination of standards development for the purpose of systems interconnetion.
-As a result of this work the designed framework has been described in VHDL. It follows the basic principles of the OSI reference presenting a general toolkit for handling  PDUs and IDUs beside these features it also provides solutions for other frequently reappearing tasks in the aid of convenient and smoother implementation of various systems interconnecting protocols.
+The handling of connectionless networking protocol messages with low memory utilization could be achieved effectively by using FPGAs. When lower level protocols are implemented in such way, they will provide fast and predictable service characteristics for their upper layer protocols. The perturbation of their software implemented variants such as delay and jitter could be eliminated using the pure hardware implementation of the operation. One of the key factors of the mentioned side effects is the hosting operating system’s scheduling algorithm.
+The purpose of this work was to design a generalized approach for implementing protocols using FPGA hardware, and to validate the theory by implementing an application layer protocol using the resulting framework.
+The OSI Basic Reference Model is a remarkable guideline as a design basis for setting the boundaries of such framework, because it’s purpose is to provides a common basis for the coordination of standards development for the purpose of systems interconnection.
+As a result of this work the designed framework has been described in VHDL. It follows the basic principles of the OSI reference presenting a general tool-kit for handling  PDUs and IDUs beside these features it also provides solutions for other frequently reappearing tasks in the aid of convenient and smoother implementation of various systems interconnecting protocols.
 %To verify the design a partial implementation of SNMP and various other lower layer protocols have been implemented which was interconnected with with other link, network and transport layer hardware and software products from 3rd party vendors. The conformance testing of the SNMP implementation had been carried out with a couple of network management software.
 To verify the design a complete implementation of ARP and Ethernet have been implemented which was interconnected with with other link, network and transport layer hardware and software products from 3rd party vendors. The conformance testing of the SNMP implementation had been carried out with a couple of network management software.
-
-
 \end{abstract}
-
 
 % no keywords
 
-
-
 \section{Motivation}\label{sec:Motivation}
 
-The family of connectionless low memory footprint networking protocols can be handled with relative ease by having pure hardware based implementations using FPGAs. One of the biggest motivation of having hardware based protocol implementations is to provide deterministic timing characterisitcs which is essential for several newtorking protocols such as Time Triggered Ethernet~\cite{SAE_AS6802} whereas time synchronization protocols like PTP could also benefit from them. Most FPGA manufacturers provide black box modules of which several protocols can be synthetized however the problematic part is that for academic purposes where most often non-existing features or protocols have to be implemented those are not suitable because often only some generic parameters of a given protocol can be tweaked as a part of instantiation. The motivation for this work is to design and implement a framework in VHDL which enables rapid prototyping of networking protocols. The aim is not to provide similar black box modules but to supply elementary components in a way that the implementor could only focus in desinging and implementing the protocol specific parts. The ISO OSI model provides a standard way of talking about protocols as a result lining up the design of the framework with the OSI model is a straightforward decision. Beside that it provides well established nomenclature it also lays down the fundamentals of the modular architecture of the framework.
+The family of connectionless low memory footprint networking protocols can be handled with relative ease by having pure hardware based implementations using FPGAs. One of the biggest motivation of having hardware based protocol implementations is to provide deterministic timing characteristics which is essential for several networking protocols such as Time Triggered Ethernet~\cite{SAE_AS6802} whereas time synchronization protocols like PTP could also benefit from them. Most FPGA manufacturers provide black box modules of which several protocols can be synthesized however the problematic part is that for academic purposes where most often non-existing features or protocols have to be implemented those are not suitable because often only some generic parameters of a given protocol can be tweaked as a part of instantiation. The motivation for this work is to design and implement a framework in VHDL which enables rapid prototyping of networking protocols. The aim is not to provide similar black box modules but to supply elementary components in a way that the implementer could only focus in designing and implementing the protocol specific parts. The ISO OSI model provides a standard way of talking about protocols as a result lining up the design of the framework with the OSI model is a straightforward decision. Beside that it provides well established nomenclature it also lays down the fundamentals of the modular architecture of the framework.
 
 \section{Related Work}\label{sec:RelatedWork}
 
-TODO: read papers and provide summary
-
-introduce some related works (at least three), from papers 
+TODO: read papers and provide summary,introduce some related work (at least three), from the papers 
 
 \section{Internal Design}\label{sec:Internal Design}
 
-As introduced in \ref{sec:Motivation} the internal design of the framework aligns with the OSI model. Individual layers of protocols communicate through SAPs using service primitives which mostly have protocol dependent parameters but its sturcture is fixed and consists of ICI and SDU. Given these it's benefitial to have a component which can be reused in each and every protcol for handling ICIs SDUs and PDUs. The implementor's task is to:
+As introduced in \ref{sec:Motivation} the internal design of the framework aligns with the OSI model. Individual layers of protocols communicate through SAPs using service primitives which mostly have protocol dependent parameters but its structure is fixed and consists of ICI and SDU. Given these it's beneficial to have a component which can be reused in each and every protocol for handling ICIs SDUs and PDUs. The implementer's task is to:
 \begin{itemize}
 \renewcommand \labelitemi{--}
 \item implement the protocol operation as specified
@@ -123,7 +114,7 @@ As introduced in \ref{sec:Motivation} the internal design of the framework align
 \item implement interface towards lower layer protocols
 \end{itemize}
 
-Based on the description above the framework in itself is module/building block which has the follwing properties: 
+Based on the description above the framework in itself is module/building block which has the following properties: 
 
 \begin{itemize}
 \renewcommand \labelitemi{--}
@@ -131,17 +122,17 @@ Based on the description above the framework in itself is module/building block 
 \item handle reception and transmission of PDUs with queuing 
 \item provide a high level interface for separating and combining PCI and SDU, forwarding pausing or dropping SDUs
 \item provide a unified way to handle ICI SDU and PDU events (e.g error signalling)
-\item add support of auxilliary information that travels along with messages -- this can be used for adding metadata to message or in implementing ceratin SAPs
-\item provide components for common tasks reocurring during impelementing networking protocols (de/serialization, arbitration etc.)
+\item add support of auxiliary information that travels along with messages -- this can be used for adding meta-data to message or in implementing cerating SAPs
+\item provide components for common tasks recurring during implementing networking protocols (de/serialization, arbitration etc.)
 \end{itemize}
 
 Figure~\ref{fig:system_sketch} shows the high level design of the Protocol Layer module. The PUI and PIP part is interconnected via a control and a data bus. The control signals provide a way for signalling various conditions: start of PDU, end of PDU, etc. All of the module's buses are configurable via generics in terms of:
 \begin{itemize}
 \renewcommand \labelitemi{--}
 \item bus width
-\item handshaked or usnolicited mode of tx/rx
+\item handshake or unsolicited mode of tx/rx
 \item no. of messages to queue
-\item instantiate aux. queue for tx/rx
+\item instantiate auxiliary queue for tx/rx
 \end{itemize}
 
 \begin{figure}[!htb]
@@ -154,25 +145,25 @@ Figure~\ref{fig:system_sketch} shows the high level design of the Protocol Layer
 \subsection{Interface and functional specification of the VHDL modules}\label{subsec:if_and_func_spec_VHDL}
 
 \subsubsection{Handshaking mechanism and error signalling}
-In synchronous systems there is a need for handshaking to indicate a request for certain operations to be carried out. In this framework this is generalized into having two signals -- \emph{Ind} for indicating a request; -- \emph{Ack} for providing acknowledegment for the requested operation. All synchronous operations must be carried out after receiving an \emph{Ack}. Synchronous operation is not always prefereable -- e.g. when there is only one upper layer protocol in a given system that is the reason why every interface is parametrizable with generics whether to use synchronization or not.
+In synchronous systems there is a need for handshaking to indicate a request for certain operations to be carried out. In this framework this is generalized into having two signals -- \emph{Ind} for indicating a request; -- \emph{Ack} for providing acknowledgement for the requested operation. All synchronous operations must be carried out after receiving an \emph{Ack}. Synchronous operation is not always preferable -- e.g. when there is only one upper layer protocol in a given system that is the reason why every interface is parametrizable with generics whether to use synchronization or not.
 For signalling error conditions bidirectional error indicator signals are present beside the bidirectional data and control buses so that both interconnected modules can signal error conditions.
 
 \subsubsection{Data delimiter signals}
 
-Data is traversing through the system in the form of consequtive bytes over various data buses (PDU,internal data, aux. data etc.) accompanied by 3 control signals:
+Data is traversing through the system in the form of consecutive bytes over various data buses (PDU,internal data, aux. data etc.) accompanied by 3 control signals:
 \begin{itemize}
 \renewcommand \labelitemi{--}
 \item Start Of PDU abbreviated as SOP
 \item End of PDU abbreviated as EOP
 \item Data Valid abbreviated as DV
 \end{itemize}
-If a module is transferring data it must indiciate it by transitioning both SOP and DV signals from logical `Low' to `High' level simultaneously and in parallel the data bus is also adjusted to the first symbol of the data to be sent. If a module samples SOP and DV on a rising edge of the clock then it can shift in and start process the data from the data bus when DV is `High' -- among other things that can be used as a write enable signal. The end of data is signalled by pulse on the EOP line while DV is `High'. After this all control signals have to be settled on `Low' logical level.
+If a module is transferring data it must indicate it by transitioning both SOP and DV signals from logical `Low' to `High' level simultaneously and in parallel the data bus is also adjusted to the first symbol of the data to be sent. If a module samples SOP and DV on a rising edge of the clock then it can shift in and start process the data from the data bus when DV is `High' -- among other things that can be used as a write enable signal. The end of data is signalled by pulse on the EOP line while DV is `High'. After this all control signals have to be settled on `Low' logical level.
 
 \subsubsection{Combining handshaking, error handling and delimiters}
 
-Figure~\ref{fig:data_signals} illustrates data transfer combined with synchronization. The delimited data transfer must take place after \emph{Ind}-\emph{Ack} handshake i.e when the sending component samples `High' on the \emph{Ack} wire.  The receiver can withold the acknowledment idefinitely -- the sender must only reset the indication signal if an error is signalled. The source module can cancel the transmission by transitioning the \emph{Ind} signal back to `Low' level. After the handshake the data transmission must take place -- after a successful handshake the sender can only cancel the transmission via signalling error.
+Figure~\ref{fig:data_signals} illustrates data transfer combined with synchronization. The delimited data transfer must take place after \emph{Ind}-\emph{Ack} handshake -- i.e. when the sending component samples `High' on the \emph{Ack} wire --  while he receiver can withhold the acknowledgement indefinitely -- the sender must only reset the indication signal if an error is signalled. The source module can cancel the transmission by transitioning the \emph{Ind} signal back to `Low' level. After the handshake the data transmission must take place -- after a successful handshake the sender can only cancel the transmission via signalling error.
 
-% WaveDrom waveform
+% WaveDrom waveform to generate figure
 %{signal: [
 %  {name: 'CLK', wave: 		'P........|.....'},
 %  {name: 'Ind', wave: 		'0.1..0...|.....'},
@@ -207,22 +198,11 @@ Figure~\ref{fig:proto_layer_rx_sch} shows the internals of the RX part inside a 
     \caption{Block diagram of RX part inside of a Protocol Layer module}
     \label{fig:proto_layer_rx_sch}
 \end{figure}
-that are each operate as described in \ref{subsec:if_and_func_spec_VHDL}. The main task of this module is to receive the delimited PDUs and notify the attached controller through the control interface. The opeartion cycle is that it forwards the start of the PDU to the controller until it signals its decision (forward,drop, etc.). The controller is able to pause the operation through the control interface. If the control decision is `Forward' then the rest of the PDU -- which is essentially the SDU -- is forwarded through the output interface while the corresponding control signals are generated illustrated by Figure~\ref{fig:data_signals}.To support Out-Of-Band signalling the module has user I/O ports so that the OOB signals are transferred alongside with the PDU. This overall mechanism provides a generic way to separate the PCI from an SDU which is a key part of handling protocol messages.
-
-%(fig. 16)
-%\begin{figure}[!htb]
-%    \centering
-%    \includegraphics[width=9cm]{figures_raw/protlayer_2.pdf}
-%    \caption{Schematic drawing of a Protocol layer modul}
-%    \label{fig:proto_layer_sch}
-%\end{figure}
-
-%(fig. 19)
-
+that are each operate as described in \ref{subsec:if_and_func_spec_VHDL}. The main task of this module is to receive the delimited PDUs and notify the attached controller through the control interface. The operation cycle is that it forwards the start of the PDU to the controller until it signals its decision (forward,drop, etc.). The controller is able to pause the operation through the control interface. If the control decision is `Forward' then the rest of the PDU -- which is essentially the SDU -- is forwarded through the output interface while the corresponding control signals are generated illustrated by Figure~\ref{fig:data_signals}.To support Out-Of-Band signalling the module has user I/O ports so that the OOB signals are transferred alongside with the PDU. This overall mechanism provides a generic way to separate the PCI from an SDU which is a key part of handling protocol messages.
 
 \subsubsection{Detailed design of `ProtoModule\_TXPart'}
 
-The module depicted on Figure~\ref{fig:proto_layer_tx_sch} is responsible for accepting data streams of corresponding PCIs and SDUs and combine them into one single data stream and forward them through its output interface which can be fed into a lower layer `ProtoModule''s SDU input. Since the PDU's PCI and SDU part can be modeled internally as two separate PDUs the module described in \ref{subsubsec:PDUQueue_details} can be used for handling the two data units. The output of those are fed into another \emph{`PDUQueue'} through a multiplexer. The reassembly control module virtually operates as a simple internal `protocol' for the 3 \emph{`PDUQueue'}s that always make \emph{`Forward'} control decision -- hence the note \emph{`PASS\_THROUGH'} on the figure -- and also controls the multiplexer input selector. The operation also supports PCI only transmission cycles which might be desired by some of the protocols.
+The module depicted on Figure~\ref{fig:proto_layer_tx_sch} is responsible for accepting data streams of corresponding PCIs and SDUs and combine them into one single data stream and forward them through its output interface which can be fed into a lower layer `ProtoModule''s SDU input. Since the PDU's PCI and SDU part can be modelled internally as two separate PDUs the module described in \ref{subsubsec:PDUQueue_details} can be used for handling the two data units. The output of those are fed into another \emph{`PDUQueue'} through a multiplexer. The reassembly control module virtually operates as a simple internal `protocol' for the 3 \emph{`PDUQueue'}s that always make \emph{`Forward'} control decision -- hence the note \emph{`PASS\_THROUGH'} on the figure -- and also controls the multiplexer input selector. The operation also supports PCI only transmission cycles which might be desired by some of the protocols.
 %(fig. 20)
 \begin{figure}[!htb]
     \centering
@@ -233,11 +213,9 @@ The module depicted on Figure~\ref{fig:proto_layer_tx_sch} is responsible for ac
 
 \section{Implementation}\label{sec:Implementation}
 
-The designed framework has been implemented in VHDL with having most of the described parameters as generic inputs of the compononents that enables high level of reusability and customization which adds value to the work. Furthermore since the implementation is open source it can be modfied and/or improved easily. 
+The designed framework has been implemented in VHDL with having most of the described parameters as generic inputs of the components that enables high level of re-usability and customization which adds value to the work. Furthermore since the implementation is open source it can be modified and/or improved easily if there are other special requirements for implementing protocols that are not covered or unsolvable with the current form of the framework. 
 
-For the actual synthesis of the VHDL code a Xilinx Virtex 5 FPGA board -- provided by Aitita International Inc. -- called GPlanad has been used with a 1 Gbps Ethernet PHY attachement this constraint fixed multiple of important generic parameters like the data bus width or the clock frequency.The actual implementation and several test cases are availible on \url{https://github.com/fecjanky/protolayer} that was used for verification.
-
-\dots~Overview of the VHDL implementation with focus on reusability and scientific value
+For the actual synthesis of the VHDL code on real hardware a Xilinx Virtex 5 FPGA board -- provided by Aitia International Inc. -- called GPlanad has been used with a 1 Gbps Ethernet PHY attachment. This constraint resulted in concrete values for multiple important generic parameters like the data bus width or the clock frequency. The implementation itself and several test cases are available on \url{https://github.com/fecjanky/protolayer} that was used for the verification by simulation and by actual operation of the modules.
 
 \section{Verification}\label{sec:Verification}
 
@@ -245,46 +223,47 @@ Two methods were used to verify the design and the implementation:
 \begin{itemize}
 \renewcommand \labelitemi{--}
 \item simulation of the VHDL implementation using Xilinx ISim
-\item syntehesis of the VHDL implementation on the GPlanar card and interconnecting it with other devices
+\item synthesis of the VHDL implementation on the GPlanar card and interconnecting it with other devices
 \end{itemize}
 
 \subsection{Simulation results}
 
-On Figure~\ref{fig:eth_sim} the simulation waveforms of the Ethernet module can be seen. It illustrates a MAC address configuration sequence (with read-back) and sending and receiving multiple PDUs in that order. For this verification the module was synthetized with capabality to hold 3 station MAC adresses of which the station was configured to have two adresses: 50-E5-49-39-04-A2 és a 00-01-17-F3-F7-86. After the configuration sequence the \emph{MA\_DATA.request} service primitive has been tested with two data units which has been followed by testing \emph{MA\_DATA.indication} by feeding 4 Ethernet II frames to the lower layer input of the module. Out of the 4 frames the 
+On Figure~\ref{fig:eth_sim} the simulation waveforms of the Ethernet module can be seen. It illustrates a MAC address configuration sequence (with read-back) and sending and receiving multiple PDUs in that order. For this verification the module was synthesized with capability to hold 3 station MAC addresses of which the station was configured to have two addresses: 50-E5-49-39-04-A2 és a 00-01-17-F3-F7-86. After the configuration sequence the \emph{MA\_DATA.request} service primitive has been tested with two data units which has been followed by testing \emph{MA\_DATA.indication} by feeding 4 Ethernet II frames to the lower layer input of the module. Out of the 4 frames the 
 \begin{itemize}
 \renewcommand \labelitemi{--}
 \item first was not destined to the station
 \item the second was destined to the broadcast address
-\item the last to were sent to the configured adresses
+\item the last to were sent to the configured addresses
 \end{itemize}
 It can be seen from the waveforms that the first packet has not been forwarded towards the upper layers -- visible on the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the control signals described in~\ref{subsec:if_and_func_spec_VHDL}
 
-\begin{figure*}[!htb]
+\begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures_raw/ether_tst_wave.png}
+    \includegraphics[width=0.5\textwidth]{figures_raw/ether_tst_wave.png}
     \caption{Simulation waveform of the Ethernet module exported from Xilinx ISim}
     \label{fig:eth_sim}
-\end{figure*}
+\end{figure}
 
 \subsection{Packet capture results}
 
+Validation of the ARP module -- that is implemented through the \emph{ProtoLayer} module -- was performed by interconnecting the device with a Layer 2 switch and operating it on a LAN segment. The module was able to initiate and respond to address resolution requests. Figure~\ref{fig:pcap_arp_seq} captures the former case where the implementation is performing address resolution of target host 10.10.0.254 which was a gateway router in that measurement setting.
+
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures_raw/arp_transaction.png}
+    \includegraphics[width=0.5\textwidth]{figures_raw/arp_transaction.png}
     \caption{Packet capture of ARP resolution sequences}
     \label{fig:pcap_arp_seq}
 \end{figure}
 
-
-Show results with through simualation waveforms and pcap of the generated SNMP packets
+Based on the simulation and packet capture results it can be stated that the framework design is valid and it can be used to implement various protocols and it also satisfies the requirements stated in \ref{sec:Internal Design}.
 
 \section{Conclusion}
 
-And summarize with a nice conclusion\cite{Williams_Web_Workload_Characterization_10_Years}
+The aim of this work was to design and implement a generalized framework which aids implementation of networking protocols using FPGAs and to verify that by implementing standardized and widely used protocols using that. The OSI reference model served as a basis for logical and physical structuring of the framework that by design addresses layering and interconnection of protocols. The framework has been implemented in VHDL with having nearly all main parameters as generic inputs that can be tweaked synthesis time. For verification ARP protocol for IPv4 and Ethernet has been implemented through the framework as well as the necessary IEE 802.3 MAC link layer protocol in full-duplex mode.
+At the end of the implementation the framework has been verified by both simulation and synthesizing it on a FPGA based board equipped with 802.3 PHY interfaces and performing real world measurements by interconnecting it with various devices. \cite{Williams_Web_Workload_Characterization_10_Years}
 
 \section{Acknowledgement}
-We would like to thank to all of our colleagues and students who contributed to the success of our project
-
+I would like to thank to Aitia International Inc. for supplying the necessary hardware resources for this work and also to Dr. Pal Varga and Gabor Krodi for their invaluable feedback and guidance which was essential for completing this work.
 
 % can use a bibliography generated by BibTeX as a .bbl file
 % BibTeX documentation can be easily obtained at:
