@@ -137,7 +137,7 @@ Figure~\ref{fig:system_sketch} shows the high level design of the Protocol Layer
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.5\textwidth]{figures_raw/system_sketch.png}
+    \includegraphics[width=0.5\textwidth]{figures_raw/system_sketch.pdf}
     \caption{System sketch of the fundamental building block of the framework}
     \label{fig:system_sketch}
 \end{figure}
@@ -194,7 +194,7 @@ Figure~\ref{fig:proto_layer_rx_sch} shows the internals of the RX part inside a 
 \end{itemize}
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.5\textwidth]{figures_raw/pdu_queue_imp.png}
+    \includegraphics[width=0.5\textwidth]{figures_raw/pdu_queue_imp.pdf}
     \caption{Block diagram of RX part inside of a Protocol Layer module}
     \label{fig:proto_layer_rx_sch}
 \end{figure}
@@ -204,12 +204,12 @@ that are each operate as described in \ref{subsec:if_and_func_spec_VHDL}. The ma
 
 The module depicted on Figure~\ref{fig:proto_layer_tx_sch} is responsible for accepting data streams of corresponding PCIs and SDUs and combine them into one single data stream and forward them through its output interface which can be fed into a lower layer `ProtoModule''s SDU input. Since the PDU's PCI and SDU part can be modelled internally as two separate PDUs the module described in \ref{subsubsec:PDUQueue_details} can be used for handling the two data units. The output of those are fed into another \emph{`PDUQueue'} through a multiplexer. The reassembly control module virtually operates as a simple internal `protocol' for the 3 \emph{`PDUQueue'}s that always make \emph{`Forward'} control decision -- hence the note \emph{`PASS\_THROUGH'} on the figure -- and also controls the multiplexer input selector. The operation also supports PCI only transmission cycles which might be desired by some of the protocols.
 %(fig. 20)
-\begin{figure*}[!htb]
+\begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.95\textwidth]{figures_raw/proto_tx_part_imp.pdf}
+    \includegraphics[width=0.5\textwidth]{figures_raw/proto_tx_part_imp.pdf}
     \caption{Block diagram of TX part inside of a Protocol Layer module}
     \label{fig:proto_layer_tx_sch}
-\end{figure*}
+\end{figure}
 
 \section{Implementation}\label{sec:Implementation}
 
@@ -239,7 +239,7 @@ It can be seen from the waveforms that the first packet has not been forwarded t
 
 \begin{figure*}[!htb]
     \centering
-    \includegraphics[width=0.95\textwidth]{figures_raw/ether_tst_wave.png}
+    \includegraphics[width=1\textwidth]{figures_raw/ether_tst_wave.png}
     \caption{Simulation waveform of the Ethernet module exported from Xilinx ISim}
     \label{fig:eth_sim}
 \end{figure*}
@@ -248,12 +248,12 @@ It can be seen from the waveforms that the first packet has not been forwarded t
 
 Validation of the ARP module -- that is implemented through the \emph{ProtoLayer} module -- was performed by interconnecting the device with a Layer 2 switch and operating it on a LAN segment. The module was able to initiate and respond to address resolution requests. Figure~\ref{fig:pcap_arp_seq} captures the former case where the implementation is performing address resolution of target host 10.10.0.254 which was a gateway router in that measurement setting.
 
-\begin{figure*}[!htb]
+\begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.95\textwidth]{figures_raw/arp_transaction.png}
+    \includegraphics[width=0.5\textwidth]{figures_raw/arp_transaction.png}
     \caption{Packet capture of ARP resolution sequences}
     \label{fig:pcap_arp_seq}
-\end{figure*}
+\end{figure}
 
 Based on the simulation and packet capture results it can be stated that the framework design is valid and it can be used to implement various protocols and it also satisfies the requirements stated in \ref{sec:Internal Design}.
 
