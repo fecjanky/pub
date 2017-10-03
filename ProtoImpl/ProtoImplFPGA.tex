@@ -228,7 +228,7 @@ Two methods were used to verify the design and the implementation:
 
 \subsection{Simulation results}
 
-On Figure~\ref{fig:eth_sim} the simulation waveforms of the Ethernet module can be seen. It illustrates a MAC address configuration sequence (with read-back) and sending and receiving multiple PDUs in that order. For this verification the module was synthesized with capability to hold 3 station MAC addresses of which the station was configured to have two addresses: 50-E5-49-39-04-A2 és a 00-01-17-F3-F7-86. After the configuration sequence the \emph{MA\_DATA.request} service primitive has been tested with two data units which has been followed by testing \emph{MA\_DATA.indication} by feeding 4 Ethernet II frames to the lower layer input of the module. Out of the 4 frames the 
+On Figure~\ref{fig:eth_sim} the simulation waveforms of the Ethernet module can be seen. It illustrates a MAC address configuration sequence (with read-back) -- green circle -- and sending and receiving multiple PDUs in that order. The lines with arrowheads are connecting the corresponding input-output ports -- with \emph{red} colour for transmission and \emph{blue} for reception of data units. For this verification the module was synthesized with capability to hold 3 station MAC addresses of which the station was configured to have two addresses: 50-E5-49-39-04-A2 és a 00-01-17-F3-F7-86. After the configuration sequence the \emph{MA\_DATA.request} service primitive has been tested with two data units which has been followed by testing \emph{MA\_DATA.indication} by feeding 4 Ethernet II frames to the lower layer input of the module. Out of the 4 frames the 
 \begin{itemize}
 \renewcommand \labelitemi{--}
 \item first was not destined to the station
