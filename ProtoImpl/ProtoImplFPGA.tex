@@ -103,16 +103,97 @@ To verify the design a partial implementation of SNMP and various other lower la
 
 \section{Motivation}\label{sec:Motivation}
 
-some introdcution, key thoughts: timing critical applications, reference to Time triggered ethernet, ad-hoc solutions of FPGA implementations 
+The family of connectionless low memory footprint networking protocols can be handled with relative ease by having pure hardware based implementations using FPGAs. One of the biggest motivation of having hardware based protocol implementations is to provide deterministic timing characterisitcs which is essential for several newtorking protocols such as Time Triggered Ethernet~\cite{SAE_AS6802} whereas time synchronization protocols like PTP could also benefit from them. Most FPGA manufacturers provide black box modules of which several protocols can be synthetized however the problematic part is that for academic purposes where most often non-existing features or protocols have to be implemented those are not suitable because often only some generic parameters of a given protocol can be tweaked as a part of instantiation. The motivation for this work is to design and implement a framework in VHDL which enables rapid prototyping of networking protocols. The aim is not to provide similar black box modules but to supply elementary components in a way that the implementor could only focus in desinging and implementing the protocol specific parts. The ISO OSI model provides a standard way of talking about protocols as a result lining up the design of the framework with the OSI model is a straightforward decision. Beside that it provides well established nomenclature it also lays down the fundamentals of the modular architecture of the framework.
 
 \section{Related Work}\label{sec:RelatedWork}
+
+TODO: read papers and provide summary
 
 introduce some related works (at least three), from papers 
 
 \section{Internal Design}\label{sec:Internal Design}
 
+As introduced in \ref{sec:Motivation} the internal design of the framework aligns with the OSI model. Individual layers of protocols communicate through SAPs using service primitives which mostly have protocol dependent parameters but its sturcture is fixed and consists of ICI and SDU. Given these it's benefitial to have a component which can be reused in each and every protcol for handling ICIs SDUs and PDUs. The implementor's task is to:
+\begin{itemize}
+\renewcommand \labelitemi{--}
+\item implement the protocol operation as specified
+\item implement interface towards upper layer protocols
+\item implement interface towards lower layer protocols
+\end{itemize}
+
+Based on the description above the framework in itself is module/building block which has the follwing properties: 
+
+\begin{itemize}
+\renewcommand \labelitemi{--}
+\item the fundamental building block of the framework has to support interconnection via layering
+\item handle reception and transmission of PDUs with queuing 
+\item provide a high level interface for separating and combining PCI and SDU, forwarding pausing or dropping SDUs
+\item provide a unified way to handle ICI SDU and PDU events (e.g error signalling)
+\item add support of auxilliary information that travels along with messages -- this can be used for adding metadata to message or in implementing ceratin SAPs
+\item provide components for common tasks reocurring during impelementing networking protocols (de/serialization, arbitration etc.)
+\end{itemize}
+
+Figure~\ref{fig:system_sketch} shows the high level design of the Protocol Layer module. The PUI and PIP part is interconnected via a control and a data bus. The control signals provide a way for signalling various conditions: start of PDU, end of PDU, etc. All of the module's buses are configurable via generics in terms of:
+\begin{itemize}
+\renewcommand \labelitemi{--}
+\item bus width
+\item handshaked or usnolicited mode of tx/rx
+\item no. of messages to queue
+\item instantiate aux. queue for tx/rx
+\end{itemize}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=9cm]{figures_raw/system_sketch.pdf}
+    \caption{System sketch of the fundamental building block of the framework}
+    \label{fig:system_sketch}
+\end{figure}
+
+\subsection{Interface and functional specification of the VHDL modules}\label{subsec:if_and_func_spec_VHDL}
+
+\subsubsection{Handshaking mechanism and error signalling}
+In synchronous systems there is a need for handshaking to indicate a request for certain operations to be carried out. In this framework this is generalized into having two signals -- \emph{Ind} for indicating a request; -- \emph{Ack} for providing acknowledegment for the requested operation. All synchronous operations must be carried out after receiving an \emph{Ack}. Synchronous operation is not always prefereable -- e.g. when there is only one upper layer protocol in a given system that is the reason why every interface is parametrizable with generics whether to use synchronization or not.
+For signalling error conditions bidirectional error indicator signals are present beside the bidirectional data and control buses so that both interconnected modules can signal error conditions.
+
+\subsubsection{Data delimiter signals}
+
+Data is traversing through the system in the form of consequtive bytes over various data buses (PDU,internal data, aux. data etc.) accompanied by 3 control signals:
+\begin{itemize}
+\renewcommand \labelitemi{--}
+\item Start Of PDU abbreviated as SOP
+\item End of PDU abbreviated as EOP
+\item Data Valid abbreviated as DV
+\end{itemize}
+If a module is transferring data it must indiciate it by transitioning both SOP and DV signals from logical `Low' to `High' level simultaneously and in parallel the data bus is also adjusted to the first symbol of the data to be sent. If a module samples SOP and DV on a rising edge of the clock then it can shift in and start process the data from the data bus when DV is `High' -- among other things that can be used as a write enable signal. The end of data is signalled by pulse on the EOP line while DV is `High'. After this all control signals have to be settled on `Low' logical level.
+
+\subsubsection{Combining handshaking, error handling and delimiters}
+
+Figure~\ref{fig:data_signals} illustrates data transfer combined with synchronization. The delimited data transfer must take place after \emph{Ind}-\emph{Ack} handshake i.e when the sending component samples `High' on the \emph{Ack} wire.  The receiver can withold the acknowledment idefinitely -- the sender must only reset the indication signal if an error is signalled. The source module can cancel the transmission by transitioning the \emph{Ind} signal back to `Low' level. After the handshake the data transmission must take place -- after a successful handshake the sender can only cancel the transmission via signalling error.
+
+% WaveDrom waveform
+%{signal: [
+%  {name: 'CLK', wave: 		'P........|.....'},
+%  {name: 'Ind', wave: 		'0.1..0...|.....'},
+%  {name: 'Ack', wave: 		'0..1.0...|.....'},
+%  {name: 'SOP', wave: 		'0...10...|.....'},
+%  {name: 'EOP', wave: 		'0........|..10.'},
+%  {name: 'DV', wave:  		'0...1....|...0.'},
+%  {name: 'DATA[x:0]', wave: 'x...3....|...x.', data: ['data']},
+%]}
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=9cm]{figures_raw/data_signals.png}
+    \caption{Waveform of a typical error free data transmission between modules}
+    \label{fig:data_signals}
+\end{figure}
+
+
+
 Design should follow the OSI modell, high level description and specification (p.37) of the modules + description of figures
 (fig. 16,19, 20)
+
+
+Explain a bit
 
 \begin{figure}[!htb]
     \centering
