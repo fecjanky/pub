@@ -163,7 +163,7 @@ If a module is transferring data it must indicate it by transitioning both SOP a
 
 Figure~\ref{fig:data_signals} illustrates data transfer combined with synchronization. The delimited data transfer must take place after \emph{Ind}-\emph{Ack} handshake -- i.e. when the sending component samples `High' on the \emph{Ack} wire --  while he receiver can withhold the acknowledgement indefinitely -- the sender must only reset the indication signal if an error is signalled. The source module can cancel the transmission by transitioning the \emph{Ind} signal back to `Low' level. After the handshake the data transmission must take place -- after a successful handshake the sender can only cancel the transmission via signalling error.
 
-% WaveDrom waveform to generate figure
+% WaveDrom waveform to generate figure http://wavedrom.com/editor.html
 %{signal: [
 %  {name: 'CLK', wave: 		'P........|.....'},
 %  {name: 'Ind', wave: 		'0.1..0...|.....'},
