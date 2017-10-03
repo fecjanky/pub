@@ -92,7 +92,9 @@ The handling of connectionless networking protocol messages with low memory util
 The purpose of this \dots was to design a generalized approach for implementing protocols using FPGA hardware, and to validate the theory by implementing an application layer protocol using the resulting framework.
 The OSI Basic Reference Model is a remarkable guideline as a design basis for setting the boundaries of such framework, because it’s purpose is to provides a common basis for the coordination of standards development for the purpose of systems interconnetion.
 As a result of this work the designed framework has been described in VHDL. It follows the basic principles of the OSI reference presenting a general toolkit for handling  PDUs and IDUs beside these features it also provides solutions for other frequently reappearing tasks in the aid of convenient and smoother implementation of various systems interconnecting protocols.
-To verify the design a partial implementation of SNMP and various other lower layer protocols have been implemented which was interconnected with with other link, network and transport layer hardware and software products from 3rd party vendors. The conformance testing of the SNMP implementation had been carried out with a couple of network management software.
+%To verify the design a partial implementation of SNMP and various other lower layer protocols have been implemented which was interconnected with with other link, network and transport layer hardware and software products from 3rd party vendors. The conformance testing of the SNMP implementation had been carried out with a couple of network management software.
+To verify the design a complete implementation of ARP and Ethernet have been implemented which was interconnected with with other link, network and transport layer hardware and software products from 3rd party vendors. The conformance testing of the SNMP implementation had been carried out with a couple of network management software.
+
 
 \end{abstract}
 
@@ -188,25 +190,91 @@ Figure~\ref{fig:data_signals} illustrates data transfer combined with synchroniz
 \end{figure}
 
 
+\subsection{Detailed design of Protocol layer module}
 
-Design should follow the OSI modell, high level description and specification (p.37) of the modules + description of figures
-(fig. 16,19, 20)
+\subsubsection{Detailed design of \emph{`PDUQueue'}}\label{subsubsec:PDUQueue_details}
 
-
-Explain a bit
-
+Figure~\ref{fig:proto_layer_rx_sch} shows the internals of the RX part inside a Protocol layer module which is called \emph{`PDUQueue'} in the final VHDL implementation. It has 3 main interfaces:
+\begin{itemize}
+\renewcommand \labelitemi{--}
+\item input
+\item output
+\item control
+\end{itemize}
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=9cm]{figures_raw/protlayer_2.pdf}
-    \caption{Schematic drawing of a Protocol layer modul}
-    \label{fig:proto_layer_sch}
+    \includegraphics[width=9cm]{figures_raw/pdu_queue_imp.pdf}
+    \caption{Block diagram of RX part inside of a Protocol Layer module}
+    \label{fig:proto_layer_rx_sch}
+\end{figure}
+that are each operate as described in \ref{subsec:if_and_func_spec_VHDL}. The main task of this module is to receive the delimited PDUs and notify the attached controller through the control interface. The opeartion cycle is that it forwards the start of the PDU to the controller until it signals its decision (forward,drop, etc.). The controller is able to pause the operation through the control interface. If the control decision is `Forward' then the rest of the PDU -- which is essentially the SDU -- is forwarded through the output interface while the corresponding control signals are generated illustrated by Figure~\ref{fig:data_signals}.To support Out-Of-Band signalling the module has user I/O ports so that the OOB signals are transferred alongside with the PDU. This overall mechanism provides a generic way to separate the PCI from an SDU which is a key part of handling protocol messages.
+
+%(fig. 16)
+%\begin{figure}[!htb]
+%    \centering
+%    \includegraphics[width=9cm]{figures_raw/protlayer_2.pdf}
+%    \caption{Schematic drawing of a Protocol layer modul}
+%    \label{fig:proto_layer_sch}
+%\end{figure}
+
+%(fig. 19)
+
+
+\subsubsection{Detailed design of `ProtoModule\_TXPart'}
+
+The module depicted on Figure~\ref{fig:proto_layer_tx_sch} is responsible for accepting data streams of corresponding PCIs and SDUs and combine them into one single data stream and forward them through its output interface which can be fed into a lower layer `ProtoModule''s SDU input. Since the PDU's PCI and SDU part can be modeled internally as two separate PDUs the module described in \ref{subsubsec:PDUQueue_details} can be used for handling the two data units. The output of those are fed into another \emph{`PDUQueue'} through a multiplexer. The reassembly control module virtually operates as a simple internal `protocol' for the 3 \emph{`PDUQueue'}s that always make \emph{`Forward'} control decision -- hence the note \emph{`PASS\_THROUGH'} on the figure -- and also controls the multiplexer input selector. The operation also supports PCI only transmission cycles which might be desired by some of the protocols.
+%(fig. 20)
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=9cm]{figures_raw/proto_tx_part_imp.pdf}
+    \caption{Block diagram of TX part inside of a Protocol Layer module}
+    \label{fig:proto_layer_tx_sch}
 \end{figure}
 
 \section{Implementation}\label{sec:Implementation}
 
-Overview of the VHDL implementation with focus on reusability and scientific value
+The designed framework has been implemented in VHDL with having most of the described parameters as generic inputs of the compononents that enables high level of reusability and customization which adds value to the work. Furthermore since the implementation is open source it can be modfied and/or improved easily. 
 
-\section{Verification}
+For the actual synthesis of the VHDL code a Xilinx Virtex 5 FPGA board -- provided by Aitita International Inc. -- called GPlanad has been used with a 1 Gbps Ethernet PHY attachement this constraint fixed multiple of important generic parameters like the data bus width or the clock frequency.The actual implementation and several test cases are availible on \url{https://github.com/fecjanky/protolayer} that was used for verification.
+
+\dots~Overview of the VHDL implementation with focus on reusability and scientific value
+
+\section{Verification}\label{sec:Verification}
+
+Two methods were used to verify the design and the implementation:
+\begin{itemize}
+\renewcommand \labelitemi{--}
+\item simulation of the VHDL implementation using Xilinx ISim
+\item syntehesis of the VHDL implementation on the GPlanar card and interconnecting it with other devices
+\end{itemize}
+
+\subsection{Simulation results}
+
+On Figure~\ref{fig:eth_sim} the simulation waveforms of the Ethernet module can be seen. It illustrates a MAC address configuration sequence (with read-back) and sending and receiving multiple PDUs in that order. For this verification the module was synthetized with capabality to hold 3 station MAC adresses of which the station was configured to have two adresses: 50-E5-49-39-04-A2 és a 00-01-17-F3-F7-86. After the configuration sequence the \emph{MA\_DATA.request} service primitive has been tested with two data units which has been followed by testing \emph{MA\_DATA.indication} by feeding 4 Ethernet II frames to the lower layer input of the module. Out of the 4 frames the 
+\begin{itemize}
+\renewcommand \labelitemi{--}
+\item first was not destined to the station
+\item the second was destined to the broadcast address
+\item the last to were sent to the configured adresses
+\end{itemize}
+It can be seen from the waveforms that the first packet has not been forwarded towards the upper layers -- visible on the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the control signals described in~\ref{subsec:if_and_func_spec_VHDL}
+
+\begin{figure*}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures_raw/ether_tst_wave.png}
+    \caption{Simulation waveform of the Ethernet module exported from Xilinx ISim}
+    \label{fig:eth_sim}
+\end{figure*}
+
+\subsection{Packet capture results}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures_raw/arp_transaction.png}
+    \caption{Packet capture of ARP resolution sequences}
+    \label{fig:pcap_arp_seq}
+\end{figure}
+
 
 Show results with through simualation waveforms and pcap of the generated SNMP packets
 
