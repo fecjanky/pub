@@ -24,10 +24,24 @@ note: double {{}} are needed so the title next is not converted into lowercase
 }
 
 @standard{SAE_AS6802,
-  title         = "TTEthernet",
+  title         = "Time-Triggered Ethernet",
   organization  = "SAE",
   type          = "Standard",
   number        = "AS6802",
+}
+
+@standard{PTP_standard,
+  title         = "IEEE Standard for a Precision Clock Synchronization Protocol for Networked Measurement and Control Systems",
+  organization  = "IEEE",
+  type          = "Standard",
+  number        = "1588-2008",
+}
+
+@standard{ISO:OSI,
+  title         = {{Information technology - Open Systems Interconnection - Basic Reference Model: The Basic Model}},
+  organization  = "ISO/IEC",
+  type          = "Standard",
+  number        = "7498-1:1994(E)",
 }
 
 
@@ -46,6 +60,45 @@ note: double {{}} are needed so the title next is not converted into lowercase
   url           = "http://www.data.proidea.org.pl/euronog/2edycja/materials/Peter_Olaszi-Complex_Load_Testing_of_Mobile_PS_and_CS_Core.pdf",
   month         = "September",
   year          = "2012"
+}
+
+@manual{GPlanar,
+  organization  = "Aitia International Inc.",
+  title         = {{GPlanar product description}},
+  note          = {Accessed: 2017-10-04},
+  journal       = {Product description},
+  url           = "http://www.fpganetworking.com/160616/gplanar/index.html",
+}
+
+@misc{GIT_protolayer,
+  author = {Janky, Ferenc Nandor},
+  title = {ProtoLayer},
+  year = {2017},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/fecjanky/protolayer}},
+  commit = {380be394fdf944d6b802a1b652cb615c3bc750aa}
+}
+
+
+@inproceedings{related:TrustNode,
+  author = {Liß, Christian and Ulbricht, Marian and Farooq Zia, Umar and Müller, Hartmut},
+  title = {{Architecture of a Synchronized Low-Latency Network Node Targeted to Research and Education}},
+  booktitle     = "2017 IEEE 18th International Conference on High Performance Switching and Routing (HPSR) (IEEE HPSR'17)",
+  address       = "Campinas, Brazil",
+  month         = jun,
+  year          = "2017",
+  doi = {10.1109/HPSR.2017.7968673},
+  url = {http://dx.doi.org/10.1109/HPSR.2017.7968673}
+}
+
+@article{OpenFlow_Switch_NetFPGA,
+  Author  = {Jad Naous and David Erickson and G. Adam Covington and Guido Appenzeller and Nick McKeown},
+  Title   = {{Implementing an OpenFlow Switch on the NetFPGA platform}},
+  Journal   = {IEEE/ACM 4th Symposium on Architectures for Networking and Communications Systems},
+  Month   = {November},
+  Year    = {2008},
+  Pages   = {1--9},
 }
 
 
@@ -146,16 +199,7 @@ a paper in a conference proceedings
 "conference" can be used as an alias for "inproceedings"
 From the June 2002 issue of "Journal of Microelectromechanical Systems",
 page 205, reference #16.
-@inproceedings{IEEEexample:conf_typical,
-  author        = "R. K. Gupta and S. D. Senturia",
-  title         = "Pull-in Time Dynamics as a Measure of Absolute Pressure",
-  booktitle     = "Proc. {IEEE} International Workshop on
-                   Microelectromechanical Systems ({MEMS}'97)",
-  address       = "Nagoya, Japan",
-  month         = jan,
-  year          = "1997",
-  pages         = "290-294"
-}
+TrustNode
 
 a book
 From the May 2002 issue of "IEEE Transactions on Magnetics",
@@ -251,8 +295,6 @@ page 181, reference #26.
   year          = "1999",
   pages         = "345-352"
 }
-
-
 
 
 technical report with type

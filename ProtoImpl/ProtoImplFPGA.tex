@@ -58,7 +58,8 @@
 % long dash is --
 %
 % `is single quoted' , ``is double qouted"
-
+%
+% to autoformat with latexindent: latexindent -w  -m -l defaultSettings.yaml ProtoImplFPGA.tex
 
 
 \begin{document}
@@ -101,7 +102,8 @@
     through
     using the generalized architecture as a framework.
 
-    The ISO OSI Basic Reference Model for communication is a remarkable guideline as a design basis for setting the
+    The ISO OSI Basic Reference Model~\cite{ISO:OSI} for communication is a remarkable guideline as a design basis for
+    setting the
     boundaries of such a generalized architecture. As a result of this work, a framework has been designed and also
     described in VHDL. It  follows the basic principles of the OSI reference, presenting a general tool-kit for
     handling
@@ -115,8 +117,10 @@
     %%%%%%%% management software.
 
     The model has been verified through simulations as well as through physical, live tests. The simulations were
-    performed on the VHDL description itself. The live tests were carried out on the fully implemented application of ARP
-    and Ethernet, which was interconnected with network and transport layer hardware and software products from 3rd party
+    performed on the VHDL description itself. The live tests were carried out on the fully implemented application of
+    ARP
+    and Ethernet, which was interconnected with network and transport layer hardware and software products from 3rd
+    party
     vendors.
 \end{abstract}
 
@@ -132,7 +136,8 @@ characteristics. This is essential for several networking protocols such as Time
 whereas time synchronization protocols like PTP (Precision Time Protocol) \cite{PTP_standard}could also benefit from
 them.
 
-Most FPGA manufacturers provide black box modules of which several protocols can be synthesized. While these can be used
+Most FPGA manufacturers provide black box modules of which several protocols can be synthesized. While these can be
+used
 well with well-established protocols, their rigid nature makes them inappropriate for protocol development. In real
 life there are often non-existing features
 or new protocols have to be implemented, for which the factory-provided implementations allow little design space.
@@ -147,7 +152,8 @@ fundamentals of the modular architecture of the framework.
 
 %%%%%%%% \section{Related Work}\label{sec:RelatedWork}
 
-TODO: read papers and provide summary,introduce some related work (at least three), from the papers
+TODO: read papers and provide summary,introduce some related work (at least three), from the
+papers~\cite{related:TrustNode}
 
 \section{Internal Design}\label{sec:Internal Design}
 
