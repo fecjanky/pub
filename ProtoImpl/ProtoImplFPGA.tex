@@ -105,7 +105,7 @@
     boundaries of such a generalized architecture. As a result of this work, a framework has been designed and also
     described in VHDL. It  follows the basic principles of the OSI reference, presenting a general tool-kit for
     handling
-    PDUs (Protocol Data Unites) and IDUs (Interface Data Units). Beside these features it also provides solutions
+    PDUs (Protocol Data Units) and IDUs (Interface Data Units). Beside these features it also provides solutions
     for other
     frequently reappearing tasks in the aid of convenient and smooth implementation of various protocols.
 
@@ -132,7 +132,7 @@ characteristics. This is essential for several networking protocols such as Time
 whereas time synchronization protocols like PTP (Precision Time Protocol) \cite{PTP_standard}could also benefit from
 them.
 
-Most FPGA manufacturers provide black box modules of which several protocols can be synthesized. While these can be use
+Most FPGA manufacturers provide black box modules of which several protocols can be synthesized. While these can be used
 well with well-established protocols, their rigid nature makes them inappropriate for protocol development. In real
 life there are often non-existing features
 or new protocols have to be implemented, for which the factory-provided implementations allow little design space.
@@ -209,7 +209,7 @@ In this framework this is generalized into having two signals: \emph{Ind} and \e
 the requested operation. All synchronous operations must be carried out after receiving an \emph{Ack}.
 Synchronous operation is not always preferable -- e.g. when there is only one upper layer protocol in a
 given system. That is the reason why every interface is parametrizable with generics whether to use
-synchronization or not.
+handshaking or not.
 Beside the bidirectional data and control buses, there are bidirectional error indicator signals present
 for signalling error conditions. This allows that both parties of the communication can signal error conditions.
 
@@ -383,7 +383,7 @@ IPv4 and Ethernet has been implemented through the framework as well as the  nec
 protocol in full-duplex mode.
 At the end of the implementation the framework has been verified by both simulation and synthesizing it on a FPGA based
 board equipped with 802.3 PHY interfaces. There were complete, real world measurements carried out by interconnecting
-the board with various devices. \cite{Williams_Web_Workload_Characterization_10_Years}
+the board with various devices.
 
 \section{Acknowledgement}
 I would like to thank to Aitia International Inc. for supplying the necessary hardware resources for this work and also
