@@ -136,12 +136,26 @@ characteristics. This is essential for several networking protocols such as Time
 whereas time synchronization protocols like PTP (Precision Time Protocol) \cite{PTP_standard}could also benefit from
 them.
 
-Most FPGA manufacturers provide black box modules of which several protocols can be synthesized. While these can be
-used
-well with well-established protocols, their rigid nature makes them inappropriate for protocol development. In real
-life there are often non-existing features
+There could be various focal points for FPGA-based networking equipment design; these include high networking speed
+\cite{C-GEP_HPSR} low latency \cite{related:TrustNode}, ease of programmability \cite{C-Board_NEMA}, among others.
+
+There are many networking solutions available for NetFPGA \cite{NetFPGA}, which is a widely used platform
+in research and education. Naturally, there are many protocol-implementations available for NetFPGA users, although
+their implementations are heterogeneous, which forces the developer to take extra special care when stacking up protocols.
+
+All of these solutions essentially need protocol handling within the FPGA. Most FPGA manufacturers provide black box
+modules of which several protocols can be synthesized. While these can be used well with well-established protocols,
+their rigid nature makes them inappropriate for protocol development.
+In real life there are often non-existing features
 or new protocols have to be implemented, for which the factory-provided implementations allow little design space.
 Often times there are only some generic parameters of a given protocol that can be tweaked as a part of instantiation.
+For new protocols, the implementation process usually follows a practically ad-hoc method that may come with special
+advantages of tailoring, but definitely needs longer design time.
+This includes developing the given protocol logic, and rather than fitting that into a generic interface,
+the designer has to fit that into the stack as the \emph{implementation} of the surrounding protocols require.
+
+In order to speed up design time and provide a clear solution, a systematic approach is suggested in this paper,
+that follows the layered OSI model of communication.
 
 The motivation for this work is to design and implement a framework in VHDL that enables rapid prototyping of
 networking protocols. The aim is not to provide similar black box modules, but to supply elementary components in a way
@@ -150,14 +164,9 @@ provides a standard way of talking about protocols. As a result, lining up the d
 model is a straightforward decision. Besides, it provides a well-established nomenclature, and it also lays down the
 fundamentals of the modular architecture of the framework.
 
-%%%%%%%% \section{Related Work}\label{sec:RelatedWork}
-
-TODO: read papers and provide summary,introduce some related work (at least three), from the
-papers~\cite{related:TrustNode}
-
 \section{Internal Design}\label{sec:Internal Design}
 
-As described earlier, the internal design of the framework aligns with the OSI model. Individual layers of protocols
+The internal design of the framework aligns with the OSI model, as mentioned before. Individual layers of protocols
 communicate through SAPs (Service Access Points), using service primitives.
 These mostly have protocol dependent parameters, but their structure is fixed and consists of ICI (Interface Control
 Information) and SDU (Service Data Unit). Given these, it is beneficial to have a generic component that can be reused
