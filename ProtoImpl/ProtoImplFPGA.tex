@@ -141,7 +141,8 @@ There could be various focal points for FPGA-based networking equipment design; 
 
 There are many networking solutions available for NetFPGA \cite{NetFPGA}, which is a widely used platform
 in research and education. Naturally, there are many protocol-implementations available for NetFPGA users, although
-their implementations are heterogeneous, which forces the developer to take extra special care when stacking up protocols.
+their implementations are heterogeneous, which forces the developer to take extra special care when stacking up
+protocols.
 
 All of these solutions essentially need protocol handling within the FPGA. Most FPGA manufacturers provide black box
 modules of which several protocols can be synthesized. While these can be used well with well-established protocols,
@@ -364,7 +365,6 @@ lower layer input of the module. Out of the four frames, the
 It can be seen from the waveforms that the first packet has not been forwarded towards the upper layers -- visible on
 the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the control
 signals described in~\ref{subsec:if_and_func_spec_VHDL}.
-
 
 \subsection{Packet capture results}
 
