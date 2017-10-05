@@ -16,7 +16,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
-   sodipodi:docname="ether_tst_wave.svg">
+   sodipodi:docname="ether_tst_wave.svg"
+   inkscape:export-filename="D:\users\ferko\docs\univ\2017_2018_I\PHd\ieee_journal_cikk\ProtoImpl\figures_raw\ether_tst_wave.svg.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <defs
      id="defs2">
     <marker
@@ -215,11 +218,11 @@
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1018"
-     inkscape:window-x="1358"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="716"
+     inkscape:window-height="404"
+     inkscape:window-x="182"
+     inkscape:window-y="71"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -23939,7 +23942,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAhYKDhk4RHikAAAAASUVORK5CYII=
        ry="18.575233"
        rx="9.8889723"
        cy="89.465218"
-       cx="-41.694042" />
+       cx="-41.694042"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <ellipse
        style="fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:0.26499999;stroke-miterlimit:4;stroke-dasharray:2.1199999, 2.1199999;stroke-dashoffset:0;stroke-opacity:1"
        id="path8463"
