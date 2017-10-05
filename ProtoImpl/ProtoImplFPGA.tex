@@ -228,10 +228,8 @@ clear properties, that
 (iii)provides a high level interface for separating and combining PCI (Protocol Control Information) and SDU,
 (iv)forwarding, pausing or dropping SDUs;
 (v)provides a unified way to handle ICI, SDU, and PDU events (e.g error signalling);
-(vi)adds support of auxiliary information that travels along with messages -- this can be used for adding
-(vii)meta-data to message or in creating SAPs;
-(viii)provides components for common tasks recurring during implementing networking protocols and 
-(ix)(de/serialization, arbitration etc.).
+(vi)adds support of auxiliary information that travels along with messages -- this can be used for adding meta-data to message or in creating SAPs;
+(vii)provides components for common tasks recurring during implementing networking protocols and (de/serialization, arbitration etc.).
 %\begin{itemize}
 %    \renewcommand \labelitemi{--}
 %    \item has to support interconnection via layering;
@@ -435,7 +433,7 @@ those can be implemented easily and effectively with its support.
 
 The OSI reference model served as a basis for logical and physical structuring of the framework, that by design
 addresses layering and interconnection of protocols. The framework has been implemented in VHDL with having nearly all
-main parameters as generic inputs that can be tweaked synthesis time. As part of the verification, the ARP protocol for
+main parameters as generic inputs that can be tweaked in synthesis time. As part of the verification, the ARP protocol for
 IPv4 and Ethernet has been implemented through the framework as well as the  necessary IEE 802.3 MAC link layer
 protocol in full-duplex mode.
 At the end of the implementation the framework has been verified by both simulation and synthesizing it on a FPGA based
