@@ -137,7 +137,7 @@ whereas time synchronization protocols like PTP (Precision Time Protocol) \cite{
 them.
 
 There could be various focal points for FPGA-based networking equipment design; these include high networking speed
-\cite{C-GEP_HPSR} low latency \cite{related:TrustNode}, ease of programmability \cite{C-Board_NEMA}, among others.
+\cite{C-GEP_HPSR} low latency \cite{related:TrustNode}, ease of programmability \cite{C-Board_NEMA},etc.
 
 There are many networking solutions available for NetFPGA \cite{NetFPGA}, which is a widely used platform
 in research and education. Naturally, there are many protocol-implementations available for NetFPGA users, although
@@ -179,11 +179,10 @@ in each and every protocol for handling ICIs,SDUs and PDUs. The designer's task 
     \item the interface towards lower layer protocols.
 \end{itemize}
 
-Such a straightforward approach help minimizing implementation errors, and easy to verify due to its clean
-architecture.
+Such a straightforward approach help minimizing implementation errors, and reducing verification effort.
 
 Based on the description above the framework essentially becomes a generic module or building block, that has some
-clear properties. The fundamental building block of the framework
+clear properties, that
 
 \begin{itemize}
     \renewcommand \labelitemi{--}
@@ -227,17 +226,17 @@ Synchronous operation is not always preferable -- e.g. when there is only one up
 given system. That is the reason why every interface is parametrizable with generics whether to use
 handshaking or not.
 Beside the bidirectional data and control buses, there are bidirectional error indicator signals present
-for signalling error conditions. This allows that both parties of the communication can signal error conditions.
+for signalling error conditions for both parties of the communication.
 
 \subsubsection{Data delimiter signals}
 
 Data is traversing through the system in the form of consecutive bytes over various data buses (PDU, internal data,
-aux. data etc.) accompanied by 3 control signals:
+aux. data etc.) accompanied by:
 \begin{itemize}
     \renewcommand \labelitemi{--}
-    \item Start Of PDU abbreviated as SOP,
-    \item End of PDU abbreviated as EOP,
-    \item Data Valid abbreviated as DV.
+    \item Start Of PDU control signal (SOP),
+    \item End of PDU control signal (EOP),
+    \item Data Valid control signal (DV).
 \end{itemize}
 If a module is transferring data, it must indicate it by transitioning both SOP and DV signals from logical `Low' to
 `High' level simultaneously -- and in parallel, the data bus is also adjusted to the first symbol of the data to be
@@ -331,7 +330,7 @@ constraint resulted in concrete values for multiple important generic parameters
 clock frequency.
 The implementation itself and several test cases are available on \cite{GIT_protolayer}
 \url{https://github.com/fecjanky/protolayer} that was used for the verification by simulation and by actual operation
-of the modules.
+of it.
 
 \begin{figure*}[!htb]
     \centering
@@ -342,8 +341,8 @@ of the modules.
 
 \section{Verification}\label{sec:Verification}
 
-There were two methods used to verify the design and the implementation: (i) simulation of the VHDL implementation
-using Xilinx ISim, and (ii) synthesis of the VHDL implementation on the GPlanar card and interconnecting it with other
+There were two methods used to verify the design and the implementation: (i) simulation of the VHDL model
+using Xilinx ISim, and (ii) synthesis of that on the GPlanar card and interconnecting it with other
 devices.
 
 \subsection{Simulation results}
@@ -363,8 +362,7 @@ lower layer input of the module. Out of the four frames, the
     \item the last to were sent to the configured addresses.
 \end{itemize}
 It can be seen from the waveforms that the first packet has not been forwarded towards the upper layers -- visible on
-the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the control
-signals described in~\ref{subsec:if_and_func_spec_VHDL}.
+the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the signals of~\ref{subsec:if_and_func_spec_VHDL}.
 
 \subsection{Packet capture results}
 
@@ -390,7 +388,7 @@ satisfies the requirements stated in \ref{sec:Internal Design}.
 The aim of this paper was to present the design and implementation of a generalized framework for FPGA-based networking
 systems. This architecture enables high level of re-usability and customization, which is the main achievement of this
 work. It is demonstrated that the framework aids implementation of networking protocols using FPGAs and verified that
-it is easy and effective to implement protocols with its support.
+those can be implemented easily and effectively with its support.
 
 The OSI reference model served as a basis for logical and physical structuring of the framework, that by design
 addresses layering and interconnection of protocols. The framework has been implemented in VHDL with having nearly all
