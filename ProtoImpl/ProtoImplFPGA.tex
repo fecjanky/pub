@@ -328,7 +328,7 @@ transmission through a signalling error.
 
 Figure~\ref{fig:proto_layer_rx_sch} shows the internals of the RX part inside a Protocol layer module -- which is
 called \emph{`PDUQueue'} in the final VHDL implementation. It has three main interfaces: input, output and control;
-each operate as described in \ref{subsec:if_and_func_spec_VHDL}.
+each operate as described in Section~\ref{subsec:if_and_func_spec_VHDL}.
 
 \begin{figure}[!htb]
     \centering
@@ -351,7 +351,7 @@ part of handling protocol messages.
 The module depicted on Figure~\ref{fig:proto_layer_tx_sch} is responsible for accepting data streams of corresponding
 PCIs and SDUs and combine them into one single data stream, then forward them through its output interface, which can
 be fed into a lower layer `ProtoModule''s SDU input. Since the PDU's PCI and SDU part can be modelled internally as two
-separate PDUs, the module described in \ref{subsubsec:PDUQueue_details} can be used for handling the two data units.
+separate PDUs, the module described in Section~\ref{subsubsec:PDUQueue_details} can be used for handling the two data units.
 The output of those are fed into another \emph{`PDUQueue'} through a multiplexer. The reassembly control module
 virtually operates as a simple internal `protocol' for the 3 \emph{`PDUQueue'}s that always make \emph{`Forward'}
 control decision -- hence the note \emph{`PASS\_THROUGH'} on the figure -- and also controls the multiplexer input
@@ -405,7 +405,7 @@ data units. These has been followed by testing \emph{MA\_DATA.indication} by fee
 lower layer input of the module. Out of the four frames, the : (i) first was not destined to the station, and (ii)
 the second was destined to the broadcast address, and  (iii) the last to were sent to the configured addresses.
 It can be seen from the waveforms that the first packet has not been forwarded towards the upper layers -- visible on
-the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the signals of~\ref{subsec:if_and_func_spec_VHDL}.
+the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the signals of Section~\ref{subsec:if_and_func_spec_VHDL}.
 
 \subsection{Packet capture results}
 
@@ -424,7 +424,7 @@ that measurement setting.
 
 Based on the numerous and thorough tests -- as well as the two demonstrated simulation and packet capture results --,
 it can be stated that the framework design is valid. It can be used to implement various protocols, and it also
-satisfies the requirements stated in \ref{sec:Internal Design}.
+satisfies the requirements stated in Section~\ref{sec:Internal Design}.
 
 \section{Conclusion}
 
