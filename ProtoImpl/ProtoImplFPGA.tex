@@ -332,6 +332,13 @@ The implementation itself and several test cases are available on \cite{GIT_prot
 \url{https://github.com/fecjanky/protolayer} that was used for the verification by simulation and by actual operation
 of the modules.
 
+\begin{figure*}[!htb]
+    \centering
+    \includegraphics[width=1\textwidth]{figures_raw/ether_tst_wave_annotated.png}
+    \caption{Simulation waveform of the Ethernet module exported from Xilinx ISim}
+    \label{fig:eth_sim}
+\end{figure*}
+
 \section{Verification}\label{sec:Verification}
 
 There were two methods used to verify the design and the implementation: (i) simulation of the VHDL implementation
@@ -358,12 +365,6 @@ It can be seen from the waveforms that the first packet has not been forwarded t
 the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the control
 signals described in~\ref{subsec:if_and_func_spec_VHDL}.
 
-\begin{figure*}[!htb]
-    \centering
-    \includegraphics[width=1\textwidth]{figures_raw/ether_tst_wave_annotated.png}
-    \caption{Simulation waveform of the Ethernet module exported from Xilinx ISim}
-    \label{fig:eth_sim}
-\end{figure*}
 
 \subsection{Packet capture results}
 
@@ -386,7 +387,7 @@ satisfies the requirements stated in \ref{sec:Internal Design}.
 
 \section{Conclusion}
 
-The aim of this paper was to present the design and implementation of a generalized framework for FPFA-based networking
+The aim of this paper was to present the design and implementation of a generalized framework for FPGA-based networking
 systems. This architecture enables high level of re-usability and customization, which is the main achievement of this
 work. It is demonstrated that the framework aids implementation of networking protocols using FPGAs and verified that
 it is easy and effective to implement protocols with its support.
