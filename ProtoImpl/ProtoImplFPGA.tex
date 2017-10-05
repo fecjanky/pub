@@ -87,16 +87,9 @@
 
 \begin{abstract}
     \boldmath
-    The handling of connectionless networking protocol messages that has low memory footprint could be implemented
+    The handling of networking protocol messages that has low memory footprint could be implemented
     effectively by using FPGAs.
-    When lower level protocols are realized in such way, they will provide fast and predictable service
-    characteristics for
-    their upper layer protocols. The variance of frame or packet handling delay can easily go out of control for
-    software-based protocol implementations. This is due to various factors including the scheduling system of the
-    operating
-    system, the dynamics of memory handling, among others. These can be eliminated when using hardware-based
-    implementations, where data unit handling is counted in clock cycles.
-
+    
     The purpose of this work was to design a generalized approach for implementing protocols using FPGA hardware.
     In order to validate the approach, this paper also presents an application layer protocol that was implemented
     through
@@ -137,7 +130,7 @@ whereas time synchronization protocols like PTP (Precision Time Protocol) \cite{
 them.
 
 There could be various focal points for FPGA-based networking equipment design; these include high networking speed
-\cite{C-GEP_HPSR} low latency \cite{related:TrustNode}, ease of programmability \cite{C-Board_NEMA},etc.
+\cite{C-GEP_HPSR} low latency \cite{related:TrustNode}, ease of programmability \cite{C-Board_NEMA}, etc.
 
 There are many networking solutions available for NetFPGA \cite{NetFPGA}, which is a widely used platform
 in research and education. Naturally, there are many protocol-implementations available for NetFPGA users, although
@@ -354,13 +347,8 @@ reception of data units. For this specific verification, the module was synthesi
 MAC addresses, of which the station was configured to have two addresses: 50-E5-49-39-04-A2 and a 00-01-17-F3-F7-86.
 After completing the configuration sequence, the \emph{MA\_DATA.request} service primitive has been tested with two
 data units. These has been followed by testing \emph{MA\_DATA.indication} by feeding four Ethernet II frames to the
-lower layer input of the module. Out of the four frames, the
-\begin{itemize}
-    \renewcommand \labelitemi{--}
-    \item first was not destined to the station,
-    \item the second was destined to the broadcast address, and
-    \item the last to were sent to the configured addresses.
-\end{itemize}
+lower layer input of the module. Out of the four frames, the : (i) first was not destined to the station, and (ii)
+the second was destined to the broadcast address, and  (iii) the last to were sent to the configured addresses.
 It can be seen from the waveforms that the first packet has not been forwarded towards the upper layers -- visible on
 the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the signals of~\ref{subsec:if_and_func_spec_VHDL}.
 
@@ -396,8 +384,8 @@ main parameters as generic inputs that can be tweaked synthesis time. As part of
 IPv4 and Ethernet has been implemented through the framework as well as the  necessary IEE 802.3 MAC link layer
 protocol in full-duplex mode.
 At the end of the implementation the framework has been verified by both simulation and synthesizing it on a FPGA based
-board equipped with 802.3 PHY interfaces. There were complete, real world measurements carried out by interconnecting
-the board with various devices.
+board equipped with 802.3 PHY interfaces. There were complete,  successful, real world measurements carried out by
+interconnecting the board with various devices.
 
 \section{Acknowledgement}
 The authors would like to say thanks for AITIA Int’l. Inc. for support, and to Gabor Krodi for his invaluable feedback.
