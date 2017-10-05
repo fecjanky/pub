@@ -17,7 +17,7 @@
 
 \usepackage{xcolor}
 
-\usepackage{tikzpagenodes}
+%\usepackage{tikzpagenodes}
 
 \newcommand\note[1]{\textcolor{red}{#1}}
 
@@ -87,6 +87,16 @@
 
 \IEEEpubid{978-1-5386-3073-0/17/\$31.00~\copyright~2017 IEEE}
 
+\makeatletter
+\newcommand*\titleheader[1]{\gdef\@titleheader{#1}}
+\AtBeginDocument{%
+  \let\st@red@title\@title
+  \def\@title{%
+    \bgroup\normalfont\large\centering\@titleheader\par\egroup
+    \vskip0.2em\st@red@title}
+}
+\makeatother
+
 % conference papers do not typically use \thanks and this command
 % is locked out in conference mode. If really needed, such as for
 % the acknowledgment of grants, issue a \IEEEoverridecommandlockouts
@@ -94,7 +104,7 @@
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
 \title{A Flexible Architecture for Protocol Implementations within FPGAs}
-%\titleheader{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22, 2017.}
+\titleheader{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22, 2017.}
 
 % author names and affiliations
 % use a multiple column layout for up to three different
@@ -113,10 +123,10 @@
 % make the title area
 \maketitle
 %[yshift=1em]
-  \begin{tikzpicture}[remember picture,overlay]
-    \node[align=left] at ([yshift=1em,xshift=10em]current page text area.north west) {25th Telecommunications forum TELFOR 2017};
-    \node[align=right] at ([yshift=1em,xshift=-8em]current page text area.north east) {Serbia, Belgrade, November 21-22, 2017.};
-  \end{tikzpicture}%
+% \begin{tikzpicture}[remember picture,overlay]
+%   \node[align=left] at ([yshift=1em,xshift=10em]current page text area.north west) {25th Telecommunications forum TELFOR 2017};
+%   \node[align=right] at ([yshift=1em,xshift=-8em]current page text area.north east) {Serbia, Belgrade, November 21-22, 2017.};
+% \end{tikzpicture}%
 
 
 \begin{abstract}
