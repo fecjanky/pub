@@ -3,8 +3,13 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage{url}
+\usepackage[hidelinks]{hyperref}
 
 \usepackage{caption}
+
+\usepackage{listings}
+
+\usepackage{color}
 
 % *** GRAPHICS RELATED PACKAGES ***
 %\usepackage[pdftex]{graphicx}
@@ -12,6 +17,8 @@
 %\usepackage[dvips]{graphicx}
 % to place figures on a fixed position
 \usepackage{float}
+
+\usepackage[margin=1in]{geometry}
 
 \title{OpenFlow \& Mininet – syllabus}
 \author{}
@@ -236,18 +243,106 @@ The OpenFlow control messages can be monitored using Wireshark packet capture so
 
 \subsection{OpenFlow v1.0 differences and simplifications}
 
-\begin{figure}[!htb]
-    \centering
-    \includegraphics[width=0.9\textwidth]{figures/populated_flowtable.png}
-    \caption{Populated flow table}
-    \label{fig:NOX-populated-flowtable}
-\end{figure}
+In OpenFlow version 1.0 the structure of the flow entries are much simpler and dumping the flow table is done slightly differently. Figure~\ref{fig:NOX-table-dump-v1.0} shows a table dump from a switch running on localhost using the \emph{dpctl} command.
 
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures/populated_flowtable.png}
-    \caption{Populated flow table}
-    \label{fig:NOX-populated-flowtable}
+    \includegraphics[width=0.9\textwidth]{figures/table_dump.png}
+    \caption{OpenFlow v1.0 table dump}
+    \label{fig:NOX-table-dump-v1.0}
 \end{figure}
+
+From the result returned by the switch it is visible that currently there are 4 active entries and all of these are situated in the \emph{hash} table. If one would like to inspect concrete flow entries the \emph{dpctl} utility can be used with proper arguments as shown on Figure~\ref{fig:NOX-entries-dump-v1.0}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/entry_dump.png}
+    \caption{OpenFlow v1.0 entries dump}
+    \label{fig:NOX-entries-dump-v1.0}
+\end{figure}
+
+Out of the 4 entries 2 are there for ICMP packets while the remaining 2 are for ARP packets. Since the hash table uses exact matching all fields of the flow key entries are fully populated. For example decoding the 1st entry says that if an ICMP packet arrives on port no. 2 (in\_port=2) that has source IP address as 10.0.0.3 and destination IP address as 10.0.0.2 etc. then the matching packet has to be forwarded over port 1 (actions=output:1). Several other parameters can be tweaked like e.g priority of the entry, time-out, etc. Further information can be found related to this on the man page of the \emph{dpctl} command.
+
+\section{Mininet}\label{sec:Mininet}
+
+Mininet is an extremely useful network simulator software tool which is capable of emulating OpenFlow networks consisting from hundreds of OpenFlow switches using on a single host computer.
+
+It was designed for emulating large-scale network with minimal resource utilization. It is possible to emulate networks with more than 100 hosts on a single laptop. This is possible via using OS level virtualization facilities, host are realized as standalone shell processes and network namespaces. The main goal of this tool is to make it possible to experiment with new network architectures, addressing schemes, etc. using only consumer class PCs. The following design principles were established by the authors of Mininet:
+\begin{itemize}
+    \item Flexibility: testing new functionality in software running on a well-known OS
+    \item Install-ability: The potential of installing a functionally complete model onto real hardware
+    \item Interactivity: The network management and operation must be real-time just like in a real world network
+    \item Scalability: Must scale in a way that hundreds of devices can be emulated by using a single laptop
+    \item Realistic: The operation itself should be as close as it can be compared to the real world
+    \item Sharing: the sharing of prototypes should be done with ease amongst the developers working on the same projects
+\end{itemize}
+
+Before Mininet came there were expensive special purpose devices for network emulation or alternatively software simulators (e.g ns-2) that were not realistic enough. Mininet addresses these issues by having a Python implementation running on Linux OS. The host and node emulation is performed using shell processing, virtual Ethernet pairs and network namespaces. For testing new topologies and network architectures and algorithms it uses the OpenFlow standard. The internal implementation of Mininet is illustrated by Figure~\ref{fig:Mininet-Impl}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/mininet_impl.png}
+    \caption{Mininet implementation details}
+    \label{fig:Mininet-Impl}
+\end{figure}
+
+Mininet instead of using virtual machines for each individual host uses a more light-weight solution: it launches simple shell processes for them where each host has a corresponding shell process associated with it that can execute arbitrary programs. Each process is launched in a separate network namespace so that is has its own network interface, routing table etc. From networking perspective it behaves as a standalone entity. The virtual interfaces are interconnected with the corresponding switch port running in the root namespace using virtual connections. The host processes can communicate with Mininet using the OS pipe facilities so that each host can be controlled respectively. The switches can be connected to an external controller that can run either on a remote machine or on the local host.
+
+When starting Mininet one can specify to which software switch implementation should it run, how should it connect to the controller, what is the network topology it should emulate and also that which internal test suites should it execute.
+There are multiple options present for selecting the the controller. Either a reference controller or the previously mentioned NOX controller can be used, which could be launched either by Mininet or manually. In the latter case only the controller's IP address and port has to be specified. For the switch implementation there are also two possibilities. One of them is the OpenVSwitch that supports OpenFlow v1.0 or alternatively the reference switch implementation can be used. The internal test suite consists two test cases: the ping test, that verifies the availability of the hosts, and the iperf test, which measures the transmission bandwidth between two hosts. 
+
+\begin{figure}[H]%[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/mininet-topology.jpg}
+    \caption{A sample topology in Mininet}
+    \label{fig:Mininet-sample-topo}
+\end{figure}
+
+There are multiple options for specifying the network topology as well. A couple of simple topologies have been embedded into Mininet itself --like linear or tree topology -- where only some parameters has to be specified.
+There is also an option for describing custom topologies manually using Python code. For example topology on Figure~\ref{fig:Mininet-sample-topo} is described with the code of Figure~\ref{fig:Mininet-sample-topo-code}.
+
+\begin{figure}[H]%[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/mininet-code.png}
+    \caption{Sample Mininet topology's Python description}
+    \label{fig:Mininet-sample-topo-code}
+\end{figure}
+
+Starting from newer Mininet versions (v2.0) there is a new method for describing topologies as shown in Listing~\ref{lst:Mininet-2.0-example}
+
+\lstinputlisting[language=Python,showstringspaces=false,frame=single,breaklines,caption={Mininet 2.0 newer topology specification scheme},label=lst:Mininet-2.0-example]{resources/mininet-2.0-sample.py}
+
+Listing~\ref{lst:Mininet-2.0-example} shows that the topology can be described with relative ease. First it sets up the identifiers of the devices then -- by calling self explanatory functions -- it creates the virtual devices and the interconnections between them. After these steps it fires up the devices. Starting from there the topology can be launched from Mininet by specifying the appropriate switches on the command line as shown by Listing~\ref{lst:Mininet-startup}
+
+
+\begin{lstlisting}[language=bash,frame=single,breaklines,caption={Mininet startup command},label=Mininet-startup]
+sudo -E mn  --switch=user --controller=remote --ip=127.0.0.1 --port=6633 --custom /home/openflow/mininet/custom/topo-test2.py --topo test
+\end{lstlisting}
+
+As a result of the command execution of Listing~\ref{lst:Mininet-startup} Mininet starts the reference switch implementation which will connect to a controller listening on localhost:6633 and it also loads the user defined topology as given. After startup  commands can be executed on arbitrary selected hosts by entering the host identifier and the command to execute (e.g. h3 ping h4). Furthermore if a \emph{ssh} daemon is running on the virtual hosts connecting to them using ssh is also possible even with using X window forwarding.
+
+One of its greatest advantages of Mininet is that solutions developed using Mininet can be easily ported to real hardware devices. This results in quick and effective development cycles without the availability of real networking equipment at hand. The controller application running in Mininet is capable of communicating with both virtual and non-virtual devices as well as long as they conform with the OpenFlow specification.
+
+\section{Further Reading}
+
+On mininet:
+\begin{itemize}
+\item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/a19-lantz.pdf}{A Network in a Laptop: Rapid Prototyping for Software-Defined Networks}
+\item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/mininet-hotnets2010-final.pdf}{Presentation of conference proceedings on Mininet}
+\item   Mininet page: \url{http://mininet.org/}
+\item   Mininet wiki: \url{https://github.com/mininet/mininet/wiki}
+\item   Mininet introduction: \url{https://github.com/mininet/mininet/wiki/  Introduction-to-Mininet}
+\item   Mininet Python API: \url{http://mininet.org/api/hierarchy.html}
+\end{itemize}
+
+OpenFlow specifications:
+\begin{itemize}
+\item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-spec-v1.0.0.pdf}{v1.0}
+\item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-spec-v1.1.0.pdf}{v1.1}
+\item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-switch-v1.3.4.pdf}{v1.3.4}
+\item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-switch-v1.4.1.pdf}{v1.4.1}
+\item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-switch-v1.5.1.pdf}{v1.5.1}
+
+\end{itemize}
 
 \end{document}
