@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[a4paper]{article}
 
 \usepackage[utf8]{inputenc}
 
@@ -430,12 +430,14 @@ realized as standalone shell processes and network namespaces. The main goal of 
 experiment with new network architectures, addressing schemes, etc. using only consumer class PCs. The following design
 principles were established by the authors of Mininet:
 \begin{itemize}
-    \item Flexibility: testing new functionality in software running on a well-known OS
-    \item Install-ability: The potential of installing a functionally complete model onto real hardware
-    \item Interactivity: The network management and operation must be real-time just like in a real world network
-    \item Scalability: Must scale in a way that hundreds of devices can be emulated by using a single laptop
-    \item Realistic: The operation itself should be as close as it can be compared to the real world
-    \item Sharing: the sharing of prototypes should be done with ease amongst the developers working on the same
+    \item \textbf{Flexibility}: testing new functionality in software running on a well-known OS
+    \item \textbf{Install-ability}: The potential of installing a functionally complete model onto real hardware
+    \item \textbf{Interactivity}: The network management and operation must be real-time just like in a real world
+          network
+    \item \textbf{Scalability}: Must scale in a way that hundreds of devices can be emulated by using a single laptop
+    \item \textbf{Realistic}: The operation itself should be as close as it can be compared to the real world
+    \item \textbf{Sharing}: the sharing of prototypes should be done with ease amongst the developers working on the
+          same
           projects
 \end{itemize}
 
@@ -472,7 +474,7 @@ availability of the hosts, and the iperf test, which measures the transmission b
 
 \begin{figure}[H]%[!htb]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures/mininet-topology.jpg}
+    \includegraphics[width=0.9\textwidth]{figures/mininet-topology.png}
     \caption{A sample topology in Mininet}
     \label{fig:Mininet-sample-topo}
 \end{figure}
@@ -578,6 +580,7 @@ OpenFlow specifications:
 During the lab exercises Mininet v2.1 has to be run on a PC on Ubuntu Linux running in a VirtualBox VM. All necessary
 programs are pre-installed on the VM.
 Login credentials : mininet/mininet
+
 Root privileges can be obtained by using \emph{sudo}.
 
 The list of equipments/tools to be used during the exercises are the following:
@@ -590,14 +593,15 @@ The list of equipments/tools to be used during the exercises are the following:
     \item dpctl
 \end{itemize}
 
-\subsection{Task: Mininet basics}
+\subsection{Task: Mininet basics} \label{task:Mininet}
 
 This exercise is basically a Mininet tutorial through performing the official walk-trough steps. For reference please
 use this site: \url{http://mininet.org/walkthrough/ }
 
 \begin{enumerate}
 
-    \item Start Mininet using the default command line switches (usage of the \emph{--mac} switch is strongly advised)
+    \item Start Mininet using the default command line switches (usage of the \emph{-{}-mac} switch is strongly
+          advised)
           then document the answers to the following questions:
           \begin{itemize}
               \item What types of nodes and links are there in the network that has been started?
@@ -610,13 +614,13 @@ use this site: \url{http://mininet.org/walkthrough/ }
           instance
           has to be launched using root privileges -- using \emph{sudo} -- and the interface to be monitored should be
           the
-          \emph{loopback} interface. Using the \emph{ping} utility measure round-trip time between two arbitrarily
+          \emph{loopback} interface. Using the \emph{ping} utility measure the round-trip time between two arbitrarily
           chosen hosts
-          of the Mininet network. During the measurement perform packet capture of the control traffic. For this
+          of the Mininet network. During the measurement perform packet capture from the control traffic. For this
           measurement use
           only 5 ICMP \emph{echo request - echo reply} transaction! Perform in-depth analysis of the OpenFlow messages
           and
-          inspect the control message transactions step-by-step. For this step to considered as complete document
+          inspect the control message transactions step-by-step. For this step to be considered as complete document
           everything in
           the lab report and also answer the following questions:
           \begin{itemize}
@@ -638,16 +642,17 @@ use this site: \url{http://mininet.org/walkthrough/ }
               \item How many flow tables does the the switch/switches have in this measurement?
               \item Re-execute the measurements above but use the user space reference implementation instead of the
                     default one
-                    (Do not use the \emph{--mac} switch for starting Mininet). What does the results indicate this
+                    (Do not use the \emph{-{}-mac} switch for starting Mininet). What does the results indicate this
                     time?
               \item How many flow tables does the the switch/switches have in this measurement this time?
           \end{itemize}
 
 \end{enumerate}
 
-\subsection{Task: Using user defined topology}
+\subsection{Task: Using user defined topology} \label{task:UDT}
 
-After the measurement performed on the simple topology a custom network topology has to created where the link
+After the measurements have been performed on the simple topology a custom network topology has to be created where the
+link
 parameters have to be modified. Mininet is capable of emulating these parameters using \emph{tc} utility but in order
 to utilize this Mininet has to be started with the \emph{--link=tc} switch.
 \begin{itemize}
@@ -667,17 +672,46 @@ to utilize this Mininet has to be started with the \emph{--link=tc} switch.
     \item Measure the RTT for each host pairs and document the results in the lab report document.
 
 \end{itemize}
-%
-%2. Saját topológia
-%
-%    Az egyszerû hálózati topológia után saját topológiát fogunk létrehozni, ahol a linkek paramétereit is állítani kell. A Mininetet a tc %segítségével tudja emulálni ezeket a paramétereket, de ehhez speciális paraméterezéssel kell indítani (--link=tc).
-%        Hozd létre a mérévezető által megadott hálózati topológiát Mininetben!
-%        Állítsd be a megfelelő link sávszélességeket és késleltetéseket! (segítség: https://github.com/mininet/mininet/wiki/%Introduction-to-Mininet, http://mininet.org/api/hierarchy.html vagy a Mininet forráskódok)
-%        Az alapértelmezett kontroller helyett használd a POX kontrollert (remote controller) a localhost 6633-as portján futtatva (ez a %default)! Használd a forwarding.l2_learning modult!
-%            segítség: egy külön terminálból a pox könyvtárba lépve a következő parancsot használd: ./pox.py forwarding.l2_learning %samples.pretty_log 
-%        Minden hoszt párra végezzél throughput méréseket az alapértelmezett TCP használatával! Az eredményeket rögzítsd a jegyzőkönyvben!
-%        Minden hoszt párra mérd ki az RTT-t! Az eredményeket rögzítsd a jegyzőkönyvben! 
-%
+
+\subsection{Task: POX controller applications}
+
+In this task 3 different POX applications have to be evaluated using the topology created in Task~\ref{task:UDT} and
+the
+goal is to figure out the differences in terms of network operation. Adequate inspection has to be carried out using
+each controller application in order to be able to deduce what type of operation does the network realize in each case.
+The applications can be launched by the following commands:
+\begin{enumerate}
+    \item \emph{\textbf{./pox.py samples.feladat1 samples.pretty\_log}}
+    \item \emph{\textbf{./pox.py samples.feladat2 samples.pretty\_log}}
+    \item \emph{\textbf{./pox.py --verbose samples.feladat3 samples.pretty\_log openflow.discovery }}
+\end{enumerate}
+
+\begin{itemize}
+    \item Evaluate the network operation
+          \begin{itemize}
+              \item Possible method for inspection: perform a ping test between H1 and H4 hosts and during that
+                    \begin{itemize}
+                        \item capture the control traffic using wireshark
+                        \item inspect the flow entries of the switches
+                        \item Optionally: inspect the POX applications log messages
+                    \end{itemize}
+              \item What type of network functions are implemented by each application? What are the fundamental
+                    operational differences between them?
+              \item Hints for the 3rd application:
+                    \begin{itemize}
+                        \item Delete static IP addresses in Mininet
+                              \begin{itemize}
+                                  \item e.g. For H1 host in Mininet terminal: \emph{\textbf{h1 ip addr del 10.0.0.1/8
+                                                dev h1-eth0}}
+                              \end{itemize}
+                        \item Use DHCP instead
+                              \begin{itemize}
+                                  \item e.g. For H1 host in Mininet terminal: \emph{\textbf{h1 dhclient -v h1-eth0}}
+                              \end{itemize}
+                    \end{itemize}
+          \end{itemize}
+\end{itemize}
+
 %3. POX kontroller alkalmazások
 %
 %    Ebben a feladatban három különböző POX alkalmazást kell összehasonlítani az előző feladatban létrehozott topológián mûködtetve és rá %kell jönni a mûködésbeli különbségekre. Mindhárom alkalmazás mellett el kell végezni a megfelelő vizsgálatokat, hogy kiderítsétek %hogyan mûködik a hálózat az egyes esetekben. Az alkalmazások a következőképpen indíthatók:
