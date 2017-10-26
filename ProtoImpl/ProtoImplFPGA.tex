@@ -209,39 +209,39 @@ communicate through SAPs (Service Access Points), using service primitives.
 These mostly have protocol dependent parameters, but their structure is fixed and consists of ICI (Interface Control
 Information) and SDU (Service Data Unit). Given these, it is beneficial to have a generic component that can be reused
 in each and every protocol for handling ICIs,SDUs and PDUs. The designer's task is to implement: 
-(i)the protocol operation as specified,
-(ii)the interface towards upper layer protocols, and
-(iii)the interface towards lower layer protocols.
-%\begin{itemize}
-%    \renewcommand \labelitemi{--}
-%    \item the protocol operation as specified,
-%    \item the interface towards upper layer protocols, and
-%    \item the interface towards lower layer protocols.
-%\end{itemize}
+%(i)the protocol operation as specified,
+%(ii)the interface towards upper layer protocols, and
+%(iii)the interface towards lower layer protocols.
+\begin{itemize}
+    \renewcommand \labelitemi{--}
+    \item the protocol operation as specified,
+    \item the interface towards upper layer protocols, and
+    \item the interface towards lower layer protocols.
+\end{itemize}
 
 Such a straightforward approach help minimizing implementation errors, and reducing verification effort.
 
 Based on the description above the framework essentially becomes a generic module or building block, that has some
 clear properties, that
-(i)has to support interconnection via layering;
-(ii)handles reception and transmission of PDUs with queuing;
-(iii)provides a high level interface for separating and combining PCI (Protocol Control Information) and SDU,
-(iv)forwarding, pausing or dropping SDUs;
-(v)provides a unified way to handle ICI, SDU, and PDU events (e.g error signalling);
-(vi)adds support of auxiliary information that travels along with messages -- this can be used for adding meta-data to message or in creating SAPs;
-(vii)provides components for common tasks recurring during implementing networking protocols and (de/serialization, arbitration etc.).
-%\begin{itemize}
-%    \renewcommand \labelitemi{--}
-%    \item has to support interconnection via layering;
-%    \item handles reception and transmission of PDUs with queuing;
-%    \item provides a high level interface for separating and combining PCI (Protocol Control Information) and SDU,
-%          forwarding, pausing or dropping SDUs;
-%    \item provides a unified way to handle ICI, SDU, and PDU events (e.g error signalling);
-%    \item adds support of auxiliary information that travels along with messages -- this can be used for adding
-%          meta-data to message or in creating SAPs;
-%    \item provides components for common tasks recurring during implementing networking protocols
-%          (de/serialization, arbitration etc.).
-%\end{itemize}
+%(i)has to support interconnection via layering;
+%(ii)handles reception and transmission of PDUs with queuing;
+%(iii)provides a high level interface for separating and combining PCI (Protocol Control Information) and SDU,
+%(iv)forwarding, pausing or dropping SDUs;
+%(v)provides a unified way to handle ICI, SDU, and PDU events (e.g error signalling);
+%(vi)adds support of auxiliary information that travels along with messages -- this can be used for adding meta-data to message or in creating SAPs;
+%(vii)provides components for common tasks recurring during implementing networking protocols and (de/serialization, arbitration etc.).
+\begin{itemize}
+    \renewcommand \labelitemi{--}
+    \item has to support interconnection via layering;
+    \item handles reception and transmission of PDUs with queuing;
+    \item provides a high level interface for separating and combining PCI (Protocol Control Information) and SDU,
+          forwarding, pausing or dropping SDUs;
+    \item provides a unified way to handle ICI, SDU, and PDU events (e.g error signalling);
+    \item adds support of auxiliary information that travels along with messages -- this can be used for adding
+          meta-data to message or in creating SAPs;
+    \item provides components for common tasks recurring during implementing networking protocols
+          (de/serialization, arbitration etc.).
+\end{itemize}
 
 Figure~\ref{fig:system_sketch} shows the high level design of the Protocol Layer module. The PUI and PIP part is
 interconnected via a control and a data bus. The control signals provide a way for signalling various conditions: start
@@ -387,8 +387,9 @@ of it.
 
 \section{Verification}\label{sec:Verification}
 
-There were two methods used to verify the design and the implementation: (i) simulation of the VHDL model
-using Xilinx ISim, and (ii) synthesis of that on the GPlanar card and interconnecting it with other
+There were two methods used to verify the design and the implementation: 
+simulation of the VHDL model using Xilinx ISim, and 
+synthesis of that on the GPlanar card and interconnecting it with other
 devices.
 
 \subsection{Simulation results}
@@ -400,8 +401,12 @@ reception of data units. For this specific verification, the module was synthesi
 MAC addresses, of which the station was configured to have two addresses: 50-E5-49-39-04-A2 and a 00-01-17-F3-F7-86.
 After completing the configuration sequence, the \emph{MA\_DATA.request} service primitive has been tested with two
 data units. These has been followed by testing \emph{MA\_DATA.indication} by feeding four Ethernet II frames to the
-lower layer input of the module. Out of the four frames, the : (i) first was not destined to the station, and (ii)
-the second was destined to the broadcast address, and  (iii) the last to were sent to the configured addresses.
+lower layer input of the module. Out of the four frames, the : 
+\begin{itemize}
+\item first was not destined to the station, and 
+\item the second was destined to the broadcast address, and  
+\item the last to were sent to the configured addresses.
+\end{itemize}
 It can be seen from the waveforms that the first packet has not been forwarded towards the upper layers -- visible on
 the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the signals of Section~\ref{subsec:if_and_func_spec_VHDL}.
 
