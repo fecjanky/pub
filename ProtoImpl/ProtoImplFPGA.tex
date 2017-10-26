@@ -82,13 +82,17 @@
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{Ferenc Nándor Janky\thanks{Ferenc Nándor Janky  is with Dept. of Telecommunications and MediaInformatics, Faculty of Electrical Engineering and Informatics, Budapest University of Technology and Economics, Magyar tudósok körútja 2., 1117 Budapest, Hungary (phone: +36704213213; e-mail: fecjanky@gmail.com)}%
+\author{Ferenc Nándor Janky\thanks{Ferenc Nándor Janky	is with Dept. of Telecommunications and MediaInformatics,
+        Faculty of Electrical Engineering and Informatics, Budapest University of Technology and Economics, Magyar tudósok
+        körútja 2., 1117 Budapest, Hungary (phone: +36704213213; e-mail: fecjanky@gmail.com)}%
 }%
 
-\markboth{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22, 2017.}%
+\markboth{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22,
+    2017.}%
 {}
 
-\IEEEpubid{\makebox[\columnwidth]{978-1-5386-3073-0/17/\$31.00~\copyright~2017 IEEE\hfill} \hspace{\columnsep}\makebox[\columnwidth]{ }}
+\IEEEpubid{\makebox[\columnwidth]{978-1-5386-3073-0/17/\$31.00~\copyright~2017 IEEE\hfill}
+    \hspace{\columnsep}\makebox[\columnwidth]{ }}
 
 % make the title area
 \maketitle
@@ -97,7 +101,7 @@
     \boldmath
     The handling of networking protocol messages that has low memory footprint could be implemented
     effectively by using FPGAs.
-    
+
     The purpose of this work was to design a generalized approach for implementing protocols using FPGA hardware.
     %In order to validate the approach, this paper also presents an application layer protocol that was implemented
     %through
@@ -126,9 +130,8 @@
 \end{abstract}
 
 \begin{IEEEkeywords}
-FPGA, Networking, Protocol stack, VHDL
+    FPGA, Networking, Protocol stack, VHDL
 \end{IEEEkeywords}
-
 
 % no keywords
 \section{Introduction}\label{sec:Motivation}
@@ -178,7 +181,7 @@ The internal design of the framework aligns with the OSI model, as mentioned bef
 communicate through SAPs (Service Access Points), using service primitives.
 These mostly have protocol dependent parameters, but their structure is fixed and consists of ICI (Interface Control
 Information) and SDU (Service Data Unit). Given these, it is beneficial to have a generic component that can be reused
-in each and every protocol for handling ICIs,SDUs and PDUs. The designer's task is to implement: 
+in each and every protocol for handling ICIs,SDUs and PDUs. The designer's task is to implement:
 %(i)the protocol operation as specified,
 %(ii)the interface towards upper layer protocols, and
 %(iii)the interface towards lower layer protocols.
@@ -319,7 +322,8 @@ part of handling protocol messages.
 The module depicted on Fig.~\ref{fig:proto_layer_tx_sch} is responsible for accepting data streams of corresponding
 PCIs and SDUs and combine them into one single data stream, then forward them through its output interface, which can
 be fed into a lower layer `ProtoModule''s SDU input. Since the PDU's PCI and SDU part can be modelled internally as two
-separate PDUs, the module described in Section~\ref{subsubsec:PDUQueue_details} can be used for handling the two data units.
+separate PDUs, the module described in Section~\ref{subsubsec:PDUQueue_details} can be used for handling the two data
+units.
 The output of those are fed into another \emph{`PDUQueue'} through a multiplexer. The reassembly control module
 virtually operates as a simple internal `protocol' for the 3 \emph{`PDUQueue'}s that always make \emph{`Forward'}
 control decision -- hence the note \emph{`PASS\_THROUGH'} on the figure -- and also controls the multiplexer input
@@ -357,8 +361,8 @@ of it.
 
 \section{Verification}\label{sec:Verification}
 
-There were two methods used to verify the design and the implementation: 
-simulation of the VHDL model using Xilinx ISim, and 
+There were two methods used to verify the design and the implementation:
+simulation of the VHDL model using Xilinx ISim, and
 synthesis of that on the GPlanar card and interconnecting it with other
 devices.
 
@@ -371,14 +375,15 @@ reception of data units. For this specific verification, the module was synthesi
 MAC addresses, of which the station was configured to have two addresses: 50-E5-49-39-04-A2 and a 00-01-17-F3-F7-86.
 After completing the configuration sequence, the \emph{MA\_DATA.request} service primitive has been tested with two
 data units. These has been followed by testing \emph{MA\_DATA.indication} by feeding four Ethernet II frames to the
-lower layer input of the module. Out of the four frames, the : 
+lower layer input of the module. Out of the four frames, the :
 \begin{itemize}
-\item first was not destined to the station, and 
-\item the second was destined to the broadcast address, and  
-\item the last to were sent to the configured addresses.
+    \item first was not destined to the station, and
+    \item the second was destined to the broadcast address, and
+    \item the last to were sent to the configured addresses.
 \end{itemize}
 It can be seen from the waveforms that the first packet has not been forwarded towards the upper layers -- visible on
-the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the signals of Section~\ref{subsec:if_and_func_spec_VHDL}.
+the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI information accompanied by the signals
+of Section~\ref{subsec:if_and_func_spec_VHDL}.
 
 \subsection{Packet capture results}
 
@@ -408,15 +413,17 @@ those can be implemented easily with its support.
 
 The OSI reference model served as a basis for logical and physical structuring of the framework, that by design
 addresses layering and interconnection of protocols. The framework has been implemented in VHDL with having nearly all
-main parameters as generic inputs that can be tweaked in synthesis time. As part of the verification, the ARP protocol for
+main parameters as generic inputs that can be tweaked in synthesis time. As part of the verification, the ARP protocol
+for
 IPv4 and Ethernet has been implemented through the framework as well as the  necessary IEE 802.3 MAC link layer
 protocol in full-duplex mode.
 At the end of the implementation the framework has been verified by both simulation and synthesizing it on a FPGA based
-board equipped with 802.3 PHY interfaces. There were complete,  successful, real world measurements carried out by
+board equipped with 802.3 PHY interfaces. There were complete,	successful, real world measurements carried out by
 interconnecting the board with various devices.
 
 \section*{Acknowledgement}
-The author would like to say thanks for AITIA Int’l. Inc. for support, and to Dr. Pal Varga -- the author's mentor -- for his guidance.
+The author would like to say thanks for AITIA Int’l. Inc. for support, and to Dr. Pal Varga -- the author's mentor --
+for his guidance.
 
 % can use a bibliography generated by BibTeX as a .bbl file
 % BibTeX documentation can be easily obtained at:
