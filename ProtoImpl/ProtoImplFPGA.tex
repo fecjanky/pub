@@ -1,8 +1,12 @@
 % !TeX encoding = UTF-8
 %% (requires IEEEtran.cls version 1.7 or later) with an IEEE conference paper.
-\documentclass[conference]{IEEEtran}
+\documentclass[journal]{IEEEtran}
 
 \renewcommand\IEEEkeywordsname{Keywords}
+
+\pagenumbering{gobble}
+
+\usepackage[utf8]{inputenc}
 
 % *** GRAPHICS RELATED PACKAGES ***
 %\usepackage[pdftex]{graphicx}
@@ -19,9 +23,7 @@
 
 \usepackage{xcolor}
 
-%\usepackage{tikzpagenodes}
 
-\newcommand\note[1]{\textcolor{red}{#1}}
 
 % \renewcommand\note[1]{} % uncomment this line to hide notes
 
@@ -66,40 +68,8 @@
 %
 % to autoformat with latexindent: latexindent -w  -m -l defaultSettings.yaml ProtoImplFPGA.tex
 
-%\makeatletter
-%\newcommand*\titleheader[1]{\gdef\@titleheader{#1}}
-%\AtBeginDocument{%
-%  \let\st@red@title\@title
-%  \def\@title{%
-%    \bgroup\normalfont\large\centering\@titleheader\par\egroup
-%    \vskip1.5em\st@red@title}
-%}
-%\makeatother
 
-
-\makeatletter
-\def\ps@IEEEtitlepagestyle{%
-  \def\@oddfoot{\mycopyrightnotice}%
-  \def\@evenfoot{}%
-}
-\def\mycopyrightnotice{%
-  { \footnotesize 978-1-5386-3073-0/17/\$31.00 \copyright ©2017 IEEE\hfill}
-}
-
-\makeatother
-
-\IEEEpubid{978-1-5386-3073-0/17/\$31.00~\copyright~2017 IEEE}
-
-\makeatletter
-\newcommand*\titleheader[1]{\gdef\@titleheader{#1}}
-\AtBeginDocument{%
-  \let\st@red@title\@title
-  \def\@title{%
-    \bgroup\normalfont\large\centering\@titleheader\par\egroup
-    \vskip0.2em\st@red@title}
-}
-\makeatother
-
+\begin{document}
 % conference papers do not typically use \thanks and this command
 % is locked out in conference mode. If really needed, such as for
 % the acknowledgment of grants, issue a \IEEEoverridecommandlockouts
@@ -107,21 +77,18 @@
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
 \title{A Flexible Architecture for Protocol Implementations within FPGAs}
-\titleheader{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22, 2017.}
+%\titleheader{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22, 2017.}
 
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{\IEEEauthorblockN{Ferenc Nandor Janky}
-    \IEEEauthorblockA{
-        Dept. of Telecommunications and MediaInformatics\\
-        Budapest University of Technology and Economics\\
-        Budapest, Hungary\\
-        Email: fecjanky@gmail.com}
-}
+\author{Ferenc Nándor Janky\thanks{Ferenc Nándor Janky  is with Dept. of Telecommunications and MediaInformatics, Faculty of Electrical Engineering and Informatics, Budapest University of Technology and Economics, Magyar tudósok körútja 2., 1117 Budapest, Hungary (phone: +36704213213; e-mail: fecjanky@gmail.com)}%
+}%
 
+\markboth{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22, 2017.}%
+{}
 
-\begin{document}
+\IEEEpubid{\makebox[\columnwidth]{978-1-5386-3073-0/17/\$31.00~\copyright~2017 IEEE\hfill} \hspace{\columnsep}\makebox[\columnwidth]{ }}
 
 % make the title area
 \maketitle
@@ -168,8 +135,8 @@
 FPGA, Networking, Protocol stack, VHDL
 \end{IEEEkeywords}
 
-% no keywords
 
+% no keywords
 \section{Introduction}\label{sec:Motivation}
 
 The family of connectionless low memory footprint networking protocols can be handled with relative ease by having pure
@@ -208,6 +175,8 @@ that the implementer could only focus in designing and implementing the protocol
 provides a standard way of talking about protocols. As a result, lining up the design of the framework with the OSI
 model is a straightforward decision. Besides, it provides a well-established nomenclature, and it also lays down the
 fundamentals of the modular architecture of the framework.
+
+\IEEEpubidadjcol
 
 \section{Internal Design}\label{sec:Internal Design}
 
