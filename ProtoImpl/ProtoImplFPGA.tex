@@ -243,7 +243,7 @@ clear properties, that
           (de/serialization, arbitration etc.).
 \end{itemize}
 
-Figure~\ref{fig:system_sketch} shows the high level design of the Protocol Layer module. The PUI and PIP part is
+Fig.~\ref{fig:system_sketch} shows the high level design of the Protocol Layer module. The PUI and PIP part is
 interconnected via a control and a data bus. The control signals provide a way for signalling various conditions: start
 of PDU, end of PDU, etc. All of the module's buses are configurable via generics in terms of:
 \begin{itemize}
@@ -294,7 +294,7 @@ settled on `Low' logical level.
 
 \subsubsection{Combining handshaking, error handling and delimiters}
 
-Figure~\ref{fig:data_signals} illustrates data transfer combined with synchronization. The delimited data transfer must
+Fig.~\ref{fig:data_signals} illustrates data transfer combined with synchronization. The delimited data transfer must
 take place after the \emph{Ind}-\emph{Ack} handshake.
 %%%%%%%% i.e.when the sending component samples `High' on the \emph{Ack} wire --  while the receiver can withhold the 
 %%%%%%%% acknowledgement indefinitely -- the sender must only reset the indication signal if an error is signalled. 
@@ -324,7 +324,7 @@ transmission through a signalling error.
 
 \subsubsection{Detailed design of \emph{`PDUQueue'}}\label{subsubsec:PDUQueue_details}
 
-Figure~\ref{fig:proto_layer_rx_sch} shows the internals of the RX part inside a Protocol layer module -- which is
+Fig.~\ref{fig:proto_layer_rx_sch} shows the internals of the RX part inside a Protocol layer module -- which is
 called \emph{`PDUQueue'} in the final VHDL implementation. It has three main interfaces: input, output and control;
 each operate as described in Section~\ref{subsec:if_and_func_spec_VHDL}.
 
@@ -339,14 +339,14 @@ The main task of this module is to receive the delimited PDUs and notify the att
 interface. The operation cycle is that it forwards the start of the PDU to the controller until it signals its decision
 (forward, drop, etc.). The controller is able to pause the operation through the control interface. If the control
 decision is `Forward' then the rest of the PDU -- which is essentially the SDU -- is forwarded through the output
-interface, while the corresponding control signals are generated as illustrated by Figure~\ref{fig:data_signals}. In
+interface, while the corresponding control signals are generated as illustrated by Fig.~\ref{fig:data_signals}. In
 order to support Out-Of-Band (OOB) signalling, the module has user I/O ports so that the OOB signals are transferred
 alongside with the PDU. This overall mechanism provides a generic way to separate the PCI from an SDU, which is a key
 part of handling protocol messages.
 
 \subsubsection{Detailed design of `ProtoModule\_TXPart'}
 
-The module depicted on Figure~\ref{fig:proto_layer_tx_sch} is responsible for accepting data streams of corresponding
+The module depicted on Fig.~\ref{fig:proto_layer_tx_sch} is responsible for accepting data streams of corresponding
 PCIs and SDUs and combine them into one single data stream, then forward them through its output interface, which can
 be fed into a lower layer `ProtoModule''s SDU input. Since the PDU's PCI and SDU part can be modelled internally as two
 separate PDUs, the module described in Section~\ref{subsubsec:PDUQueue_details} can be used for handling the two data units.
@@ -394,7 +394,7 @@ devices.
 
 \subsection{Simulation results}
 
-On Figure~\ref{fig:eth_sim} the simulation waveforms of the Ethernet module can be seen. It illustrates a MAC address
+On Fig.~\ref{fig:eth_sim} the simulation waveforms of the Ethernet module can be seen. It illustrates a MAC address
 configuration sequence (with read-back) -- green circle -- and sending and receiving multiple PDUs in that order -- the
 lines are connecting the corresponding input-output events with \emph{red} colour for transmission and \emph{blue} for
 reception of data units. For this specific verification, the module was synthesized with capability to hold 3 station
@@ -414,7 +414,7 @@ the \emph{SDU\_doutv} signal -- and the other were passed up along with all ICI 
 
 Validation of the ARP (Address Resolution Protocol) module -- that is implemented through the \emph{ProtoLayer} module
 -- was performed by interconnecting the device with a Layer 2 switch and operating it on a LAN segment. The module was
-able to initiate and respond to address resolution requests. Figure~\ref{fig:pcap_arp_seq} captures the former case,
+able to initiate and respond to address resolution requests. Fig.~\ref{fig:pcap_arp_seq} captures the former case,
 where the implementation is performing address resolution of the target host 10.10.0.254. which was a gateway router in
 that measurement setting.
 
