@@ -103,7 +103,7 @@
 \begin{abstract}
     \boldmath
     The handling of networking protocol messages that has low memory footprint could be implemented
-    effectively by using FPGAs.
+    effectively by using Field Programmable Gate Arrays (FPGA).
 
     The purpose of this work was to design a generalized approach for implementing protocols using FPGA hardware.
     %In order to validate the approach, this paper also presents an application layer protocol that was implemented
@@ -125,8 +125,8 @@
     %%%%%%%% management software.
 
     The model has been verified through simulations as well as through physical, live tests. The simulations were
-    performed on the VHDL description itself. The live tests were carried out on the fully implemented application of
-    ARP
+    performed on the VHSIC Hardware Description Language (VHDL) description itself. The live tests were carried out on the fully implemented application of Address Resolution Protocol(
+    ARP)
     and Ethernet, which was interconnected with network and transport layer hardware and software products from 3rd
     party
     vendors.
@@ -140,11 +140,11 @@
 \section{Introduction}\label{sec:Motivation}
 
 The family of connectionless low memory footprint networking protocols can be handled with relative ease by having pure
-hardware-based implementations using FPGAs.
+hardware-based implementations using Field Programmable Gate Arrays (FPGA).
 
 One of the greatest motivation of having hardware based protocol implementations is to provide deterministic timing
 characteristics. This is essential for several networking protocols such as Time Triggered Ethernet~\cite{SAE_AS6802},
-whereas time synchronization protocols like PTP (Precision Time Protocol) \cite{PTP_standard}could also benefit from
+whereas time synchronization protocols like  Precision Time Protocol (PTP) \cite{PTP_standard}could also benefit from
 them.
 
 There could be various focal points for FPGA-based networking equipment design; these include high networking speed
@@ -167,9 +167,9 @@ This includes developing the given protocol logic, and rather than fitting that 
 the designer has to fit that into the stack as the \emph{implementation} of the surrounding protocols require.
 
 In order to speed up design time and provide a clear solution, a systematic approach is suggested in this paper,
-that follows the layered OSI model~\cite{ISO:OSI} of communication.
+that follows the layered ISO Open Systems Interconnection (OSI) model~\cite{ISO:OSI} of communication.
 
-The motivation for this work is to design and implement a framework in VHDL that enables rapid prototyping of
+The motivation for this work is to design and implement a framework in VHSIC Hardware Description Language (VHDL) that enables rapid prototyping of
 networking protocols. The aim is not to provide similar black box modules, but to supply elementary components in a way
 that the implementer could only focus in designing and implementing the protocol specific parts. The ISO OSI model
 provides a standard way of talking about protocols. As a result, lining up the design of the framework with the OSI
@@ -181,10 +181,10 @@ fundamentals of the modular architecture of the framework.
 \section{Internal Design}\label{sec:Internal Design}
 
 The internal design of the framework aligns with the OSI model, as mentioned before. Individual layers of protocols
-communicate through SAPs (Service Access Points), using service primitives.
-These mostly have protocol dependent parameters, but their structure is fixed and consists of ICI (Interface Control
-Information) and SDU (Service Data Unit). Given these, it is beneficial to have a generic component that can be reused
-in each and every protocol for handling ICIs,SDUs and PDUs. The designer's task is to implement:
+communicate through Service Access Points (SAP) , using service primitives.
+These mostly have protocol dependent parameters, but their structure is fixed and consists of Interface Control
+Information (ICI)  and Service Data Unit (SDU). Given these, it is beneficial to have a generic component that can be reused
+in each and every protocol for handling ICIs,SDUs and Protocol Data Units (PDU). The designer's task is to implement:
 %(i)the protocol operation as specified,
 %(ii)the interface towards upper layer protocols, and
 %(iii)the interface towards lower layer protocols.
@@ -210,7 +210,7 @@ clear properties, that
     \renewcommand \labelitemi{--}
     \item has to support interconnection via layering;
     \item handles reception and transmission of PDUs with queuing;
-    \item provides a high level interface for separating and combining PCI (Protocol Control Information) and SDU,
+    \item provides a high level interface for separating and combining  Protocol Control Information (PCI) and SDU,
           forwarding, pausing or dropping SDUs;
     \item provides a unified way to handle ICI, SDU, and PDU events (e.g error signalling);
     \item adds support of auxiliary information that travels along with messages -- this can be used for adding
@@ -219,7 +219,7 @@ clear properties, that
           (de/serialization, arbitration etc.).
 \end{itemize}
 
-Fig.~\ref{fig:system_sketch} shows the high level design of the Protocol Layer module. The PUI and PIP part is
+Fig.~\ref{fig:system_sketch} shows the high level design of the Protocol Layer module. The Protocol Under Implementation (PUI) and Protocol Independent Part (PIP) part is
 interconnected via a control and a data bus. The control signals provide a way for signalling various conditions: start
 of PDU, end of PDU, etc. All of the module's buses are configurable via generics in terms of:
 \begin{itemize}
@@ -371,7 +371,7 @@ devices.
 
 \subsection{Simulation results}
 
-On Fig.~\ref{fig:eth_sim} the simulation waveforms of the Ethernet module can be seen. It illustrates a MAC address
+On Fig.~\ref{fig:eth_sim} the simulation waveforms of the Ethernet module can be seen. It illustrates a Media Access Control (MAC) address
 configuration sequence (with read-back) -- green circle -- and sending and receiving multiple PDUs in that order -- the
 lines are connecting the corresponding input-output events with \emph{red} colour for transmission and \emph{blue} for
 reception of data units. For this specific verification, the module was synthesized with capability to hold 3 station
@@ -390,10 +390,10 @@ of Section~\ref{subsec:if_and_func_spec_VHDL}.
 
 \subsection{Packet capture results}
 
-Validation of the ARP (Address Resolution Protocol) module -- that is implemented through the \emph{ProtoLayer} module
--- was performed by interconnecting the device with a Layer 2 switch and operating it on a LAN segment. The module was
+Validation of the Address Resolution Protocol (ARP) module -- that is implemented through the \emph{ProtoLayer} module
+-- was performed by interconnecting the device with a Layer 2 switch and operating it on a Local Area Network (LAN) segment. The module was
 able to initiate and respond to address resolution requests. Fig.~\ref{fig:pcap_arp_seq} captures the former case,
-where the implementation is performing address resolution of the target host 10.10.0.254. which was a gateway router in
+where the implementation is performing address resolution of the target host 10.10.0.254 which was a gateway router in
 that measurement setting.
 
 \begin{figure}[!htb]
