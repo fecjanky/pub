@@ -2,6 +2,8 @@
 %% (requires IEEEtran.cls version 1.7 or later) with an IEEE conference paper.
 \documentclass[conference]{IEEEtran}
 
+\renewcommand\IEEEkeywordsname{Keywords}
+
 % *** GRAPHICS RELATED PACKAGES ***
 %\usepackage[pdftex]{graphicx}
 \usepackage{graphicx}
@@ -83,6 +85,7 @@
 \def\mycopyrightnotice{%
   { \footnotesize 978-1-5386-3073-0/17/\$31.00 \copyright ©2017 IEEE\hfill}
 }
+
 \makeatother
 
 \IEEEpubid{978-1-5386-3073-0/17/\$31.00~\copyright~2017 IEEE}
@@ -135,18 +138,18 @@
     effectively by using FPGAs.
     
     The purpose of this work was to design a generalized approach for implementing protocols using FPGA hardware.
-    In order to validate the approach, this paper also presents an application layer protocol that was implemented
-    through
-    using the generalized architecture as a framework.
+    %In order to validate the approach, this paper also presents an application layer protocol that was implemented
+    %through
+    %using the generalized architecture as a framework.
 
-    The ISO OSI Basic Reference Model~\cite{ISO:OSI} for communication is a remarkable guideline as a design basis for
-    setting the
-    boundaries of such a generalized architecture. As a result of this work, a framework has been designed and also
-    described in VHDL. It  follows the basic principles of the OSI reference, presenting a general tool-kit for
-    handling
-    PDUs (Protocol Data Units) and IDUs (Interface Data Units). Beside these features it also provides solutions
-    for other
-    frequently reappearing tasks in the aid of convenient and smooth implementation of various protocols.
+    %The ISO OSI Basic Reference Model~\cite{ISO:OSI} for communication is a remarkable guideline as a design basis for
+    %setting the
+    %boundaries of such a generalized architecture. As a result of this work, a framework has been designed and also
+    %described in VHDL. It  follows the basic principles of the OSI reference, presenting a general tool-kit for
+    %handling
+    %PDUs (Protocol Data Units) and IDUs (Interface Data Units). Beside these features it also provides solutions
+    %for other
+    %frequently reappearing tasks in the aid of convenient and smooth implementation of various protocols.
 
     %%%%%%%% To verify the design a partial implementation of SNMP and various other lower layer protocols have been implemented
     %%%%%%%% which was interconnected with with other link, network and transport layer hardware and software products from 3rd 
@@ -160,6 +163,10 @@
     party
     vendors.
 \end{abstract}
+
+\begin{IEEEkeywords}
+FPGA, Networking, Protocol stack, VHDL
+\end{IEEEkeywords}
 
 % no keywords
 
