@@ -19,7 +19,7 @@
 \usepackage{url}
 
 % correct bad hyphenation here
-\hyphenation{}
+\hyphenation{NetFPGA}
 
 \usepackage{xcolor}
 
@@ -86,7 +86,7 @@
         \mbox{MediaInformatics},
         Faculty of Electrical Engineering and Informatics, Budapest University of Technology and \mbox{Economics},
         Magyar tudósok
-        körútja 2., 1117 Budapest, Hungary (\mbox{phone: +36704213213};\mbox{e-mail:
+        körútja 2., 1117 Budapest, Hungary (\mbox{phone: +36704213213}; \mbox{e-mail:
             fecjanky@gmail.com})}%
 }%
 
@@ -125,8 +125,7 @@
     %%%%%%%% management software.
 
     The model has been verified through simulations as well as through physical, live tests. The simulations were
-    performed on the VHSIC Hardware Description Language (VHDL) description itself. The live tests were carried out on the fully implemented application of Address Resolution Protocol(
-    ARP)
+    performed on the VHSIC Hardware Description Language (VHDL) description itself. The live tests were carried out on the fully implemented application of Address Resolution Protocol (ARP)
     and Ethernet, which was interconnected with network and transport layer hardware and software products from 3rd
     party
     vendors.
@@ -181,10 +180,10 @@ fundamentals of the modular architecture of the framework.
 \section{Internal Design}\label{sec:Internal Design}
 
 The internal design of the framework aligns with the OSI model, as mentioned before. Individual layers of protocols
-communicate through Service Access Points (SAP) , using service primitives.
+communicate through Service Access Points (SAP), using service primitives.
 These mostly have protocol dependent parameters, but their structure is fixed and consists of Interface Control
 Information (ICI)  and Service Data Unit (SDU). Given these, it is beneficial to have a generic component that can be reused
-in each and every protocol for handling ICIs,SDUs and Protocol Data Units (PDU). The designer's task is to implement:
+in each and every protocol for handling ICIs, SDUs and Protocol Data Units (PDU). The designer's task is to implement:
 %(i)the protocol operation as specified,
 %(ii)the interface towards upper layer protocols, and
 %(iii)the interface towards lower layer protocols.
@@ -365,7 +364,7 @@ of it.
 \section{Verification}\label{sec:Verification}
 
 There were two methods used to verify the design and the implementation:
-simulation of the VHDL model using Xilinx ISim, and
+simulation of the VHDL model using Xilinx ISim from the ISE design suite, and
 synthesis of that on the GPlanar card and interconnecting it with other
 devices.
 
@@ -390,7 +389,7 @@ of Section~\ref{subsec:if_and_func_spec_VHDL}.
 
 \subsection{Packet capture results}
 
-Validation of the Address Resolution Protocol (ARP) module -- that is implemented through the \emph{ProtoLayer} module
+Validation of the Address Resolution Protocol (ARP)~\cite{RFC0826-ARP} module -- that is implemented through the \emph{ProtoLayer} module
 -- was performed by interconnecting the device with a Layer 2 switch and operating it on a Local Area Network (LAN) segment. The module was
 able to initiate and respond to address resolution requests. Fig.~\ref{fig:pcap_arp_seq} captures the former case,
 where the implementation is performing address resolution of the target host 10.10.0.254 which was a gateway router in
