@@ -38,13 +38,13 @@ The well-know and most used P2P applications -- like file exchange, VoIP and on-
 
 \section{P2P file exchange}
 
-Az első speciálisan fájlok egymás közötti cseréjére kifejlesztett rendszer, a Napster 1999-ben jelent meg. A fájlcserélő hálózatok utána igen gyorsan fejlődtek, rengeteg architektúra alakult ki, melyeket három fő kategóriába sorolhatunk. A fejezet bemutatja az egyes kategóriákat, majd pedig részletesen a BitTorrentet, amellyel a mérés során megismerkedünk. 
+Az első speciálisan fájlok egymás közötti cseréjére kifejlesztett rendszer, a Napster 1999-ben jelent meg. A fájlcserélő hálózatok utána igen gyorsan fejlődtek, rengeteg architektúra alakult ki, melyeket három fő kategóriába sorolhatunk. A fejezet bemutatja az egyes kategóriákat, majd pedig részletesen a BitTorrentet, amellyel a mérés során megismerkedünk.
 
 \subsubsection{Client-server systems}
 
 A Napster hálózat felépítése igen egyszerű. A rendszer alapját egyetlen szerverközpont alkotja. Minden egyes felhasználó ehhez a szerverhez kapcsolódik kliensprogramjával. Az állományok letöltése is a szerver vezérlésével történik, azonban maga az állomány áttöltés már közvetlenül a kérő és kínáló kliens között történik, a szerver érintése nélkül. E tulajdonsága miatt nevezhetjük a Napstert peer-to-peer hálózatnak, hiszen kiaknázza a hálózat minden egyes felhasználójánál rejlő tárolókapacitást, illetve sávszélességet. A Napster hálózat nyilvánvaló hátránya, hogy egyetlen központi szerverre (szerverparkra) hagyatkozik, melynek esetleges bezárása az egész hálózat leállításával jár. Erre számos esetben sor is került, mert a RIAA (amerikai jogvédő szerv) sorozatosan perelte a Napstert az illegálisan megosztott tartalmak miatt.
 
-Egyesek ezért az architektúra alapjait próbálták módosítani, és olyan megoldást kerestek, amely nem támaszkodik központi elemekre, ehelyett teljesen elosztott. Mások viszont csak a biztonsági problémák leküzdésére koncentráltak, és csak az ehhez szükséges módosításokat akarták végrehajtani az architektúrán. Így egy olyan rendszerhez jutottak, melyben ugyan egy központi entitáshoz csatlakoznak a kliensek, azonban egyrészt semmilyen információt nem tárol a kliensekről, másrészt pedig nem egyetlen szervert üzemeltettek, hanem ehelyett számos kisebb szervert nyitottak meg. A legjelentősebb ilyen architektúra a DirectConnect. 
+Egyesek ezért az architektúra alapjait próbálták módosítani, és olyan megoldást kerestek, amely nem támaszkodik központi elemekre, ehelyett teljesen elosztott. Mások viszont csak a biztonsági problémák leküzdésére koncentráltak, és csak az ehhez szükséges módosításokat akarták végrehajtani az architektúrán. Így egy olyan rendszerhez jutottak, melyben ugyan egy központi entitáshoz csatlakoznak a kliensek, azonban egyrészt semmilyen információt nem tárol a kliensekről, másrészt pedig nem egyetlen szervert üzemeltettek, hanem ehelyett számos kisebb szervert nyitottak meg. A legjelentősebb ilyen architektúra a DirectConnect.
 
 \subsubsection{Distributed systems}
 
@@ -58,7 +58,7 @@ Miután a kliens megismert egy Gnutella tagot, kezdeményezi a csatlakozást hoz
 
 A jogi támadhatóság ellen is szinte teljes biztonságot kínál, hiszen a hálózat szinte feltérképezhetetlen. A feltérképezhetetlenség egyébként egyben az architektúra egyik nagy hátránya is, hiszen a kliensek kis horizontja miatt az Internet teljes monitorozása nélkül lehetetlen képet alkotni arról, hogy hányan is használják a Gnutella hálózatot, így ez mindmáig ismeretlen, csak becslések léteznek rá, melyek szerint az egy peer által elérhető peerek száma ezres nagyságrendű.
 
-A keresési üzenet terjesztése hasonlóan történik a csatlakozási üzenet terjesztéséhez. A kliens minden kliensnek elküldi a keresési üzenetet, amelyekkel kapcsolatban áll. Azok feldolgozzák a kérést, és amennyiben pozitív találatuk van, visszaküldenek egy választ. Ezután az életben maradási értéket eggyel csökkentve továbbküldik azt az összes általuk ismert peernek. Így a kérés bejárja az adott kliens teljes horizontján belüli peereket, és megkapja tőlük az összes pozitív választ. A válaszból egyúttal újabb peereket ismerhet meg, így adott esetben hozzájuk is csatlakozhat, így tágítva horizontját. 
+A keresési üzenet terjesztése hasonlóan történik a csatlakozási üzenet terjesztéséhez. A kliens minden kliensnek elküldi a keresési üzenetet, amelyekkel kapcsolatban áll. Azok feldolgozzák a kérést, és amennyiben pozitív találatuk van, visszaküldenek egy választ. Ezután az életben maradási értéket eggyel csökkentve továbbküldik azt az összes általuk ismert peernek. Így a kérés bejárja az adott kliens teljes horizontján belüli peereket, és megkapja tőlük az összes pozitív választ. A válaszból egyúttal újabb peereket ismerhet meg, így adott esetben hozzájuk is csatlakozhat, így tágítva horizontját.
 
 \subsubsection{Hierarchical systems}
 
@@ -70,8 +70,7 @@ A FastTrack hálózat hierarchikus architektúrát használ. Tulajdonképpen a G
 
 Amikor a felhasználó elindítja a kliensprogramot, akkor az egy nem nyilvános algoritmus alapján eldönti, hogy milyen szerepet vesz fel. Amennyiben Supernode szerepet kap, más Supernode-okkal igyekszik felvenni a kapcsolatot. A titkosított kommunikáció miatt az sem ismert, hogy a Supernode-ok hogyan találják meg egymást, de az ismert, hogy minden kliensprogram tartalmaz egy előre megírt Supernode listát magában. Ez a beépített lista minden egyes újabb verzióval frissül. A Supernode ezen lista elemeit próbálgatja végig, míg valamelyikhez csatlakozni nem tud. A csatlakozás után a hálózatban lévő Supernode elküldi az aktuális Supernode listát a csatlakozónak, aki ezzel frissítheti a saját listáját. A lista megszületésének módja nem ismert, de valószínű, hogy a Gnutellában használt csatlakozási protokollhoz hasonlóan készül. A kommunikáció titkossága miatt a folyamat nem ismert részleteiben, mérések során azonban azt állapították meg, hogy egy Supernode átlagosan huszonöt másik Supernode-hoz csatlakozik.
 
-A FastTrack architektúra jól ötvözi a kliens-szerver, illetve egyenrangú peerekből álló hálózatok jó tulajdonságait. A központi szervert felváltó több ezer Supernode-ból álló gerinchálózat jól skálázhatóvá teszi, illetve mentesíti a létfontosságú elemektől. Elárasztás pedig csak a Supernode-ok között történik, így a hálózat növekedésével az adatforgalom nem növekszik lényegesen, csak a nagy sávszélességgel rendelkező Supernode-ok között. Az architektúra leírása nem véletlenül hasonlít a Skype feltárt működéséhez, ugyanaz a programozói csapat áll mindkét rendszer fejlesztése mögött. 
-
+A FastTrack architektúra jól ötvözi a kliens-szerver, illetve egyenrangú peerekből álló hálózatok jó tulajdonságait. A központi szervert felváltó több ezer Supernode-ból álló gerinchálózat jól skálázhatóvá teszi, illetve mentesíti a létfontosságú elemektől. Elárasztás pedig csak a Supernode-ok között történik, így a hálózat növekedésével az adatforgalom nem növekszik lényegesen, csak a nagy sávszélességgel rendelkező Supernode-ok között. Az architektúra leírása nem véletlenül hasonlít a Skype feltárt működéséhez, ugyanaz a programozói csapat áll mindkét rendszer fejlesztése mögött.
 
 \section{BitTorrent}
 A 2001-ben született BitTorrent eredeti célja a szerverek terhelésmentesítése volt. A probléma adott: van egy szerver, amiről túl sokan akarják ugyanazt az állományt egyszerre letölteni. A szerver ilyenkor lelassul, rosszabb esetben összeomlik. Az ötlet egyszerű: miért mindenki a szerverről tölti le az adatokat, mikor azok egy része a többi letöltőnek is megvan már? A megoldás tehát az, hogy az állományokat kis részegységekre osztjuk, és ezeket mindenki tetszőleges sorrendben letöltheti, nem csak a központi gépről, hanem a többi letöltőtől is, akinek megvan az adott darab. Így minél többen töltenek le egy darabot egymástól, annál inkább elterjed a letöltők között, mind jobban tehermentesítve a szervert. A megvalósításhoz két különböző funkciójú központi elemre is szükség van. A Seeder maga a szerver, mely eredetileg, teljes egészében hozzáférést biztosít az eredeti állományhoz. A Tracker pedig egy olyan szerver, mely nyilvántartja a letöltések menetét, így az újonnan csatlakozó kliensek számára meg tudja mondani, hogy az állomány egyes darabjai mely klienseken érhetőek el.
@@ -110,7 +109,7 @@ A stringek kódolása úgy történik, hogy a string hosszát decimális számk�
 
 A listák tetszőlegesen sok bencode eljárással ábrázolt adatot tartalmazhatnak, melyet az "l" és "e" karakterek közé kell helyeznünk. Például az "l4:almai13ee" egy olyan kételemű listát ábrázol, melyben az első elem az "alma” string, a második pedig a 13-as egész szám.
 
-A szótárakat a listákhoz hasonlóan "d" és "e" karakterek között ábrázoljuk bencode kódolt karakterekkel, azonban itt kettesével kell felsorolnunk az elemeket, melyekből az első a kulcs, a második pedig a hozzá rendelt érték lesz. Például a "d4:almai13e5:körte5:nincse" egy olyan szótárat ír le, melyben az "alma" stringhez 13-at, a "körte"-hez pedig "nincs"-et rendelünk. 
+A szótárakat a listákhoz hasonlóan "d" és "e" karakterek között ábrázoljuk bencode kódolt karakterekkel, azonban itt kettesével kell felsorolnunk az elemeket, melyekből az első a kulcs, a második pedig a hozzá rendelt érték lesz. Például a "d4:almai13e5:körte5:nincse" egy olyan szótárat ír le, melyben az "alma" stringhez 13-at, a "körte"-hez pedig "nincs"-et rendelünk.
 
 \section{Topology-aware BitTorrent clients}
 
@@ -126,15 +125,15 @@ A TopBT kliens aktívan fedezi fel a peer-ek hálózati közelségét és mind a
 A Mininet, OpenFlow és POX kontroller bemutatása az OpenFlow \& Mininet mérés (MSc) Mérési Segédletben olvasható. A továbbiakban a P2P mérésen használt Mininetes hálózatot mutatjuk be.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{figures/halozat.png}
-    \caption{Network architecture used in lab exercises}
-    \label{fig:Lab-topo}
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/halozat.png}
+	\caption{Network architecture used in lab exercises}
+	\label{fig:Lab-topo}
 \end{figure}
 
 A hálózatban 4 OpenFlow switch fut, ezekböl 3 (R1, R2, R3) router müködést szimulál static routeokkal. Kiemelendö a szimuláció, ugyanis az OpenFlow switchek nem képesek ARP kérésekre válaszolni, így azokat vagy egy megfelelö kontroller alkalmazásból kell kezelni, vagy esetünkben static MAC címeket használunk. A szimulált hálózatban alapszabály, hogy a hostok a saját routereiket mint gatewayt mindig a csupa nullás (egyébként invalid) MAC címmel érhetik el. A hostok MAC címjei pedig "00:00:<ROUTER-ID>:00:00:<ROUTER-LINK-ID>" séma alapján kerül kiosztásra. Ennek megfelelöen az R2-es routerre kötött elsö host (leecher 2) a "00:00:02:00:00:01" MAC címmel rendelkezik.
 
-Az R2-es routeren a következö OpenFlow statikus szabályok kerülnek beillesztésre: 
+Az R2-es routeren a következö OpenFlow statikus szabályok kerülnek beillesztésre:
 
 \begin{lstlisting}[language=bash,frame=single,breaklines,caption={R2 router flow entry configuration},label=lst:R2-flow-config]
 ovs-ofctl add-flow r2 'ip,nw_dst=89.97.0.0/16,action=mod_dl_src:00:00:00:00:00:00,output:4'
@@ -147,12 +146,12 @@ ovs-ofctl add-flow r2 'arp,action=output:1,2,3'
 
 Az elsö két szabály a két szomszédos router IP cím tartományát fedi le. Látható, hogy a szomszédos routerek tartományai /16 és /28-as netmaskkal rendelkeznek. Ha ezekben az IP tartományokban érkezik egy csomag, akkor történik egy forrás MAC állítás (cél MAC állításra is szükség lenne a pontos router müködés szimulálására, de esetünkben ez kihagyható, mivel a túloldalon is általunk programozott OpenFlow eszköz van - egyszerübb flow bejegyzések) és kiküldés a megfelelö porton. Hostok esetében a match pontosan akkor törénik, ha az IP címnek mind a 32 bitje felveszi a célcímben megadott IP címet. Egyezés esetén a cél MAC a host MAC címe lesz, és kiküldi a switch/router a megfelelö porton. Az utolsó sor azt a könnyítést adja, hogy ugyanazon a subneten levö hostoknak (azaz ugyanarra a switchre/routerre bekötött) ne kelljen statikusan megadni a MAC címjeit. Mivel az ARP egy broadcast címre épülö protokoll, ezért floodolni kell, ugyanakkor figyelemben kell tartani, hogy nem minden portra kell floodolni. A router szétbontja a hálózatokat broadcast domainekre, így a router szimulációjánál is figyelembe kell venni ezt a tulajdonságot. Ha az OpenFlow switchnek flood paramétert adnánk meg, akkor a többi routert szimuláló switchnek is elküldenénk, amik szintúgy továbbítanák minden portjukon, azaz egyetlen ARP csomag képes olyan broadcast stormot generálni, ami megbénítja a Mininet szimulációt futtató gazdagépet.
 
-A 4. switch (Firewall) nem rendelkezik statikus OF bejegyzésekkel, tisztán a kontrollertöl függ. A mérési feladatok során a kontroller programozásával kell szürésí intelligenciát vinni a tüzfalba, hogy a torrent forgalmat megfelelöen szürje, vagy éppen shape-elje. A tüzfal két porttal rendelkezik, és alapbeállításban a kontroller egy repeater funkciót valósít meg a switchen, azaz ami egyik porton beérkezik, az a másikon kimegy. A tüzfal a kontroller fele Packet-In üzenetekben küldi az egyik porton beérkezett csomagot, és ennek megfelelöen a POX kontroller alkalmazás a handlePacketIn metódusában kezeli le ezeket a csomagokat. Az intelligenciát is ebben a metódusban kell implementálni. A beérkezett csomag parsolását a következö függvényhívás végzi: 
+A 4. switch (Firewall) nem rendelkezik statikus OF bejegyzésekkel, tisztán a kontrollertöl függ. A mérési feladatok során a kontroller programozásával kell szürésí intelligenciát vinni a tüzfalba, hogy a torrent forgalmat megfelelöen szürje, vagy éppen shape-elje. A tüzfal két porttal rendelkezik, és alapbeállításban a kontroller egy repeater funkciót valósít meg a switchen, azaz ami egyik porton beérkezik, az a másikon kimegy. A tüzfal a kontroller fele Packet-In üzenetekben küldi az egyik porton beérkezett csomagot, és ennek megfelelöen a POX kontroller alkalmazás a handlePacketIn metódusában kezeli le ezeket a csomagokat. Az intelligenciát is ebben a metódusban kell implementálni. A beérkezett csomag parsolását a következö függvényhívás végzi:
 \begin{lstlisting}[language=python,frame=single,breaklines]
 packet = event.parsed  
 \end{lstlisting}
 
-Ez után a 'packet' objektumtól már egyszerüen lekérdezhetöek az OpenFlow által ismert paraméterek. Például a beérkezö port sorszáma a "packet.port", míg egy specifikus TCP port megtalálása és szürése a következöképpen nézhet ki: 
+Ez után a 'packet' objektumtól már egyszerüen lekérdezhetöek az OpenFlow által ismert paraméterek. Például a beérkezö port sorszáma a "packet.port", míg egy specifikus TCP port megtalálása és szürése a következöképpen nézhet ki:
 
 \begin{lstlisting}[language=python,frame=single,breaklines]
 tcpp = event.parsed.find( 'tcp' )
@@ -172,15 +171,15 @@ tcpp.srcport, tcpp.dstport)
 event.halt = True
 \end{lstlisting}
 
-Mivel az OpenFlow nem néz L4-nél magasabb rétegekbe, ezért például egy BitTorrent csomag header mezöinek az elemzése problémásabb, ilyenkor muszáj az L4-es payload elemzése a "payload" property segítségével. 
+Mivel az OpenFlow nem néz L4-nél magasabb rétegekbe, ezért például egy BitTorrent csomag header mezöinek az elemzése problémásabb, ilyenkor muszáj az L4-es payload elemzése a "payload" property segítségével.
 
 \appendix
 
 \begin{itemize}
 
-    \item p2pMeresTopo.py.txt: Mininet topologia P2P mereshez, futtatas: 'sudo python p2pMeresTopo.py' 
+	\item p2pMeresTopo.py.txt: Mininet topologia P2P mereshez, futtatas: 'sudo python p2pMeresTopo.py'
 
-    \item p2p.py.txt: POX kontroller alkalmazas, bemasolando pox/ext konyvtarba, futtatas: './pox.py p2p' 
+	\item p2p.py.txt: POX kontroller alkalmazas, bemasolando pox/ext konyvtarba, futtatas: './pox.py p2p'
 \end{itemize}
 
 \end{document}
