@@ -33,8 +33,8 @@
 
 \section{Introduction}
 
-Compared to traditional client-server connections peer-to-peer solutions (P2P) offer more direct and dynamic
-alternatives. They provide searching services in a global network and allow direct, point to point data transfers
+Compared to traditional client-server operation peer-to-peer solutions (P2P) offer a more direct and dynamic
+solution. They provide searching services in a global network and allow direct, point to point data transfers
 bypassing the administrative and performance bottlenecks of servers.
 The well-know and most used P2P applications -- like file exchange, VoIP and on-line gaming -- affects many users and
 generate the significant portion of today's Internet traffic. Covering all aspects of P2P network during this lab would
@@ -138,119 +138,116 @@ proportionally -- it only increases between the high bandwidth Supernodes. This 
 of Skype -- not accidentally as the same developer team was responsible for developing both systems.
 
 \section{BitTorrent}
-A 2001-ben született BitTorrent eredeti célja a szerverek terhelésmentesítése volt. A probléma adott: van egy szerver,
-amiről túl sokan akarják ugyanazt az állományt egyszerre letölteni. A szerver ilyenkor lelassul, rosszabb esetben
-összeomlik. Az ötlet egyszerű: miért mindenki a szerverről tölti le az adatokat, mikor azok egy része a többi
-letöltőnek is megvan már? A megoldás tehát az, hogy az állományokat kis részegységekre osztjuk, és ezeket mindenki
-tetszőleges sorrendben letöltheti, nem csak a központi gépről, hanem a többi letöltőtől is, akinek megvan az adott
-darab. Így minél többen töltenek le egy darabot egymástól, annál inkább elterjed a letöltők között, mind jobban
-tehermentesítve a szervert. A megvalósításhoz két különböző funkciójú központi elemre is szükség van. A Seeder maga a
-szerver, mely eredetileg, teljes egészében hozzáférést biztosít az eredeti állományhoz. A Tracker pedig egy olyan
-szerver, mely nyilvántartja a letöltések menetét, így az újonnan csatlakozó kliensek számára meg tudja mondani, hogy az
-állomány egyes darabjai mely klienseken érhetőek el.
 
-Hálózatméret szempontjából ez a koncepció tulajdonképpen a Napster és DirectConnect között végbemenő átmenet
-folytatása. Míg a Napsternél egy globálisan egységes hálózat megalkotása volt a cél, addig a DirectConnectnél már
-inkább kisebb, tematikus hálózatok létrejöttét tűzték ki célul. Az ilyen kisebb hálózatokhoz ugyanis csak azok
-csatlakoztak, akik érdekeltek voltak az adott közösség által megosztott állományokban, így egy-egy hálózatban kevesebb
-"felesleges" állomány volt megosztva. A BitTorrent ezt a gondolatot viszi el a végsőkig: itt egyenesen olyan
-mikro-hálózatok alakulnak ki, amelyek csak egyetlen egy állomány megosztásáért felelősek. Persze ha valaki akar,
-egyszerre több ilyen hálózatnak is tagja lehet, ám számára így is csak a hasznos állományok megosztását segítő
-hálózatoknak kell tagja lennie. Ezeket a gondolatokat igazolják azok a mérések is, melyek szerint egy adott
-állománymegosztó rendszerben a forgalom mintegy 90%-át a megosztott állományok csupán 5-10%-a adja.
+The original purpose of BitTorrent released in 2001 was to decrease the load on servers. The problem to solve is that
+given a server there are too many clients trying to download the same file. The sever slows as more and more clients
+connects to it and in worst case it could crash. The key idea behind BitTorrent is that the clients could download
+fragments of data from other clients as soon as the have it. The files are fragmented into smaller chunks that are
+eligible to be download in any order, and not only from the server but from other clients that has the corresponding
+fragments as well. As more and more clients download a fragment/piece from each other it will have greater availability
+reducing the server load proportionally. The implementation uses two central functionality: the \emph{Seeder} is a
+server that originally provided full access to the original file; the \emph{Tracker} is also a server that track the
+downloading process so it can provide information on fragment availability -- which fragment can be downloaded from
+which clients -- for the newly connected clients.
 
-E tulajdonság miatt a rendszer rendkívül gyors letöltést biztosít, sokszor a letöltési sávszélesség jelenti a szűk
-keresztmetszetet. Ezért, bár a rendszer jelentősen eltér a többi állománymegosztó rendszertől, mégis hamar felismerték
-a benne rejlő lehetőséget. Kisebb módosításokra szükség volt ugyan, ám – köszönhetően a nyílt forráskódnak – egyre
-újabb verziók jelentek meg, melyek mind alkalmasabbá váltak az állománymegosztásra; pontosabban a letöltésre, hiszen a
-program ezen kívül semmilyen más funkcióval nem rendelkezett.
+In terms of network size this concept is a refinement of the transition between Napster and DirectConnect. While
+Napster aimed for a globally uniform network DirectConnect focused on creating smaller, topic based networks. These
+kind of smaller networks received connections from clients who were interested in the content of the specific topic
+provided by the network as a result reducing the number of ``unnecessary" files shared on a single network. BitTorrent
+continues along this basic concept to an extreme where micro networks are established for sharing a single file.
+Naturally one client can be a part of several of these networks still it only has to be a member of those in which it
+has interest in. This hypothesis is backed by measurements -- in a file sharing system the 90\% of the traffic is
+generated by the 5-10\% of the files shared.
 
-Az állománymegosztáshoz a gyakorlatban – az eredeti elgondoláshoz képest – a következő módosításokat hajtották végre:
-vannak speciális weboldalak, ahonnan letölthetőek az úgynevezett torrent állományok. Ezek az oldalak sokfélék lehetnek,
-és ugyanazt a torrent állományt több ilyen oldalon is megtalálhatjuk. Ezek alapján a torrent állományok alapján pedig
-megtalálhatjuk a számunkra megfelelő Tracker és Seeder szervereket.
+Due to this property the system offers extremely fast download speeds where most of the time the bottleneck is the
+downlink bandwidth of the client's access network. Despite its differences compared to the other file sharing solutions
+the potential of BitTorrent has been realized quickly. There were minor modifications in the implementation but thanks
+to the open source nature of the project new releases were published repeatedly that offered better and better file
+sharing capabilities from release to release. To be specific the main function of it was file downloading since it
+didn't have any other features.
 
-További különbség, az eredeti elképzeléshez képest, hogy a Seeder szervere elvesztette kiemelt szerepét. Az új
-elgondolás szerint amint valaki befejezte a letöltést, azaz az állomány összes részével rendelkezik, maga is Seederré
-válik. Így idővel a Seederek száma is megnő a hálózatban, még jobban gyorsítva a letöltést. Ennek ellenére a
-terminológia továbbra is Seedernek nevezi azokat a klienseket, amelyek az egész állományt megosztják a többi kliens
-számára (így azt is, aki először tette közzé az állományt).
+For practical reasons due to file sharing the following modifications had been done: there are special purpose web
+sites from where the users can download torrent files. These sites can vary but the same torrent file can be found on
+multiple sites. Based on the torrent files the client can find the appropriate Tracker and Seeder servers.
 
-A csatlakozáshoz, illetve a letöltés megkezdéséhez a felhasználóknak először egy torrent állományt kell letölteniük,
-hogy ennek segítségével megtalálhatják a keresett állomány Trackerét és Seederét. A Tracker szerver segítségével ezután
-megtalálhatják azokat a klienseket is, amelyek éppen az állomány különböző darabjait töltötték le, így jelenleg róluk
-is elérhető. Az újabb verziókban a torrent állományok már több Trackerre és Seederre is hivatkoznak, így egyik leállása
-esetén a letöltések zavartalanul folyhatnak tovább.
+Another speciality is the Seeder server doesn't have a distinguished role. In this variant a client that has finished
+downloading -- i.e. it has all the fragments of a file -- it becomes a Seeder itself. As time progresses the number of
+Seeders will increase in the network further increasing the download speed. Despite the Seeder server the terminology
+calls Seeders those clients as well which are sharing the complete files for the other clients.
 
-Az állományok megosztása természetesen itt máshogy történik, mint a többi állománycserélő rendszer esetében. A
-BitTorrentet egyes állományok megosztására, letöltésére találták ki, nem pedig az osszunk meg minél több állományt elv
-kielégítésére. Így ez nem támogat olyan lehetőségeket, mint teljes könyvtárak megosztása.
+In order to connect to the network the user downloads the torrent file and the BitTorrent client can use that to locate
+the file's Tracker and Seeder servers. Using the Tracker the client can find other clients that has only downloaded
+fragments of the current file so they are also eligible to download from. In newer versions the torrent file can refer
+to multiple Tracker and Seeder servers as a result providing higher availability in case of a server outage.
 
-A megosztáshoz először is választanunk kell egy Tracker szervert, vagy akár többet is. Ezután el kell készítenünk a
-torrent állományunkat, amely ránk hivatkozik Seederként, a Tracker szerverekre pedig, mint Trackerek. Továbbá a
-megosztani kívánt állományt fel kell darabolni, illetve minden egyes részének a hash értékét kiszámolni, és beleírni a
-torrent állományba. Végül a torrent állományt publikálnunk kell valahol, hogy azt az érdeklődők megszerezhessék. Erre
-szakosodott web-szerverek léteznek, amelyek különböző meta-információk megadása esetén keresési lehetőséget is
-nyújtanak az elérhető torrent állományok által nyújtott állományokról.
+The content sharing is done slightly differently compared to other P2P file sharing networks. BitTorrent had been
+developed for sharing specific files and content not for sharing more and more files as a consequence it does not
+support sharing full folders.
 
-Amikor a letöltők megszereztek egy-egy részt, akkor ezután azok is megosztják azt a többiek számára, úgy, hogy a
-Tracker szervernek jelzik, hogy ez most már náluk is elérhető. Amikor egy letöltő a teljes állományt letöltötte, ő is
-Seederré válik, így onnan kezdve a torrent állomány akár őt is megjelölheti forrásként.
+To be able to share first one has to select one (or more) Tracker server. After the Tracker has been selected a torrent
+file has to be created that refers to the creator host as Seeder and to the chosen Tracker server as Tracker.
+Furthermore the candidate file to be shared has to be fragmented into pieces with corresponding hash information
+calculated and written into the torrent file. Finally the torrent file has to be published for example on some of the
+well-known sites in order to be found by those whom are interested in the content. Some of the web-sites provide
+searching services if some of the meta-data are also given.
 
-A kliensprogramok bár nyílt forráskódúak, a freeriding megakadályozása érdekében általában implementálják azt az elvet,
-hogy a letöltés sebessége legyen viszonylag arányos a feltöltési sebességével. Így megoldható, hogy senki se tudjon
-"élősködni" a többi felhasználón.
+As soon as the clients obtain fragments of the file they are sharing it wit the other by notifying the Tracker server
+that they also have that particular segment. After the full file has been downloaded the client becomes a Seeder and it
+can appear as a potential seeder in the torrent file.
 
-Mivel a BitTorrent esetében olyan mikro-hálózatokról beszélhetünk, amelyek egy-egy állomány szétszórására jöttek létre,
-nyílván nincs lehetőségünk keresések lefolytatására. Az egyes állományok keresésére általában a torrent állományok
-tárolására szakosodott szerverek adnak lehetőséget. Ezeken a szervereken egy torrent állomány mellé elmenthetjük az
-általa megosztott állomány meta-információit, így a web felületen lehetőségünk lesz arra, hogy ezek között keressünk.
-Így tulajdonképpen az állomány keresése után egy torrent állományt kapunk, amely elvezet minket az adott állomány
-mikro-hálózatához.
+Nonetheless the client programs are open source most of them prevent ``free-riding" i.e. the download bandwidth should
+be proportional to the upload bandwidth in order to restrict leeching on the other clients.
 
-A torrent állomány segítségével felvehetjük a kapcsolatot egy Tracker szerverrel, ami ezután átirányít minket azokhoz a
-kliensekhez, illetve a Seederhez, ahonnan az állomány egyes részeit letölthetjük. Miután egy-egy rész lejött, ezt a
-Tracker megjegyzi, így az újabb klienseket már hozzánk is irányíthat.
+Since in case of BitTorrent there are so-called micro-network that are specifically established to broadcast a given
+file there are no means to execute queries for specific files. Search operations usually provided by those web-sites
+that are specialized in storing torrent files. On these servers one can save auxiliary meta-data for any torrent file
+so it can be searched through the web UI. In practice a search results in a torrent file that leads the client to the
+corresponding file-sharing micro-network.
 
-Valójában az állomány egyes részei is alrészekre vannak osztva, így még a nagyon rövid tartamú letöltések esetén is
-sikeres lehet a teljes állomány megszerzése. Amikor egy állomány részének alrészét letöltöttük valahonnan, a
-kliensprogram előnyben részesíti ugyanazon rész más alrészeit. Így nagyobb eséllyel lesz meg nálunk egy teljes rész,
-ami ezután már tőlünk is hozzáférhetővé válik. Természetesen ezelőtt a hash érték ellenőrzése is megtörténik, amellyel
-biztosíthatjuk, hogy a rész hibamentesen letöltésre került. További optimalizálást jelent, hogy a Tracker számon
-tartja, melyek azok a részek, amelyekkel a legkevesebb letöltő rendelkezik. Így egy új letöltőt arra utasít, hogy
-először ezeket töltse le. Így egyrészt tehermentesítik a szervert, másrészt pedig biztosítják, hogy a hálózatban minden
-egyes rész megfelelő számban rendelkezésre álljon, így ha a Seeder közben el is veszik a hálózatból, a ritkább részek
-is elérhetőek maradnak. Ugyanakkor a klienseknek is előnyös a ritka részek letöltése. Hiszen ha egy-egy ilyen ritka
-rész birtokába jut, nagyobb eséllyel fogják azt tőle letölteni, mint egy olyat, amely minden letöltőnél elérhető. Ezzel
-garantálható, hogy többen töltenek le, vagyis növeli a globális letöltési sebességét, ezáltal biztosíthatja maga
-számára a nagy letöltési sebességet is. Az állományok letöltése tehát úgy történik, hogy a lehető legtöbb olyan
-klienshez csatlakozunk, melyeknek az állomány különböző részei már rendelkezésére állnak. Amikor egy-egy részt
-letöltöttünk, azt mi is megosztjuk a közösséggel, így azok már tőlünk is elérhetővé válnak.
+Furthermore the client can connect to a Tracker server using the info obtained from the torrent file. The Tracker then
+directs the client to those other clients and Seeders from where fragments of the given file can be downloaded. After a
+piece has been downloaded the Tracker records it as a result subsequent clients can download the same fragment from the
+previous client.
 
-A letöltés ideje nyilván nagyon változó, szinte megjósolhatatlan. Az egész rendszerre jellemző a lassú indulás, majd a
-fokozott növekedés. Eleinte ugyanis csak a Seederen találhatóak meg az állomány részei, így minden kliens onnan kezdi
-letölteni azokat. Ezután azonban mind egyre több peeren lesz elérhető, vagyis azok fokozatosan leveszik a terhet a
-Seederről, ezzel a rendelkezésre álló részek sávszélessége is tulajdonképpen egyre jobban nő a hálózat egészében.
+Actually the fragments of a file are further divided into smaller pieces so even in case of short availability shared
+full downloads can be successful. If a client successfully obtain a sub-fragment of a fragment the software will give
+precedence to download other sub-fragments from the same fragment. Given this algorithm it's more likely to obtain full
+segments that are eligible to be downloaded by others. The integrity of a fragment is verified by checking the
+calculated has value of the downloaded fragment with the one present in the torrent file. Another optimization is that
+the Tracker counts that which fragment has the lowest availability in the network and it directs a newly connected
+client to download those fragments. This results in off-loading the server and on the other hand it also provides high
+availability of the file in the network so in case of the Seeder is lost the rare segments could be downloaded as well.
+Nevertheless clients benefit from downloading fragments with low availability since as soon as it obtains such a piece
+it will be selected as an uploader with higher probability. This ensures more downloader and provides greater global
+download bandwidth as well as greater download bandwidth for itself. To summarize the file downloading works like the
+client connect to as many clients -- that have full fragments available -- as possible and as soon as the downloading
+client obtains a full fragment it shares it and provides availability for these fragments.
 
-A torrent állományokban a bencode módszert alkalmazzák az adatok kódolására. Ez egy string alapú kód, ami igen könnyen
-visszafejthető. Ez a "nyelv" kétféle egyszerű és kétféle összetett típust használ. Az egyszerű típusok stringeket és
-egész értékeket tárolnak, az összetett típusok pedig listákat és úgynevezett szótárakat, amikben egyes értékekhez más
-értékeket rendelhetünk. Az összetett elemek természetesen más összetett elemeket is tárolhatnak.
+The time that takes to download files varies greatly it's almost unpredictable. Slow start of download characterizes
+the system that is followed by exponential speed-up. In the beginning only the Seeder has the file as a result all
+clients will download from that. As time passes more and more peers will have fragments available thus off-loading the
+server gradually and providing more and more upload bandwidth for the given file.
 
-Az integereket "i" kezdő és "e" befejező-karakterek közé kell írni, például a 13-at i13e-ként ábrázoljuk.
+Torrent file use \emph{bencode} for encoding data. This is a string based encoding that can be decoded easily. This
+encoding supports two primitive types and one complex type. The primitive types can be used for storing strings and
+integers respectively and the complex types can be used for building lists and dictionaries. Recursive composition of
+complex types is supported -- e.g. a list can contain another list as an element.
 
-A stringek kódolása úgy történik, hogy a string hosszát decimális számként leírjuk, majd kettőspont után maga a string
-következik. Például az "alma" string bencode megfelelője a 4:alma. Ebben az esetben tehát nem használunk
-záró-karaktert, hanem a string hosszából tudjuk megállapítani hol fejeződik be.
+The integers are represented by writing the number to be encoded between  a leading ``i" and a trailing ``e" -- e.g
+`13' is encoded as `i13e'.
 
-A listák tetszőlegesen sok bencode eljárással ábrázolt adatot tartalmazhatnak, melyet az "l" és "e" karakterek közé
-kell helyeznünk. Például az "l4:almai13ee" egy olyan kételemű listát ábrázol, melyben az első elem az "alma” string, a
-második pedig a 13-as egész szám.
+Strings are encoded in way that the length of the string is written before a colon that is followed by the actual
+string. For example the string ``apple" in encoded format is `5:apple'. Important to notice that there is no terminator
+that follows the string, the length of the string can be determined from the leading length indicator.
 
-A szótárakat a listákhoz hasonlóan "d" és "e" karakterek között ábrázoljuk bencode kódolt karakterekkel, azonban itt
-kettesével kell felsorolnunk az elemeket, melyekből az első a kulcs, a második pedig a hozzá rendelt érték lesz.
-Például a "d4:almai13e5:körte5:nincse" egy olyan szótárat ír le, melyben az "alma" stringhez 13-at, a "körte"-hez pedig
-"nincs"-et rendelünk.
+List can contain arbitrarily many entries that are encoded between a leading ``l" and a trailing ``e" character. For
+example ``l5:applei13ee" encodes a list of two where the first element is the string ``apple" that is followed by the
+number `13'.
+
+Dictionaries -- similarly to lists -- are encoded between leading ``d" and a trailing ``e" character however the number
+of elements must be an integral multiple of 2 where the fist element of a pair is going to be the key and the second
+will be the value. For example the ``d5:applei13e4:pear4:null" encodes a dictionary that assigns the number `13' to the
+string key ``apple" and has value string ``null" assigned to the key ``pear".
 
 \section{Topology-aware BitTorrent clients}
 
