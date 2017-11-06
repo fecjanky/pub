@@ -287,7 +287,7 @@ routes. Important to note that these OpenFlow switches are not capable to respon
 handled from an appropriate controller application or alternatively use static MAC addresses -- the latter is used in
 this lab exercise. In this network setting the hosts can reach their gateways on all-zero MAC address (by the way that
 is an invalid MAC address). The host MAC addresses are composed from the scheme
-``00:00:<ROUTER-ID>:00:00<ROUTER-LINK-ID>. Given these as example the fist host (leecher 2) connected to R2 router has
+``00:00:\textless~ROUTER-ID~\textgreater:00:00:~\textless~ROUTER-LINK-ID~\textgreater. Given these as example the fist host (leecher 2) connected to R2 router has
 MAC address ``00:00:02:00:00:01".
 
 The R2 router has the following flow entries programmed:
@@ -387,7 +387,7 @@ the L4 payload using the `payload' property of the object.
 	\begin{enumerate}
 		\item Verify connections using command 'pingall' from the Mininet shell
 		\item From the mininet shell start xterm windows on the selected hosts (e.g `xterm Leecher1 Leecher2 Leecher3 Seed')
-		\item Set the home directory on each host (Leecher1-3,Seed) by executing the command `export HOME=/home/p2p/<HOST NAME>' from the corresponding xterm window
+		\item Set the home directory on each host (Leecher1-3,Seed) by executing the command `export HOME=/home/p2p/\textless~HOST NAME~\textgreater' from the corresponding xterm window
 	\end{enumerate}
 \end{enumerate}
 
@@ -397,7 +397,7 @@ the L4 payload using the `payload' property of the object.
 	\begin{enumerate}
 		\item An 500MB file can be created quickly by executing `dd if=/dev/zero of=/home/p2p/Seed/big\_file.txt count=1024 bs=524288'
 		\item It is recommended to use qbitorrent application: it has a built-in tracker function that has to be enabled under settings/special (listens on port 9000 by default)
-		\item when creating the torrent file specify the Tracker as ``http://<IP address>:<Tracker port>/announce"
+		\item when creating the torrent file specify the Tracker as ``http://\textless~IP address~\textgreater:\textless~Tracker port~\textgreater~/announce"
 		\item it is advised to immediately seed the file on host \emph{Seed}
 	\end{enumerate}
 	\item  Download torrent file to hosts Leecher1-3 and start downloading
@@ -415,7 +415,7 @@ the L4 payload using the `payload' property of the object.
 	\item Measuring real-life like traffic on host Leecher1. For this \textbf{simultaneously} run P2P download, web requests and video streaming
 	\begin{enumerate}
 		\item To start web requests use the script from listing~\ref{lst:web-requests} . It's advised to create a file called `small\_file.txt' on the web server before starting the script
-		\item start the video client: Connect to the VLC network stream using VLC media player on ``http://<Server IP address>:8080"
+		\item start the video client: Connect to the VLC network stream using VLC media player on ``http://\textless~Server IP address\textgreater:8080"
 		\item in case if the P2P has finished in the meantime then delete the file and restart the download
 	\end{enumerate}
 	\item Use Wireshark on host Leecher1 to analyze the network traffic
@@ -446,5 +446,21 @@ wondershaper Leecher1-eth0 1024 1024
 \end{lstlisting}
 
 \end{enumerate}
+
+\section{Throttling P2P traffic from ISP side}
+\begin{enumerate}
+	\item Implement blocking of P2P traffic on Firewall device using the OpenFlow POX controller attached to it (\$HOME/pox/ext/p2p.py) -- hint: traffic ports, and header bits
+	\item Document the test results of the implemented traffic throttling application
+	\item Rewrite the throttling application in a way that it can be used for traffic shaping: Restrain P2P download bandwidth to 1Mbps on average
+	\item Document the test results of the shaping application
+\end{enumerate}
+
+\section{ISP response for advanced P2P file sharing settings}
+
+\begin{enumerate}
+	\item Use random port selection in the torrent client (and restart it multiple times), use encryption
+	\item Evaluate and improve the previously written throttling and shaping applications
+\end{enumerate}
+
 
 \end{document}
