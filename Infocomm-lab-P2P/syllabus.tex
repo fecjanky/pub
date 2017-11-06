@@ -368,6 +368,83 @@ the L4 payload using the `payload' property of the object.
 
 \section{Lab exercises}
 
-\subsection{}
+\subsection{Setting-up the measurement environment}
+\begin{enumerate}
+	\item Select `P2P' option from the boot menu
+	\item VirtualBox settings
+	\begin{enumerate}
+		\item Under Settings/Network change `Adapter 1' to `NAT' (NOT NAT Network!)
+		\item Under VBox Settings/System/Motherboard tick `Enable I/O APIC'
+		\item Start the image
+	\end{enumerate}
+	\item Ubuntu settings
+	\begin{enumerate}
+		\item Start a terminal and disable Network Manager with executing `sudo service network-manager stop' command. Then execute `sudo dhclient eth0' to restore the NAT IP address
+		\item Start the controller using the command `pox/pox.py p2p' command (pox is under /home/p2p/pox/). The INFO logs can be filtered by passing `log.level --WARNING' startup argument, but in this case the own log messages has to be logged at least on log level warning
+		\item Start Mininet with command `sudo python p2pMeresTopo.py' (the mininet topology script can be found under directory /home/p2p/)
+	\end{enumerate}
+	\item Mininet setup
+	\begin{enumerate}
+		\item Verify connections using command 'pingall' from the Mininet shell
+		\item From the mininet shell start xterm windows on the selected hosts (e.g `xterm Leecher1 Leecher2 Leecher3 Seed')
+		\item Set the home directory on each host (Leecher1-3,Seed) by executing the command `export HOME=/home/p2p/<HOST NAME>' from the corresponding xterm window
+	\end{enumerate}
+\end{enumerate}
+
+\section{Measuring the effects of access network bandwidth}
+\begin{enumerate}
+	\item Generate a big file and create a torrent file from it
+	\begin{enumerate}
+		\item An 500MB file can be created quickly by executing `dd if=/dev/zero of=/home/p2p/Seed/big\_file.txt count=1024 bs=524288'
+		\item It is recommended to use qbitorrent application: it has a built-in tracker function that has to be enabled under settings/special (listens on port 9000 by default)
+		\item when creating the torrent file specify the Tracker as ``http://<IP address>:<Tracker port>/announce"
+		\item it is advised to immediately seed the file on host \emph{Seed}
+	\end{enumerate}
+	\item  Download torrent file to hosts Leecher1-3 and start downloading
+	\begin{enumerate}
+		\item It is recommended to use `uTorrent' client
+		\item The path under which the file is downloaded is advised to be set under the recently exported \$HOME directory (/home/p2p/Leecher1). The simplest is to start uTorrent from the \$HOME directory so it will download files there by default.
+		\item start uTorrent using command `utserver -settingspath /opt/utorrent-server-alpha-v3\_3/ \&' and the GUI can be accessed through \url{http://localhost:8080/gui} . The user name is `admin' and there is no password.
+		\item The GUI has to be started on the corresponding hosts to have it running in the appropriate namespace. For example accessing uTorrent running on Leecher1 is possible from a Firefox started on host Leecher1. Close Firefox between setting up downloads as it will continue to use the existing sessions.
+	\end{enumerate}
+	\item Start web and video server on hosts HTTP and Video
+	\begin{enumerate}
+		\item a simple web server can be started from python's built-in SimpleHTTPServer  with `python -m SimpleHTTPServer'
+		\item The video streaming has to be started on host Video using the script from listing~\ref{lst:video-stream} that streams the screen over HTTP on port 8080
+	\end{enumerate}
+	\item Measuring real-life like traffic on host Leecher1. For this \textbf{simultaneously} run P2P download, web requests and video streaming
+	\begin{enumerate}
+		\item To start web requests use the script from listing~\ref{lst:web-requests} . It's advised to create a file called `small\_file.txt' on the web server before starting the script
+		\item start the video client: Connect to the VLC network stream using VLC media player on ``http://<Server IP address>:8080"
+		\item in case if the P2P has finished in the meantime then delete the file and restart the download
+	\end{enumerate}
+	\item Use Wireshark on host Leecher1 to analyze the network traffic
+	\item Change the access network bandwidth from the default 10Mbps to 5Mbps and subsequently to 1Mbps while repeating the capture and analysis above. For this use `wondershaper' shown in listing~\ref{lst:wondershaper} (Note:wondershaper has to be installed!)
+
+
+
+\begin{lstlisting}[language=bash,frame=single,breaklines,caption={VLC streaming server command},label=lst:video-stream]
+vlc-wrapper -Idummy screen:// :screen-fps=30 :screen-caching=100 --sout '#transcode{vcodec=mp4v,vb=4096,acodec=mpga,ab=256,scale=1,width=1280,height=800}:http{port=8080,mux=ts}' 
+\end{lstlisting}
+
+
+\begin{lstlisting}[language=bash,frame=single,breaklines,caption={Automatic HTTP download script},label=lst:web-requests]
+#!/bin/sh
+
+while true; do
+
+wget http://23.0.3.78:8000/small_file.txt -o /dev/null
+
+sleep 1
+
+done 
+\end{lstlisting}
+
+
+\begin{lstlisting}[language=bash,frame=single,breaklines,caption={Adjusting link capacity},label=lst:wondershaper]
+wondershaper Leecher1-eth0 1024 1024 
+\end{lstlisting}
+
+\end{enumerate}
 
 \end{document}
