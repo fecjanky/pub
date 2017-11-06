@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage{url}
-\usepackage[hidelinks]{hyperref}
+\usepackage{hyperref}
 
 \usepackage{caption}
 
@@ -348,21 +348,26 @@ the L4 payload using the `payload' property of the object.
 \appendix
 
 \section{Entry quiz sample questions}
+\begin{itemize}
+   \item When was the appearance of the P2P paradigm dated? What were the motivators behind it? What are the main categories of P2P applications? 
+   \item What is the most popular P2P file sharing technology currently? What are the components of the system? What is the principle of its operation?
+   \item What is the problem of the ISPs with P2P applications (beside copyright issues)? What solutions had appeared to overcome those problems?
+   \item How does the ISPs fight against the P2P traffic and what are the reactions of the P2P clients?
+\end{itemize}
 
 \section{Input files for the lab exercise}
 \begin{itemize}
 
-    \item
+    \item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/P2PAlkalmazasokMeresiSegedlet/p2pMeresTopo.py.txt}
+       {p2pMeresTopo.py.txt}: Mininet topology for the P2P measurements, run by executing: `sudo python p2pMeresTopo.py'
 
-          \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/P2PAlkalmazasokMeresiSegedlet/p2pMeresTopo.py.txt}{p2pMeresTopo.py.tx
-              t}: Mininet topology for the P2P measurements, run by executing: `sudo python p2pMeresTopo.py'
+    \item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/P2PAlkalmazasokMeresiSegedlet/p2pMeresTopo.py.txt}
+       {p2p.py.txt}: POX controller application to be copied into pox/ext directory, run by executing: `./pox.py p2p'
 
-    \item
-
-          \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/P2PAlkalmazasokMeresiSegedlet/p2pMeresTopo.py.txt}{p2p.py.txt}: POX
-          controller application to be copied into pox/ext directory, run by executing: `./pox.py p2p'
 \end{itemize}
 
 \section{Lab exercises}
+
+\subsection{}
 
 \end{document}
