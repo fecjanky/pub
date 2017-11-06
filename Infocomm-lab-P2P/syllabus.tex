@@ -81,7 +81,7 @@ programmer was developing P2P file exchange software in his free time. A variety
 had been introduced in this era. However some of the systems have survived and gain popularity for example Gnutella
 which is still one of the most popular network in some countries.
 
-Gnutella newtork is truly peer-to-peer which means that its only contains clients communicating with each other; it
+Gnutella network is truly peer-to-peer which means that its only contains clients communicating with each other; it
 doesn't utilize any central or globally reachable component. As mentioned before there is a problem arising from new
 client connections: it's necessary to know at least one already connected client. Initially there was no well
 established methodology for that resulting in spreading the word about some clients that were already connected between
@@ -117,7 +117,7 @@ other in a P2P fashion while regular clients are connected to these super-client
 Kazaa (FastTrack) operates based on this principle.
 
 Fastrack is basically based on later versions of Gnutella where only the \emph{Ultrapeers} are eligible to be connected
-to the Gnutella network itself while the leaf clients can only connect to Ultrapeers. The Ultrapeers responsiblity
+to the Gnutella network itself while the leaf clients can only connect to Ultrapeers. The Ultrapeers responsibility
 beside processing their own search operations is to serve the connected regular clients and take over their traditional
 P2P tasks. In the Kazaa network the Ultrapeers are called \emph{Superpeers}.
 
@@ -251,30 +251,29 @@ string key ``apple" and has value string ``null" assigned to the key ``pear".
 
 \section{Topology-aware BitTorrent clients}
 
-A peer-to-peer alkalmazások terjedésével, és a ma ugyan már csökkenő, de még mindig jelentős szerepükkel, nagy részt
-hasítanak ki az Internet teljes forgalmából: egyes becslések szerint a peer-to-peer alkalmazások a teljes forgalomnak
-akár 70\%-át is generálhatták egy időben. A gondot az okozza, hogy az overlay koncepció figyelmen kívül hagyj a
-hálózati topológiát. A jelenleg legnépszerűbb BitTorrent alkalmazás nagyban növeli az ISP-k internetes linkekre
-fizetett költségét az ISP-közi megnövekedett forgalom miatt. Ez az ISP-ket arra kényszeríti, hogy a felhasználók
-peer-to-peer forgalmát korlátozzák, aminek sajnos elégedetlen felhasználókban nyilvánul meg.
+Even though P2P applications had grown rapidly currently their importance is declining though they still have an
+important role in today's Internet traffic: approximations are that P2P applications generate almost 70\% percent of
+the total traffic of the Internet at some time point. The problem is that this overlay concept ignored the network
+topology. BitTorrent  -- which is the most popular client nowadays -- greatly increases the cost that is spent on
+inter-provider links by the Internet Service Providers (ISP). This forces the ISPs to restrict and/or shape P2P traffic
+in their network which results in dissatisfied users.
 
-A topológia-tudatos peer-to-peer alkalmazások ezen problémára próbálnak megoldást adni.
+Topology-aware P2P applications try to address this problem.
 
-Az Ono, egy plugin a Vuze BitTorrent klienshez, célja az, hogy a (topológiai szempontból) véletlenszerű
-peer-kiválasztási stratégia helyett a hálózatban közeli peer-eket részesítse előnyben. A közeli peer-ek egyrészt
-várhatóan kisebb válaszidővel és nagyobb sávszélességgel rendelkeznek, másrészt a peer-ek ilyen módon történő
-kiválasztása csökkenti az ISP-k közti forgalmat, gerinchálózati terhelést is. Az Ono plugin a peer-ek közelségének
-meghatározásához a tartalomszolgáltató hálózatokon (CDN, pl. az Akamai hálózat) végzett méréseit használja.
+Ono is a Vaze BitTorrent client plug-in that instead of randomly selecting a peer -- from topology perspective -- it
+aims to find peers that are considered to be near. Those neighbouring peers are expected to have smaller latency and
+greater bandwidth and also reducing inter-ISP and backbone traffic. The Ono plug-in measures peer proximity using
+measurement results from content delivery networks (CDN) e.g. Akami.
 
-A TopBT kliens aktívan fedezi fel a peer-ek hálózati közelségét és mind azt, mind az átviteli sebességet figyelembe
-veszi, hogy magas letöltési sebességet nyújtson, miközben csökkenti a BitTorrent forgalom átviteli távolságát, és így a
-teljes Internet forgalmát. A ping és a traceroute hálózati segédprogramokat használja a többi peer közelségének
-felderítésére. Ellentétben az Ono pluginnel, a TopBT kliensnek a hatékony működéshez nincs szüksége az ISP-ktől, vagy a
-CDN-ektől származó információkra, és nem igényli, hogy a többi peer szintén a TopBT klienst használja.
+The TopBT client performs active discovery of neighbouring peers and it takes also into account transmission bandwidth
+in order to provide high download speeds via short network hops as result reducing the total Internet traffic. TopBT
+uses \emph{ping} and \emph{traceroute} utilities to measure the proximity of other peers. Compared to Ono there is no
+need for getting measurement data from ISPs or CDN providers and doesn't require other clients to run TopBT as well.
 
 \section{P2P network using Mininet, OpenFlow switches and POX controller}
-A Mininet, OpenFlow és POX kontroller bemutatása az OpenFlow \& Mininet mérés (MSc) Mérési Segédletben olvasható. A
-továbbiakban a P2P mérésen használt Mininetes hálózatot mutatjuk be.
+
+The introduction to Mininet, OpenFlow and POX controller can be read in the OpenFlow \& Mininet syllabus. On
+Figure~\ref{fig:Lab-topo} the network topology used in this P2P lab is shown.
 
 \begin{figure}[H]
     \centering
@@ -283,14 +282,15 @@ továbbiakban a P2P mérésen használt Mininetes hálózatot mutatjuk be.
     \label{fig:Lab-topo}
 \end{figure}
 
-A hálózatban 4 OpenFlow switch fut, ezekböl 3 (R1, R2, R3) router müködést szimulál static routeokkal. Kiemelendö a
-szimuláció, ugyanis az OpenFlow switchek nem képesek ARP kérésekre válaszolni, így azokat vagy egy megfelelö kontroller
-alkalmazásból kell kezelni, vagy esetünkben static MAC címeket használunk. A szimulált hálózatban alapszabály, hogy a
-hostok a saját routereiket mint gatewayt mindig a csupa nullás (egyébként invalid) MAC címmel érhetik el. A hostok MAC
-címjei pedig "00:00:<ROUTER-ID>:00:00:<ROUTER-LINK-ID>" séma alapján kerül kiosztásra. Ennek megfelelöen az R2-es
-routerre kötött elsö host (leecher 2) a "00:00:02:00:00:01" MAC címmel rendelkezik.
+There are 4 OpenFlow switches running in the network of those 3 (R1,R2,R3) are implementing an IP router with static
+routes. Important to note that these OpenFlow switches are not capable to respond to ARP requests so those have to be
+handled from an appropriate controller application or alternatively use static MAC addresses -- the latter is used in
+this lab exercise. In this network setting the hosts can reach their gateways on all-zero MAC address (by the way that
+is an invalid MAC address). The host MAC addresses are composed from the scheme
+``00:00:<ROUTER-ID>:00:00<ROUTER-LINK-ID>. Given these as example the fist host (leecher 2) connected to R2 router has
+MAC address ``00:00:02:00:00:01".
 
-Az R2-es routeren a következö OpenFlow statikus szabályok kerülnek beillesztésre:
+The R2 router has the following flow entries programmed:
 
 \begin{lstlisting}[language=bash,frame=single,breaklines,caption={R2 router flow entry configuration},label=lst:R2-flow-config]
 ovs-ofctl add-flow r2 'ip,nw_dst=89.97.0.0/16,action=mod_dl_src:00:00:00:00:00:00,output:4'
@@ -301,33 +301,30 @@ ovs-ofctl add-flow r2 'ip,nw_dst=23.0.3.78/32,action=mod_dl_dst:00:00:02:00:00:0
 ovs-ofctl add-flow r2 'arp,action=output:1,2,3' 
 \end{lstlisting}
 
-Az elsö két szabály a két szomszédos router IP cím tartományát fedi le. Látható, hogy a szomszédos routerek tartományai
-/16 és /28-as netmaskkal rendelkeznek. Ha ezekben az IP tartományokban érkezik egy csomag, akkor történik egy forrás
-MAC állítás (cél MAC állításra is szükség lenne a pontos router müködés szimulálására, de esetünkben ez kihagyható,
-mivel a túloldalon is általunk programozott OpenFlow eszköz van - egyszerübb flow bejegyzések) és kiküldés a megfelelö
-porton. Hostok esetében a match pontosan akkor törénik, ha az IP címnek mind a 32 bitje felveszi a célcímben megadott
-IP címet. Egyezés esetén a cél MAC a host MAC címe lesz, és kiküldi a switch/router a megfelelö porton. Az utolsó sor
-azt a könnyítést adja, hogy ugyanazon a subneten levö hostoknak (azaz ugyanarra a switchre/routerre bekötött) ne
-kelljen statikusan megadni a MAC címjeit. Mivel az ARP egy broadcast címre épülö protokoll, ezért floodolni kell,
-ugyanakkor figyelemben kell tartani, hogy nem minden portra kell floodolni. A router szétbontja a hálózatokat broadcast
-domainekre, így a router szimulációjánál is figyelembe kell venni ezt a tulajdonságot. Ha az OpenFlow switchnek flood
-paramétert adnánk meg, akkor a többi routert szimuláló switchnek is elküldenénk, amik szintúgy továbbítanák minden
-portjukon, azaz egyetlen ARP csomag képes olyan broadcast stormot generálni, ami megbénítja a Mininet szimulációt
-futtató gazdagépet.
+The first two rules covers for the two adjacent router's IP range. It can be seen that those networks have a /16 and
+/28 subnet mask. If an IP packet is destined to a host in these subnets then a source MAC address change will occur and
+the packet is sent out on the appropriate output port -- for proper operation the destination MAC address has to be
+changed as well but in this case it can be omitted since the other end is also an OpenFlow switch programmed using this
+principle.
+For the hosts there is only a full match when all 32 bits of the IP destination address matches the flow entry's
+destination IP address. If there is a match for the hosts the destination MAC is swapped to the host's MAC address and
+the packet is sent out towards the host. The last entry serves the purpose of forming a broadcast domain from ports
+1,2,3 since some of the ARP packets are destined to the broadcast MAC address and has to be flooded. However the
+flooded packets must only be flooded in the same broadcast domain as on they arrived. If the flooded packets were
+transmitted on all ports  -- towards the routers as well -- it would paralyze the Mininet network emulation by the
+resulting in broadcast storm.
 
-A 4. switch (Firewall) nem rendelkezik statikus OF bejegyzésekkel, tisztán a kontrollertöl függ. A mérési feladatok
-során a kontroller programozásával kell szürésí intelligenciát vinni a tüzfalba, hogy a torrent forgalmat megfelelöen
-szürje, vagy éppen shape-elje. A tüzfal két porttal rendelkezik, és alapbeállításban a kontroller egy repeater funkciót
-valósít meg a switchen, azaz ami egyik porton beérkezik, az a másikon kimegy. A tüzfal a kontroller fele Packet-In
-üzenetekben küldi az egyik porton beérkezett csomagot, és ennek megfelelöen a POX kontroller alkalmazás a
-handlePacketIn metódusában kezeli le ezeket a csomagokat. Az intelligenciát is ebben a metódusban kell implementálni. A
-beérkezett csomag parsolását a következö függvényhívás végzi:
+The 4th switch operating as a Firewall doesn't have static OpenFlow entries it is solely controlled by the controller.
+The lab exercise is to program filtering logic into the Firewall so that it properly filters or shapes the torrent
+traffic. The firewall has two ports and it implements a repeater by default that is forwarding the packets arriving on
+it's input port as-is on the output port that is implemented in the POX controller's \emph{handlePacketIn} method. The
+desired operation has to be also implemented in this method. The parsing of the incoming packets are done by this call
 \begin{lstlisting}[language=python,frame=single,breaklines]
 packet = event.parsed  
 \end{lstlisting}
 
-Ez után a 'packet' objektumtól már egyszerüen lekérdezhetöek az OpenFlow által ismert paraméterek. Például a beérkezö
-port sorszáma a "packet.port", míg egy specifikus TCP port megtalálása és szürése a következöképpen nézhet ki:
+From there the `packet' object can be easily queried for well-known OpenFlow parameters. Like for example the input
+port id is in the filed `packet.port' and finding a specific TCP port from the packet could look like this:
 
 \begin{lstlisting}[language=python,frame=single,breaklines]
 tcpp = event.parsed.find( 'tcp' )
@@ -340,32 +337,30 @@ if tcpp.srcport in block_ports or tcpp.dstport in block_ports:
 
 # (and installing a table entry for it)
 
-core.getLogger( "blocker" ).debug( "Blocked TCP %s <-> %s" ,
-
-tcpp.srcport, tcpp.dstport)
+core.getLogger( "blocker" ).debug( "Blocked TCP %s <-> %s" ,tcpp.srcport, tcpp.dstport)
 
 event.halt = True
 \end{lstlisting}
 
-Mivel az OpenFlow nem néz L4-nél magasabb rétegekbe, ezért például egy BitTorrent csomag header mezöinek az elemzése
-problémásabb, ilyenkor muszáj az L4-es payload elemzése a "payload" property segítségével.
+Since OpenFlow does not parse the packet above L4 parsing a BitTorrent packet header requires more work by analyzing
+the L4 payload using the `payload' property of the object.
 
 \appendix
 
 \section{Entry quiz sample questions}
 
-\section{Input files for the lab excercise}
+\section{Input files for the lab exercise}
 \begin{itemize}
 
     \item
 
           \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/P2PAlkalmazasokMeresiSegedlet/p2pMeresTopo.py.txt}{p2pMeresTopo.py.tx
-              t}: Mininet topologia P2P mereshez, futtatas: 'sudo python p2pMeresTopo.py'
+              t}: Mininet topology for the P2P measurements, run by executing: `sudo python p2pMeresTopo.py'
 
     \item
 
           \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/P2PAlkalmazasokMeresiSegedlet/p2pMeresTopo.py.txt}{p2p.py.txt}: POX
-          kontroller alkalmazas, bemasolando pox/ext konyvtarba, futtatas: './pox.py p2p'
+          controller application to be copied into pox/ext directory, run by executing: `./pox.py p2p'
 \end{itemize}
 
 \section{Lab exercises}
