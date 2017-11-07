@@ -391,7 +391,7 @@ the L4 payload using the `payload' property of the object.
               \item Start a terminal and disable Network Manager with executing `sudo service network-manager stop'
                     command. Then execute `sudo dhclient eth0' to restore the NAT IP address
               \item Start the controller using the command `pox/pox.py p2p' command (pox is under /home/p2p/pox/).
-                    The INFO logs can be filtered by passing `log.level --WARNING' startup argument, but in this case
+                    The INFO logs can be filtered by passing `log.level -{}-WARNING' startup argument, but in this case
                     the own log messages
                     has to be logged at least on log level warning
               \item Start Mininet with command `sudo python p2pMeresTopo.py' (the mininet topology script can be
