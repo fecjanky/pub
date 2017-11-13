@@ -204,7 +204,8 @@ Some useful Linux commands:
 \section{Further Reading}\label{sec:further-reading}
 Further reading on Cisco IOS:
 \begin{itemize}
-    \item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/SwitchLinkekAggregalasaFeladatok/cisco_guide_en.doc}{Cisco Guide}
+    \item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/SwitchLinkekAggregalasaFeladatok/cisco_guide_en.doc}{Cisco
+              Guide}
 \end{itemize}
 
 Further eading on Quagga:
@@ -215,74 +216,103 @@ Further eading on Quagga:
 
 \appendix
 
-
 \section{Entry quiz sample questions}
 
 \begin{enumerate}
-\item What type of routing protocol BGP is? Which are the two well-know protocol type BGP is composed of?
-\item What was the motivation behind deprecating EGP?
-\item Describe the types of BGP connection used between internal and external hosts. Provide details on the priority between the two types of connections.
-\item When is BGP in `Active' state?
-\item When is BGP in `Established' state? 
-\item What is a `NLRI' and what does it contain?
-\item Trough which tables does a routing information reaches the final routing table?
-\item What is the purpose of `global configuration' mode in Cisco IOS?
-\item What is Quagga and for what can it be used?
-\item Enumerate 3 routing protocols that is implemented in Quagga!
-\item What types (both virtual and physical) devices are used in the lab exercises?
-\item What is a VLAN and what is its purpose?
+    \item What type of routing protocol BGP is? Which are the two well-know protocol type BGP is composed of?
+    \item What was the motivation behind deprecating EGP?
+    \item Describe the types of BGP connection used between internal and external hosts. Provide details on the priority
+          between the two types of connections.
+    \item When is BGP in `Active' state?
+    \item When is BGP in `Established' state?
+    \item What is a `NLRI' and what does it contain?
+    \item Trough which tables does a routing information reaches the final routing table?
+    \item What is the purpose of `global configuration' mode in Cisco IOS?
+    \item What is Quagga and for what can it be used?
+    \item Enumerate 3 routing protocols that is implemented in Quagga!
+    \item What types (both virtual and physical) devices are used in the lab exercises?
+    \item What is a VLAN and what is its purpose?
 \end{enumerate}
-
 
 \section{Lab exercises}
 
 \subsection{Intro exercise}
 
-Each group is going to implement an own AS that are going to joined to a common `mini' internet using BGP routing protocol.
-Each ASs consists a router running BGP for inter-domain routing and another router that is responsible for intra-domain routing using OSPF and finally an end-user host running Linux.
-The BGP router is physical Cisco 3640 equipment while the OSPF router and the end-user host is implemented on a Linux based machine using virtualization. The virtual machines are interconnected by a special network emulation software (GNS3). Using GNS3 arbitrary network topology can be realized. This will be detailed later on. The VMs are running a small footprint Linux distribution (OpenWRT). The goal of the lab exercise is to implement a multi AS internet i.e. to make each host reachable on IP level.
+Each group is going to implement an own AS that are going to joined to a common `mini' internet using BGP routing
+protocol.
+Each ASs consists a router running BGP for inter-domain routing and another router that is responsible for intra-domain
+routing using OSPF and finally an end-user host running Linux.
+The BGP router is physical Cisco 3640 equipment while the OSPF router and the end-user host is implemented on a Linux
+based machine using virtualization. The virtual machines are interconnected by a special network emulation software
+(GNS3). Using GNS3 arbitrary network topology can be realized. This will be detailed later on. The VMs are running a
+small footprint Linux distribution (OpenWRT). The goal of the lab exercise is to implement a multi AS internet i.e. to
+make each host reachable on IP level.
 
-Each group has a lab PC: `heterogene routing' option has to be selected on the boot screen. After Windows has started log in to the stargate server using ssh (Putty client) through which the Cisco equipments isolated subnet is reachable. 
+Each group has a lab PC: `heterogene routing' option has to be selected on the boot screen. After Windows has started
+log in to the stargate server using ssh (Putty client) through which the Cisco equipments isolated subnet is reachable.
+
 The stargate IP address is 192.168.213.20 (user/pass: hallgato/hallgato)
 
 To have internet access the following attributes have to be configured on the Windows machine:
 \begin{itemize}
-  \item IP address: 172.17.\textless~200+PC ID\textgreater~.3
-  \item Subnet mask: 255.255.255.0
-  \item Default Gateway: 172.17.\textless~200+PC ID\textgreater~.1
-  \item DNS: 8.8.8.8, 8.8.4.4
+    \item IP address: 172.17.\textless~200+PC ID\textgreater~.3
+    \item Subnet mask: 255.255.255.0
+    \item Default Gateway: 172.17.\textless~200+PC ID\textgreater~.1
+    \item DNS: 8.8.8.8, 8.8.4.4
 \end{itemize}
 
 From the stargate jump host the individual Cisco routers are reachable via telnet:
 \begin{itemize}
- \item R1 adress: 10.10.10.11
- \item R2 adress: 10.10.10.12
- \item R3 adress: 10.10.10.13
- \item R4 adress: 10.10.10.14
- \item R5 adress: 10.10.10.15
- \item R6 adress: 10.10.10.16
- \item R7 adress: 10.10.10.17 
+    \item R1 adress: 10.10.10.11
+    \item R2 adress: 10.10.10.12
+    \item R3 adress: 10.10.10.13
+    \item R4 adress: 10.10.10.14
+    \item R5 adress: 10.10.10.15
+    \item R6 adress: 10.10.10.16
+    \item R7 adress: 10.10.10.17
 \end{itemize}
 
-The last octet corresponds to the group ID. Each group is responsible for creating an AS corresponding to its ID show on Figure~\ref{fig:mini-internet}
+The last octet corresponds to the group ID. Each group is responsible for creating an AS corresponding to its ID show
+on Figure~\ref{fig:mini-internet}
 
-Due to the lack of physical interfaces the Cisco routers are connected by a Cisco switch where the concrete topology is realized with the help of VLANs. As a results of VLANs the routers are configured with sub-interfaces under \emph{`interface \textless~interface type\textgreater 1/port.vlan\_ID} in configuration mode.
+Due to the lack of physical interfaces the Cisco routers are connected by a Cisco switch where the concrete topology is
+realized with the help of VLANs. As a results of VLANs the routers are configured with sub-interfaces under
+\emph{`interface \textless~interface type\textgreater 1/port.vlan\_ID} in configuration mode.
 
-VLAN is a link-layer protocol extension the multiplexes multiple logical links on a single physical link where a VLAN header follows and Ethernet header that carries VLAN ID field that allows discrimination to which logical link the packet belongs. The PCs on the edge of the network usually don't meet packets with VLAN headers because the edge routers/switches remove that. Using VLANs makes it possible to operate multiple `physical' networks on single switch where the connected devices behave as they were not even connected to the same switch. Further readings on VLAN can be found here: \url{http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/configuration/guide/cli/CLIConfigurationGuide/VLANs.html}
+VLAN is a link-layer protocol extension the multiplexes multiple logical links on a single physical link where a VLAN
+header follows and Ethernet header that carries VLAN ID field that allows discrimination to which logical link the
+packet belongs. The PCs on the edge of the network usually don't meet packets with VLAN headers because the edge
+routers/switches remove that. Using VLANs makes it possible to operate multiple `physical' networks on single switch
+where the connected devices behave as they were not even connected to the same switch. Further readings on VLAN can be
+found here:
+\url{http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/configuration/guide/cli/CLIConfigurationGuid
+    e/VLANs.html}
 
-After Windows 7 has started successfully start GNS3 as administrator each group has to implement their corresponding topology shown on Figure~\ref{fig:mini-internet} - i.e. the AS with the group's ID. The link between the cloud and the Cisco device is provided by the PC's physical interface.
+After Windows 7 has started successfully start GNS3 as administrator each group has to implement their corresponding
+topology shown on Figure~\ref{fig:mini-internet} - i.e. the AS with the group's ID. The link between the cloud and the
+Cisco device is provided by the PC's physical interface.
 
 In the `cloud settings' select `Local Area Connection' then `Add' then `OK'. (don't hit `Apply').
 
-The next step is to start the network emulation by clicking on the green `play' icon. After it has been started launch a console by right-clicking on the router named `Quagga' and selecting the `console' option. The `vtysh' program executes the Quagga configuration the `enable' command is executed automatically - there is no need to type that again.
+The next step is to start the network emulation by clicking on the green `play' icon. After it has been started launch
+a console by right-clicking on the router named `Quagga' and selecting the `console' option. The `vtysh' program
+executes the Quagga configuration the `enable' command is executed automatically - there is no need to type that again.
 
-Each group has to configure ONLY their assigned physical Cisco router and the GNS3 virtual devices. These together will form the AS.
+Each group has to configure ONLY their assigned physical Cisco router and the GNS3 virtual devices. These together will
+form the AS.
 
-The OpenWRT image is also running in the GNS3 network simulator that is capable of running and interconnecting real-life router/host -- Cisco, Juniper, Vyyatta, Linux etc. -- images through emulated links. The traffic can be captured and analysed using Wireshark. The UI has a clean and intuitive design, the projects can be saved and reloaded. Complex network topologies can be implemented furthermore the guest VMs can have internet connections as well. Simple router configuration is also possible through the CLI.
+The OpenWRT image is also running in the GNS3 network simulator that is capable of running and interconnecting
+real-life router/host -- Cisco, Juniper, Vyyatta, Linux etc. -- images through emulated links. The traffic can be
+captured and analysed using Wireshark. The UI has a clean and intuitive design, the projects can be saved and reloaded.
+Complex network topologies can be implemented furthermore the guest VMs can have internet connections as well. Simple
+router configuration is also possible through the CLI.
 
-\textbf{IMPORTANT NOTE:} If possible do not stop the VMs running in GNS3 because the configuration data can be lost. In case if shutdown is necessary use the `halt' command that guarantees the persistence of the configuration even after restart.
+\textbf{IMPORTANT NOTE:} If possible do not stop the VMs running in GNS3 because the configuration data can be lost. In
+case if shutdown is necessary use the `halt' command that guarantees the persistence of the configuration even after
+restart.
 
-For configuring the VMs running in GNS3 standard Linux commands can be used as well (ip,ipconfig, etc.) on the VM itself --  NOT by logging in using vtysh!.
+For configuring the VMs running in GNS3 standard Linux commands can be used as well (ip,ipconfig, etc.) on the VM
+itself --  NOT by logging in using vtysh!.
 
 For those who haven't used GNS3 yet it is strongly advised to go through this simple example:
 \url{https://www.gns3.com/support/docs/creating-the-simplest-topology-2}
@@ -295,7 +325,8 @@ For those who haven't used GNS3 yet it is strongly advised to go through this si
 \end{figure}
 
 \subsection{Task}
-Configure the assigned Cisco router with the IP addresses shown by Figure~\ref{fig:cisco-topo}! This exercise should result in the desired topology.
+Configure the assigned Cisco router with the IP addresses shown by Figure~\ref{fig:cisco-topo}! This exercise should
+result in the desired topology.
 
 \begin{figure}[H]
     \centering
@@ -306,7 +337,10 @@ Configure the assigned Cisco router with the IP addresses shown by Figure~\ref{f
 
 \subsection{Task}
 
-Configure the VMs in GNS3 in a way that they will have the assigned IP addresses as shown by Figure~\ref{fig:gns3-topo}! Check the network connectivity on each link using `ping' utility. If ping is not working somewhere explain the potential reason why it isn't working. Why does pinging Quagga router work from the host machine but pinging the BGP (physical) router does not?
+Configure the VMs in GNS3 in a way that they will have the assigned IP addresses as shown by
+Figure~\ref{fig:gns3-topo}! Check the network connectivity on each link using `ping' utility. If ping is not working
+somewhere explain the potential reason why it isn't working. Why does pinging Quagga router work from the host machine
+but pinging the BGP (physical) router does not?
 
 \begin{figure}[H]
     \centering
@@ -316,16 +350,26 @@ Configure the VMs in GNS3 in a way that they will have the assigned IP addresses
 \end{figure}
 
 \subsection{Task}
-Configure Quagga router so that it runs OSPF on all its internal interfaces as well as the Cisco routers. Configure the router-id of the Quagga router.
+Configure Quagga router so that it runs OSPF on all its internal interfaces as well as the Cisco routers. Configure the
+router-id of the Quagga router.
 \subsection{Task}
-Configure the devices in way that the connected ASes (Autonomous Systems, marked with circle) are running eBGP protocol between them. Form BGP neighborships between the interconnected ASBRs as shown by Figure~\ref{mini-internet} topology.
+Configure the devices in way that the connected ASes (Autonomous Systems, marked with circle) are running eBGP protocol
+between them. Form BGP neighborships between the interconnected ASBRs as shown by Figure~\ref{mini-internet} topology.
 Verify and document the results!
 \subsection{Task}
-Configure the BGP router for automatic route redistribution from OSPF. Furthermore configure BGP for advertising 2 additional prefixes : 172.17.~\textless150+AS\_number~\textgreater.0/24 and 172.17.~\textless160+AS\_number~\textgreater.0/24. From these subnets it's advised to configure one-one on the BGP router's loopback interface otherwise the router won't advertise the routes since it doesn't have any corresponding routing entries. If this has been carried out by multiple groups successfully verify that their subnets are visible from each other's AS. Verify the routes using the `traceroute' command. Provide detailed documentation in the lab report.
+Configure the BGP router for automatic route redistribution from OSPF. Furthermore configure BGP for advertising 2
+additional prefixes : 172.17.~\textless150+AS\_number~\textgreater.0/24 and
+172.17.~\textless160+AS\_number~\textgreater.0/24. From these subnets it's advised to configure one-one on the BGP
+router's loopback interface otherwise the router won't advertise the routes since it doesn't have any corresponding
+routing entries. If this has been carried out by multiple groups successfully verify that their subnets are visible
+from each other's AS. Verify the routes using the `traceroute' command. Provide detailed documentation in the lab
+report.
 \subsection{Task}
-The task is to reduce the number of entries in the routing table: Combine two arbitrarily chosen network prefix in the routing table. Check the distribution of this route throughout the network. Document the results in the lab report.
+The task is to reduce the number of entries in the routing table: Combine two arbitrarily chosen network prefix in the
+routing table. Check the distribution of this route throughout the network. Document the results in the lab report.
 \subsection{Task}
-Configure the devices so that the connected ASBRs has to be configured to have either peer or transit connections corresponding to the topology shown on Figure~\ref{fig:transit-connections}
+Configure the devices so that the connected ASBRs has to be configured to have either peer or transit connections
+corresponding to the topology shown on Figure~\ref{fig:transit-connections}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/transit-peer-connections.png}
@@ -333,9 +377,13 @@ Configure the devices so that the connected ASBRs has to be configured to have e
     \label{fig:transit-connections}
 \end{figure}
 \subsection{Task}
-Verify Valley-free routes between ASes. Chose 3 AS arbitrarily that have 2,3,4 --in order-- distance in terms of ASes. If a valley-free route exists document it otherwise provide and document an explanation on why there isn't a valley-free route exist towards the given AS.
+Verify Valley-free routes between ASes. Chose 3 AS arbitrarily that have 2,3,4 --in order-- distance in terms of ASes.
+If a valley-free route exists document it otherwise provide and document an explanation on why there isn't a
+valley-free route exist towards the given AS.
 \subsection{Task}
-Configure the BGP import/export filters so that the neighbouring AS only receives BGP advertisements from valley-free routes. Figure~\ref{fig:valley-free} provides help on this task. If all routes has become valley-free document that with pictures.
+Configure the BGP import/export filters so that the neighbouring AS only receives BGP advertisements from valley-free
+routes. Figure~\ref{fig:valley-free} provides help on this task. If all routes has become valley-free document that
+with pictures.
 
 \begin{figure}[H]
     \centering
