@@ -18,3 +18,5 @@
 *.jpg binary
 *.odg binary
 *.pdf binary
+*.doc binary
+*.docx binary
