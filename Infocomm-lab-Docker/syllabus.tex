@@ -18,6 +18,8 @@
 % to place figures on a fixed position
 \usepackage{float}
 
+\usepackage{tabularx}
+
 \usepackage[margin=1in]{geometry}
 
 \title{OpenFlow \& Mininet – Docker}
@@ -156,13 +158,115 @@ installable components can be declared easily.
 \section{Lab exercises}
 
 \subsection{Lab environment \& introduction}
+
+The task is to implement a sample application (web server + database) using containers. The code of the index page of the web server is a simple PHP application that saves the time of the first visit into the database and the count of visits since then and also displays those in the resulting HTML.
+
+\subsubsection{Preparations}
+\begin{itemize}
+
+\item Boot menu: P2P+SDN under SPRING (TC 5.2 64bit + VBOX)
+
+\item Docker engine simple installation: \emph{curl -sSL https://get.docker.com/ | sh}
+
+\item \textbf{If the docker engine has not been started automatically execute: \emph{sudo service docker start}}
+
+\end{itemize}
+
+\textbf{All docker commands have to be executed using root privileges!}
+
+The missing applications can be installed in the containers on demand (e.g. mysql, ab, etc.)
+
+During the exercises an arbitrarily chosen image file can be used. The instructions below are based on a concrete `apache + mysql' image.
+
 \subsubsection{List of important commands}
+\begin{table}[h]
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline docker ps & list of running containers \\
+\hline docker ps –a &  list of all containers seen by the docker daemon \\
+\hline docker images  &  list of the locally available image files \\
+\hline docker inspect \textless~container\textgreater or \textless~image\textgreater  &  detailed information on the give container/image file \\
+\hline docker run -d \textless~image\textgreater \textless~command\textgreater &  create and start a new container based on the given image file running the command specified (runs in the background because of -d) \\
+\hline docker start/stop \textless~container\textgreater  &  start/stop an existing container \\
+\hline docker exec -it \textless~container\textgreater bash & open a new bash shell to the running container \\
+\hline docker rm –f \textless~container\textgreater  &  delete container, even if it's running \\
+\hline
+\end{tabularx}
+\end{table}
 
 \subsection{Task 1.}
+A két alkalmazás komponens megvalósítása két külön konténerben. (Alapértelmezés szerint egy Docker konténerben egy folyamat fut.)
+
+Használhatunk már kész konténer képfájlokat. Kiindulásul tanulmányozzuk át az ide vonatkozó utasításokat példákkal: https://docs.docker.com/engine/reference/commandline/images/
+
 \subsubsection{Application containers}
+A képfájlokhoz tartozó leírások segítenek a használatba vételben. pl mysql esetén a root jelszót beállítani, adatkötetet hogyan kell beállítani, stb.
+
+1. konténer: webszerver konténer: php apache támogatással pl.: https://hub.docker.com/_/php/
+
+Az apache támogatáshoz a megfelelő címkével ellátott képfájlt kell használni! Az alább telepítendő php mysqli támogatáshoz, pl. a 7-es verzió megfelelő: php:7-apache
+
+Alapértelmezés szerint ebben nincs feltelepítve a php mysqli kiterjesztése, ennek hozzáadását saját Dockerfile elkészítésével és build segítségével hozhatjuk létre (lásd a képfájl honlapján a "How to install more PHP extensions" alfejezetet), a mintapéldában alkalmazandó kiterjesztés neve: mysqli (jegyzőkönyvbe: Dockerfile)
+Segítségek:
+
+    https://docs.docker.com/get-started/part2/#define-a-container-with-a-dockerfile
+    https://docs.docker.com/get-started/part2/#build-the-app 
+
+2. konténer: adatbázis konténer: MySQL: https://hub.docker.com/_/mysql/
+
 \subsubsection{Interconnecting two containers}
+Konténerek közötti saját virtuális hálózatot létrehozva és konténereket hozzá csatlakoztatva: https://docs.docker.com/engine/tutorials/networkingcontainers/#create-your-own-bridge-network
+
+Dokumentáld, hogy milyen parancsokkal indulnak el vagy kapcsoltad össze a konténereket egy hálózaton és hogy a web konténer eléri az adatbázis konténert (ping)!
+
 \subsubsection{Web content and database upload}
+Mind a html/php weboldalak, mind az adatbázis adatok tárolásához használjuk a hoszt gépre kötött adat köteteket (bind mount data volume): https://docs.docker.com/engine/admin/volumes/bind-mounts/
+
+Jegyzőkönybe: docker parancsok
+
+Eredmény: a hoszt gépről felcsatolt köteten lesz a web tartalom, ezért a hoszt gépen tudjuk szerkeszteni a php fájlt, miközben a konténerünk fut!
+
+1. Szükség lesz a következő adatbázisra, amelyben az oldalmegtekintések számát naplózni tudjuk. adatbázis neve: log, tábla neve: pagestats, séma: url (varchar[80]) primary key, hits (int), since (timestamp) Ezt a create_sql.txt szkript segítségével hozhatjuk létre:
+mysql -h [host] -u [user] -p < create_sql.txt
+
+Hogyan érhetjük el az adatbázist a hoszt gépről? Milyen portok elérhetők a konténeren? (parancsok és válaszok a jegyzőkönyvbe)
+
+2. Egészítsük ki a mellékelt php fájlt ( index.php.txt /a txt kiterjesztést töröljük a végéről/), hogy kapcsolódjon az adatbázishoz! (-> jegyzőkönyvbe)
+
+Hogyan lehet a web konténerből (a php fájlból) elérni az adatbázis konténert?
+
+Ellenőrizd és dokumentáld, hogy a weboldal jól működik! (pl. böngésző vagy curl segítségével)
+
+Ha törlöd, majd elindítod ugyanazzal a paraméterezéssel a konténert mi történik a számlálóval? 
+
 \subsection{Task 2.}
+A két alkalmazás komponens futtatása egy konténerben. (Alapértelmezés szerint egy Docker konténerben egy folyamat fut.)
+
+Egy konténeren belül: pl. linuxconfig/lamp képfájlt felhasználva, leírás itt: http://linuxconfig.org/lamp-linux-apache-mariadb-php-stack-docker-image-deployment
+
+Ennél a képfájlnál a web mappát lehet adat kötetként csatolni, az adatbázis könyvtár felcsatolására azonban nincs felkészítve. Próbáljuk meg az adatbázis könyvtárat is adat kötetként felcsatolni, úgy mint az előző feladatban. Mit látunk a docker logban?
+
+Milyen portok érhetők el a konténeren?
+
+Mivel az alapértelmezett konfigurációban nem lehet mysql klienssel a hosztról a konténerben futó adatbázishoz kapcsolódni, ezért lépjünk be a a konténerbe (docker exec) és onnan hozzuk létre a mysql kliens segítségével az oldal megtekintések naplózásához szükséges adatbázist, manuálisan, a create_sql.txt-ben lévő 3 parancs kiadásával!
+
+Hozzuk létre a web tartalmat is: mit kell változtatni a PHP fájlban az előző megvalósításhoz képest? (Hogyan érjük el az adatbázist?)
+
+Alapértelmezés szerint egy Docker konténerben egy folyamat fut, lásd 1. feladatban történt megvalósítás: külön webszerver és külön adatbázis. Ha több folyamatot szeretnénk egy konténeren belül, akkor kell egy folyamat menedzselő eszköz, ilyen eszköz pl. a supervisord. Mivel itt egy konténeren belül fut a webszerver és a mysql is, itt szükség volt a supervisord alkalmazására. https://docs.docker.com/engine/articles/using_supervisord/
+
+Nézzük meg, hogy hogyan van a konténerben a supervisord bekonfigurálva. (/etc/supervisor/conf.d/supervisord.conf)
+
+Feladat: készítsünk Dockerfile-t, amellyel kiegészítve ssh elérést is biztosítunk ehhez a konténerhez!
+
+Segítség kiindulásnak: https://docs.docker.com/engine/examples/running_ssh_service/ A megadott Dockerfile utasításokat módosítsunk, ha szükséges! (pl. az /etc/ssh/sshd_config fájl módosítása)
+
+Ellenőrizd és dokumentáld, hogy a weboldal jól működik! (pl. böngésző vagy curl segítségével)
+
+Ha törlöd, majd elindítod ugyanazzal a paraméterezéssel a konténert mi történik a számlálóval?
+
+Ellenőrizd és dokumentáld, hogy a ssh elérés működik!
+
 \subsection{Task 3.}
+
+Mindkét megvalósítás teljesítőképességét teszteljük le és dokumentáljuk az apache bench (ab) segítségével! (Pl. ab -n 100 -c 10 <URL>)
 
 \end{document}
