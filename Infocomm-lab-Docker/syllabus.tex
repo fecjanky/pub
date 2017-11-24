@@ -161,16 +161,18 @@ installable components can be declared easily.
 
 \subsection{Lab environment \& introduction}
 
-The task is to implement a sample application (web server + database) using containers. The code of the index page of the web server is a simple PHP application that saves the time of the first visit into the database and the count of visits since then and also displays those in the resulting HTML.
+The task is to implement a sample application (web server + database) using containers. The code of the index page of
+the web server is a simple PHP application that saves the time of the first visit into the database and the count of
+visits since then and also displays those in the resulting HTML.
 
 \subsubsection{Preparations}
 \begin{itemize}
 
-\item Boot menu: P2P+SDN under SPRING (TC 5.2 64bit + VBOX)
+    \item Boot menu: P2P+SDN under SPRING (TC 5.2 64bit + VBOX)
 
-\item Docker engine simple installation: \emph{curl -sSL https://get.docker.com/ | sh}
+    \item Docker engine simple installation: \emph{curl -sSL https://get.docker.com/ | sh}
 
-\item \textbf{If the docker engine has not been started automatically execute: \emph{sudo service docker start}}
+    \item \textbf{If the docker engine has not been started automatically execute: \emph{sudo service docker start}}
 
 \end{itemize}
 
@@ -178,59 +180,72 @@ The task is to implement a sample application (web server + database) using cont
 
 The missing applications can be installed in the containers on demand (e.g. mysql, ab, etc.)
 
-During the exercises an arbitrarily chosen image file can be used. The instructions below are based on a concrete `apache + mysql' image.
+During the exercises an arbitrarily chosen image file can be used. The instructions below are based on a concrete
+`apache + mysql' image.
 
 \subsubsection{List of important commands}
 \begin{table}[h]
-\begin{tabularx}{\textwidth}{|l|X|}
-\hline docker ps & list of running containers \\
-\hline docker ps –a &  list of all containers seen by the docker daemon \\
-\hline docker images  &  list of the locally available image files \\
-\hline docker inspect \textless~container\textgreater or \textless~image\textgreater  &  detailed information on the give container/image file \\
-\hline docker run -d \textless~image\textgreater \textless~command\textgreater &  create and start a new container based on the given image file running the command specified (runs in the background because of -d) \\
-\hline docker start/stop \textless~container\textgreater  &  start/stop an existing container \\
-\hline docker exec -it \textless~container\textgreater bash & open a new bash shell to the running container \\
-\hline docker rm –f \textless~container\textgreater  &  delete container, even if it's running \\
-\hline
-\end{tabularx}
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline docker ps                                                                     & list of running containers                       \\
+        \hline docker ps –a                                                                  & list of all containers seen by the docker daemon \\
+        \hline docker images                                                                 & list of the locally available image files        \\
+        \hline docker inspect \textless~container\textgreater or \textless~image\textgreater & detailed information on the
+        give container/image file                                                                                                               \\
+        \hline docker run -d \textless~image\textgreater \textless~command\textgreater       & create and start a new container
+        based on the given image file running the command specified (runs in the background because of -d)                                      \\
+        \hline docker start/stop \textless~container\textgreater                             & start/stop an existing container                 \\
+        \hline docker exec -it \textless~container\textgreater bash                          & open a new bash shell to the running container   \\
+        \hline docker rm –f \textless~container\textgreater                                  & delete container, even if it's running           \\
+        \hline
+    \end{tabularx}
 \end{table}
 
 \subsection{Task 1.}
 
-Implement the two application components in two separate containers. (By default one Docker container can run one process)
-You can use already existing image files. For starters read through the corresponding reference with examples \url{https://docs.docker.com/engine/reference/commandline/images/}
+Implement the two application components in two separate containers. (By default one Docker container can run one
+process)
+You can use already existing image files. For starters read through the corresponding reference with examples
+\url{https://docs.docker.com/engine/reference/commandline/images/}
 
 \subsubsection{Application containers}
-The description of the image files can help on the usage of them. For example in case of \emph{mysql} how to set the root password, how to set-up the data volume etc.
+The description of the image files can help on the usage of them. For example in case of \emph{mysql} how to set the
+root password, how to set-up the data volume etc.
 
 \textbf{\emph{\nth{1} container}}: the web-server container apache with PHP e.g.: \url{https://hub.docker.com/_/php/}
 
-For the apache support a suitably tagged image file has to be used! For the php mysqli support below version 7 has to be used: php:7-apache
+For the apache support a suitably tagged image file has to be used! For the php mysqli support below version 7 has to
+be used: php:7-apache
 
-By default in this image php mysqli is not installed. To add it a new Dockerfile has to be created and an image has to be built. (see details on the image web page under ``How to install more PHP extensions" section). In this sample exercise the extension to be used is : mysqli
+By default in this image php mysqli is not installed. To add it a new Dockerfile has to be created and an image has to
+be built. (see details on the image web page under ``How to install more PHP extensions" section). In this sample
+exercise the extension to be used is : mysqli
 
 The resulting Dockerfile has to be documented in the lab report!
 
 Help:
 \begin{itemize}
-\item \url{https://docs.docker.com/get-started/part2/#define-a-container-with-a-dockerfile}
-\item \url{https://docs.docker.com/get-started/part2/#build-the-app}
+    \item \url{https://docs.docker.com/get-started/part2/#define-a-container-with-a-dockerfile}
+    \item \url{https://docs.docker.com/get-started/part2/#build-the-app}
 \end{itemize}
 
 \textbf{\emph{\nth{2} container}}: database container with MySQL: \url{https://hub.docker.com/_/mysql/}
 
 \subsubsection{Interconnecting two containers}
-Create a new inter-container virtual network and connect the previous containers to it: \url{https://docs.docker.com/engine/tutorials/networkingcontainers/#create-your-own-bridge-network}
+Create a new inter-container virtual network and connect the previous containers to it:
+\url{https://docs.docker.com/engine/tutorials/networkingcontainers/#create-your-own-bridge-network}
 
-Document in the lab report that which commands were used creating the network, for starting the containers and the proof that the containers can reach each other on IP level (ping utility) 
+Document in the lab report that which commands were used creating the network, for starting the containers and the
+proof that the containers can reach each other on IP level (ping utility)
 
 \subsubsection{Web content and database upload}
 
-For both storing the html/php pages and for the database data use the data volume attached to the host machine (bind mount data volume): \url{https://docs.docker.com/engine/admin/volumes/bind-mounts/}
+For both storing the html/php pages and for the database data use the data volume attached to the host machine (bind
+mount data volume): \url{https://docs.docker.com/engine/admin/volumes/bind-mounts/}
 
 Document the docker commands used in the lab report!
 
-Expected result: the web content will be available on the volume mounted to the host machine as a result it can be edited on the host machine while the container is running.
+Expected result: the web content will be available on the volume mounted to the host machine as a result it can be
+edited on the host machine while the container is running.
 
 \textbf{\emph{\nth{1}}}: The following database will be needed for storing the statistics about the web page visits:
 
@@ -244,10 +259,12 @@ For creatign the mysql database in the database container the \emph{create\_sql.
 \begin{lstlisting}[language=bash,breaklines]mysql -h [host] -u [user] -p < create_sql.txt
 \end{lstlisting}
 
-How is the database accessed from the host machine? What ports are reachable on the container? (commands + answer must go into the report)
+How is the database accessed from the host machine? What ports are reachable on the container? (commands + answer must
+go into the report)
 
-
-\textbf{\emph{\nth{2}}}:  Modify the php file found here:\url{https://qosip.tmit.bme.hu/foswiki/pub/Meres/DockerFeladatok/index.php.txt} so that it can connect to the database. The resulting php file has to be documented!
+\textbf{\emph{\nth{2}}}:  Modify the php file found
+here:\url{https://qosip.tmit.bme.hu/foswiki/pub/Meres/DockerFeladatok/index.php.txt} so that it can connect to the
+database. The resulting php file has to be documented!
 
 How is the database accessed from the web container (from the php file)?
 
@@ -258,25 +275,33 @@ What happens to the counter if the container is deleted and started again with t
 \subsection{Task 2.}
 Running the two application components from a single container. (By default only one process can be run in a container)
 
-Inside one container using image e.g. linuxconfig/lamp, description \url{http://linuxconfig.org/lamp-linux-apache-mariadb-php-stack-docker-image-deployment}
+Inside one container using image e.g. linuxconfig/lamp, description
+\url{http://linuxconfig.org/lamp-linux-apache-mariadb-php-stack-docker-image-deployment}
 
-
-In this image the web directory can be mounted as data volume but it is not prepared for mounting the database directory. Try and mount the database directory as a data volume similarly as in the previous task. What do we see in the docker logs?
+In this image the web directory can be mounted as data volume but it is not prepared for mounting the database
+directory. Try and mount the database directory as a data volume similarly as in the previous task. What do we see in
+the docker logs?
 
 Which ports are reachable on the container?
 
-Since the default config does not allow to connect to the DB running in the container using mysql client then log in to the container (docker exec) and create the database and scheme required for the page stats application from there using the mysql client manually by executing the commands from the create\_sql.txt script.
+Since the default config does not allow to connect to the DB running in the container using mysql client then log in to
+the container (docker exec) and create the database and scheme required for the page stats application from there using
+the mysql client manually by executing the commands from the create\_sql.txt script.
 
-Create the web content. What has to be modified in the PHP file compare to the previous solution? (How the database is accessed?)
+Create the web content. What has to be modified in the PHP file compare to the previous solution? (How the database is
+accessed?)
 
-By default one Docker container can run only one process. If running multiple processes is desired then the use of a process management device is required e.g. supervisord. \url{https://docs.docker.com/engine/articles/using_supervisord/}
+By default one Docker container can run only one process. If running multiple processes is desired then the use of a
+process management device is required e.g. supervisord.
+\url{https://docs.docker.com/engine/articles/using_supervisord/}
 
 Check and understand how the supervisord is configured in the container (/etc/supervisor/conf.d/supervisord.conf)
 
-Create a Dockerfile that allows ssh login into the container. Help can be found here:\url{https://docs.docker.com/engine/examples/running_ssh_service/} Modify the specified Dockerfile statements if required! (e.g. /etc/ssh/sshd\_config)
+Create a Dockerfile that allows ssh login into the container. Help can be found
+here:\url{https://docs.docker.com/engine/examples/running_ssh_service/} Modify the specified Dockerfile statements if
+required! (e.g. /etc/ssh/sshd\_config)
 
 Check and document the operation of the webpage!
-
 
 What happens to the counter if the container is deleted and started again with the same arguments?
 
@@ -284,6 +309,7 @@ Check and document that the ssh access is working!
 
 \subsection{Task 3.}
 
-Benchmark both application's performance using the apache bench utility (\emph{ab}). For example \emph{`ab -n 100 -c 10 \textless~URL\textgreater}
+Benchmark both application's performance using the apache bench utility (\emph{ab}). For example \emph{`ab -n 100 -c 10
+    \textless~URL\textgreater}
 
 \end{document}
