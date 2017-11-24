@@ -32,18 +32,9 @@
 \tableofcontents
 
 \section{Linux containers}
-A Linux konténerek (LXC) operációs rendszer szintű virtualizált környezetet nyújtanak, amelyben izolált Linux
-rendszerek (konténerek) futtathatók a Linux hosztgépen. Az operációs rendszer szintű virtualizált környezetet
-tekinthetjük a virtuális gépek (Virtaul Machine – VM) könnyített verziójának. Mivel jobb ez mint egy virtuális gép?
-Kevesebb helyet foglal egy virtuális vendégrendszer, gyors a létrehozása és működése, kevesebb a helyfoglalás – szemben
-a teljes virtuális megoldásokkal. A konténerek ahelyett, hogy a teljes hardveres környezetet emulálnának, egy közös,
-megosztott operációs rendszer magot (kernel) használnak, ezáltal hatékonyabb futásra képesek, mint a VM technológiák
-megoldásai.
+The Linux Containers (LXC) provide operating system level virtualized environment in which isolated Linux systems (containers) can be run on the Linux host machine. The operating system level environment virtualization can be viewed as a lightweight Virtual Machines (VMs). What makes this better compared to VMs? It requires less disk space compared to a fully virtualized guest OS, provides rapid creation and fast operation. In contrast to emulating the full hardware environment Containers use a shared, common OS kernel resulting in more efficient runtime performance compared to full-fledged OS virtualization.
 
-Másik megközelítésben: ``chroot on streoids" jelzővel is illetik. A chroot művelet egy parancsot vagy az interaktív
-shellt a paraméterben megadott speciális gyökérkönyvtárral futtatja. A futó folyamat mintegy be van zárva ebbe a
-könyvtárba, nem tudja az azon kívüli fájlokat elérni. Ezzel egy kisebb rendszert hozhatunk létre a nagyobbik rendszeren
-belül.
+In another aspect it is called ``chroot on streoids". The \emph{chroot} utility runs the specified command or interactive shell using the root directory specified as command argument. The process run by chroot is quasi ``locked" inside the specified directory, it can not reach any of the files outside that. This can be used for creating a system within the system.
 
 \begin{figure}[H]
     \centering
@@ -52,41 +43,33 @@ belül.
     \label{fig:containers}
 \end{figure}
 
-A Linux kernel control groups (cgroups) funkciója tudja biztosítani az erőforrások felosztását és proiritizálását,
-anélkül, hogy virtuális gépeket kellene indítani, valamint a névterek (namespaces) segítségével lehet leválasztani az
-egyes alkalmazások számára, hogy mit láthatnak az operációs rendszer által nyújtott környezetből, úgymint folyamatokat,
-fájlrendszereket, felhasználói azonosítókat és a hálózati kapcsolatokat. Ennek eredményeként egy saját egy
-futtatókörnyezetet hozunk létre alkalmazásunk számára, amely a többi konténertől és a hosztgéptől is leválasztott módon
-működik. Az alkalmazás mellé annak környezetét és függőségeit (programcsomagok, függvénykönyvtárak, konfigurációs
-fájlok, stb.) is a konténerbe ágyazhatjuk, ezáltal könnyen hordozható, leállítható és újraindítható egységet kapunk.
-Például létrehozhatunk egy konténert a webszerverünknek, egyet az adatbázisunknak, egyet az üzenetkezelőnek (message
-queue), vagy épp csomagolhatjuk őket egybe is, stb. ezzel moduláris alkalmazás architektúrát kialakítva. Ha saját
-fejlesztésű szoftvert konténer(ek)be csomagolunk, akkor az így kiadott szoftver biztosan futni fog másik hosztgépen is,
-legyen az egy másik fejlesztői vagy tesztelői PC, vagy akár az alkalmazás szerver vagy virtuális gép, amire a kész
-alkalmazást telepíteni fogjuk, vagyis nagyon felxibilis hordozhatóság szempontjából. Ami pedig egy Linux gépen
-futtatható, azt be lehet csomagolni egy Linux konténerbe is. A konténerek egy új, könnyebb módot adnak a fejlesztési
-folyamatban az alkalmazások kódolása, fordítása, telepítése és futtatása számára, és egyszerűen telepíthetők akár a
-felhő szolgáltatók gépeire is.
+The Linux kernel's control groups (\emph{cgroups}) function provide facilities for partitioning and prioritizing resources without having to
+start virtual machines. Furthermore with the help of \emph{namespaces} the visibility of file systems, user IDs, network connections can be
+isolated for individual applications. As a result a unique runtime environment can be created for our application that runs isolated from
+the other containers and from the host machine.
+The container application's dependencies (software suites, libraries, configuration files) can be embedded into the container resulting in
+highly portable, restartable, manageable unit.
+For example one can create a container for a web server, another one for its database, yet another for their message queue or alternatively these
+can be combined into a single container hence allowing the creation of modular application architecture.
+If a user packs his self-developed software into a container it can be ensured that the software will be able to execute on another host machine regardless from the type of the host (developer machine, user machine, application server etc.) resulting in great flexibility in terms of portability.
+If an executable can be executed on a Linux box that can packed into a Linux Container also. Containers provide a new and easier way of working in application coding, building, installation and execution and can be installed easily on machines running in a cloud provider's environment.
 
 \section{Docker}
 
-A Docker egy nyílt platformot nyújt a konténerek könnyű kezeléséhez, amellyel elosztott alkalmazások fejleszthetünk és
-futtathatunk, könnyű hordozhatóság mellet. Egy olyan közös eszközhalmazt ad a programozók, fejlesztői csapatok
-(development) és üzemeltetők (operations) kezébe amellyel kihasználhatják az elosztott és hálózati alkalmazások
-előnyeit. A Docker futtató környezete daemonként fut a háttérben és kezeli a konténereket, image-eket és a létrehozási
-folyamatokat.
+Docker offers an open-source platform for managing containers that can be used for development and execution of distributed applications
+while offering portability.
+It provides a common toolset for programmers and development teams and for operations personnel (DevOps) that can exploit the benefits
+of distributed network applications.
+The Docker runtime runs as a daemon in the background managing the containers, the images and the creation of those.
 
-A Docker célja az LXC használatának egyszerűsítése, kényelmessé tétele volt, emellett lehetővé teszi, hogy a konténerek
-különböző Linux rendszerek közt is hordozhatóak legyenek, vagyis elfedi az LXC rendszerspecifikus részeit. Kezdetben a
-Docker LXC-t használt, mára a Dockernek saját konténer formátuma van. Egy fontos különbség: LXC konténerekben van init,
-így több folyamatot is futtathatunk, míg Docker konténerekben nincs, így csak egyet. (A különbségeket részletesebben
-lásd itt: https://www.flockport.com/lxc-vs-docker/)
+The goal of Docker is to simplify the usage of LXC and beside that it allows the containers to be used on different types of Linux
+distributions -- i.e. it abstracts the LXC system specific parts. In the beginning Docker used the LXC format but currently it uses its own
+container format. One important difference between those two formats is that in LXC there is an \emph{init} process as a consequence multiple 
+process can be run in it. In contrast Docker doesn't have one so only one process can be run. (For detailed list of differences please see \url{https://www.flockport.com/lxc-vs-docker/})
 
-A Docker architektúrája kliens-szerver modellre épül. A Docker kliens által kiadott parancsokat a Docker daemon (docker
-engine, szerver) hajtja végre. A felhasználó a Docker daemonnal nincs közvetlen kapcsolatban, csak a kliensen
-keresztül, ez maga a ``docker" program, ami a felhasználói felületet adja. A kliens és a daemon futhat ugyanazon a
-számítógépen, vagy a kliens kapcsolódhat távoli daemonhoz. A kommunikáció socketen vagy RESTful API-n keresztül
-történik.
+Docker's architecture follows the client-server based model as illustrated on Figure~\ref{fig:arch}. The commands requested by the Docker client are executed by the Docker daemon (engine, server).
+The user has no direct interaction with the Docker daemon only through the Docker client this is the ``docker" utility that provides the 
+user interface. The client and the daemon can run on the same machine or the client can connect to a remote daemon process alternatively. The communication can be carried out either over sockets or over RESTful API.
 
 \begin{figure}[H]
     \centering
@@ -95,15 +78,10 @@ történik.
     \label{fig:arch}
 \end{figure}
 
-A docker használatához szükség van egy képfájlra (image) az adott operációs rendszerből. A képfájl egy írásvédett
-sablon, aminek segítségével a konténerek elindíthatók. A konténer futtatásakor ez kiegészül egy felső írható
-fájlrendszer réteggel, amelyben a saját alkalmazásunk futhat. A képfájl tulajdonképpen egy előtelepített rendszer,
-felépítése aufs vagy btrfs rétegek összességéből áll (Union File System), és verziókezelt. Kiindulásul van egy alap
-képfájl (base image), pl. ubuntu vagy debian, és az efelett elhelyezkedő fájlrendszer rétegetek egyesülnek a végleges
-képfájllá. Bármely képfájlra, nem csak az alapra, további rétegeket lehet építeni, így kiegészítve, változtatva azon a
-saját igényeink szerint. Képfájlok elkészíthetők saját magunk által vagy mások által előállított képfájlok letölthetők
-a docker úgynevezett Docker Hub webhelyéről. Ez egy központi tároló, de lehet saját, magáncélút is kialakítani. Az
-egyedileg elkészített képfájlok feltölthetők, megoszthatók a közösséggel.
+Docker requires an image file from a given operating system. The image is a write-protected template that is used for starting the containers.
+When running the container this is augmented with an upper layer of writeable filesystem that is used for running the application. The image file
+is basically a pre-installed system that is composed from \emph{aufs} or \emph{btrfs} layers (Union File System) and it is version controlled as it can be seen on Figure~\ref{fig:layers}.
+At startup there is a base image -- e.g. Ubuntu or Debian -- and the all the overlaying file-systems are joined together to form a final file-system. Additional layers can be placed on any image -- not just the base image -- to modify that for certain needs. The image files can be created by the user or downloaded from Docker Hub web-page created by other users. Docker Hub is a public repository but a privately hosted repository can also be used. The custom made images can be uploaded and shared with the community.
 
 \begin{figure}[H]
     \centering
@@ -112,11 +90,10 @@ egyedileg elkészített képfájlok feltölthetők, megoszthatók a közösségg
     \label{fig:layers}
 \end{figure}
 
-A konténer egy adott képfájl futó (vagy futott) példánya. Egy képfájlból egyszerre több konténer példány is futhat.
+A container is actually a running entity of a given image. Multiple containers can also be run from the same image file simultaneously.
 
-Docker képfájlok kialakítása, továbbfejlesztése két módon lehetséges: egyrészt a futó konténerbe belépve manuálisan
-installálva és konfigurálva, majd az előállt képfájlt elmentve, másrészt ún. Dockerfile segítségével, amely saját
-parancsformátummal rendelkezik és szkriptszerűen leírhatók a telepítendő komponensek.
+Creation and extension of Docker image files can be done in two ways: either by entering into the container manually and installing and configuring the desired software then by saving the resulting image file or by using a \emph{Dockerfile} that has a script-like syntax where the
+installable components can be declared easily.
 
 \section{Further Reading}
 
@@ -130,14 +107,14 @@ parancsformátummal rendelkezik és szkriptszerűen leírhatók a telepítendő 
 \section{Entry quiz sample questions}
 
 \begin{enumerate}
-    \item Mi a különbség a virtuális gépek és a linux konténerek között?
-    \item Milyen linux funkciók teszik lehetővé a konténerek megvalósítását?
-    \item Hogyan viszonyulnak egymáshoz a Docker képfájlok (image) és konténerek (container)?
-    \item Hogyan használhatók a Docker képfájlok (image), ki hozhatja létre, hogyan lehet hozzáférni?
-    \item Miként lehet kiegészíteni, továbbfejleszteni egy Docker képfájlt (image)?
-    \item Mi a funkciója az interaktív és a dameon módnak?
-    \item Mi a különbség a docker run és docker start parancsok között?
-    \item Hogyan lehet a konténer hálózati portjait a hoszt gépre leképezni?
+    \item What is the difference between the VMs and the Linux Containers?
+    \item Which Linux kernel functions allow the implementation of containers?
+    \item What is the relation between Docker images and containers?
+    \item How are Docker images used, who can create them, how can one obtain them?
+    \item How are Docker images extended/updated?
+    \item What are the purposes of interactive and dameon modes?
+    \item What is the difference between docker run and docker start commands?
+    \item How are the container network interface mapped to the host machine?
 \end{enumerate}
 
 \section{Lab exercises}
