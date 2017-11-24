@@ -38,7 +38,7 @@
 \section{Linux containers}
 The Linux Containers (LXC) provide operating system level virtualized environment in which isolated Linux systems
 (containers) can be run on the Linux host machine. The operating system level environment virtualization can be viewed
-as a lightweight Virtual Machines (VMs). What makes this better compared to VMs? It requires less disk space compared
+as lightweight Virtual Machines (VMs). What makes this better compared to VMs? It requires less disk space compared
 to a fully virtualized guest OS, provides rapid creation and fast operation. In contrast to emulating the full hardware
 environment Containers use a shared, common OS kernel resulting in more efficient runtime performance compared to
 full-fledged OS virtualization.
@@ -55,23 +55,23 @@ within the system.
     \label{fig:containers}
 \end{figure}
 
-The Linux kernel's control groups (\emph{cgroups}) function provide facilities for partitioning and prioritizing
+The Linux kernel's control groups (\emph{cgroups}) function provides facilities for partitioning and prioritizing
 resources without having to
 start virtual machines. Furthermore with the help of \emph{namespaces} the visibility of file systems, user IDs,
 network connections can be
-isolated for individual applications. As a result a unique runtime environment can be created for our application that
+isolated for individual applications. As a result a unique runtime environment can be created for the application that
 runs isolated from
 the other containers and from the host machine.
 The container application's dependencies (software suites, libraries, configuration files) can be embedded into the
 container resulting in
-highly portable, restartable, manageable unit.
-For example one can create a container for a web server, another one for its database, yet another for their message
+a highly portable, restartable, manageable unit.
+For example one can create a container for a web server, another one for its database, yet another one for their message
 queue or alternatively these
 can be combined into a single container hence allowing the creation of modular application architecture.
 If a user packs his self-developed software into a container it can be ensured that the software will be able to
 execute on another host machine regardless from the type of the host (developer machine, user machine, application
 server etc.) resulting in great flexibility in terms of portability.
-If an executable can be executed on a Linux box that can packed into a Linux Container also. Containers provide a new
+If an executable can be executed on a Linux box that executable can packed into a Linux Container also. Containers provide a new
 and easier way of working in application coding, building, installation and execution and can be installed easily on
 machines running in a cloud provider's environment.
 
@@ -79,8 +79,8 @@ machines running in a cloud provider's environment.
 
 Docker offers an open-source platform for managing containers that can be used for development and execution of
 distributed applications
-while offering portability.
-It provides a common toolset for programmers and development teams and for operations personnel (DevOps) that can
+while maintaining portability.
+It provides a common toolset for programmers, development teams and for operations personnel (DevOps) that can
 exploit the benefits
 of distributed network applications.
 The Docker runtime runs as a daemon in the background managing the containers, the images and the creation of those.
@@ -91,12 +91,12 @@ distributions -- i.e. it abstracts the LXC system specific parts. In the beginni
 currently it uses its own
 container format. One important difference between those two formats is that in LXC there is an \emph{init} process as
 a consequence multiple
-process can be run in it. In contrast Docker doesn't have one so only one process can be run. (For detailed list of
+processen can be run in parallel inside a container. In contrast Docker format doesn't have one so only one process can be run. (For detailed list of
 differences please see \url{https://www.flockport.com/lxc-vs-docker/})
 
 Docker's architecture follows the client-server based model as illustrated on Figure~\ref{fig:arch}. The commands
 requested by the Docker client are executed by the Docker daemon (engine, server).
-The user has no direct interaction with the Docker daemon only through the Docker client this is the ``docker" utility
+The user has no direct interaction with the Docker daemon only through the Docker client -- this is the ``docker" utility --
 that provides the
 user interface. The client and the daemon can run on the same machine or the client can connect to a remote daemon
 process alternatively. The communication can be carried out either over sockets or over RESTful API.
@@ -114,7 +114,7 @@ When running the container this is augmented with an upper layer of writeable fi
 application. The image file
 is basically a pre-installed system that is composed from \emph{aufs} or \emph{btrfs} layers (Union File System) and it
 is version controlled as it can be seen on Figure~\ref{fig:layers}.
-At startup there is a base image -- e.g. Ubuntu or Debian -- and the all the overlaying file-systems are joined
+At startup there is a base image -- e.g. Ubuntu or Debian -- and  all the overlaying file-systems are joined
 together to form a final file-system. Additional layers can be placed on any image -- not just the base image -- to
 modify that for certain needs. The image files can be created by the user or downloaded from Docker Hub web-page
 created by other users. Docker Hub is a public repository but a privately hosted repository can also be used. The
@@ -138,8 +138,8 @@ installable components can be declared easily.
 \section{Further Reading}
 
 \begin{itemize}
-    \item Docker áttekintés: \url{https://docs.docker.com/engine/docker-overview/}
-    \item Docker bevezetés: \url{https://docs.docker.com/get-started/} Part 1. and 2.!
+    \item Docker overview: \url{https://docs.docker.com/engine/docker-overview/}
+    \item Docker introduction: \url{https://docs.docker.com/get-started/} Part 1. and 2.!
 \end{itemize}
 
 \appendix
@@ -152,9 +152,9 @@ installable components can be declared easily.
     \item What is the relation between Docker images and containers?
     \item How are Docker images used, who can create them, how can one obtain them?
     \item How are Docker images extended/updated?
-    \item What are the purposes of interactive and dameon modes?
+    \item What are the purposes of interactive and daemon modes?
     \item What is the difference between docker run and docker start commands?
-    \item How are the container network interface mapped to the host machine?
+    \item How are the container network interfaces mapped to the host machine?
 \end{enumerate}
 
 \section{Lab exercises}
@@ -187,7 +187,7 @@ During the exercises an arbitrarily chosen image file can be used. The instructi
 \begin{table}[h]
     \begin{tabularx}{\textwidth}{|l|X|}
         \hline docker ps                                                                     & list of running containers                       \\
-        \hline docker ps –a                                                                  & list of all containers seen by the docker daemon \\
+        \hline docker ps -a                                                                  & list of all containers seen by the docker daemon \\
         \hline docker images                                                                 & list of the locally available image files        \\
         \hline docker inspect \textless~container\textgreater or \textless~image\textgreater & detailed information on the
         give container/image file                                                                                                               \\
@@ -195,7 +195,7 @@ During the exercises an arbitrarily chosen image file can be used. The instructi
         based on the given image file running the command specified (runs in the background because of -d)                                      \\
         \hline docker start/stop \textless~container\textgreater                             & start/stop an existing container                 \\
         \hline docker exec -it \textless~container\textgreater bash                          & open a new bash shell to the running container   \\
-        \hline docker rm –f \textless~container\textgreater                                  & delete container, even if it's running           \\
+        \hline docker rm -f \textless~container\textgreater                                  & delete container, even if it's running           \\
         \hline
     \end{tabularx}
 \end{table}
@@ -208,12 +208,12 @@ You can use already existing image files. For starters read through the correspo
 \url{https://docs.docker.com/engine/reference/commandline/images/}
 
 \subsubsection{Application containers}
-The description of the image files can help on the usage of them. For example in case of \emph{mysql} how to set the
+The description of the image files can help on the usage of them. For example in case of \emph{mysql}: how to set the
 root password, how to set-up the data volume etc.
 
-\textbf{\emph{\nth{1} container}}: the web-server container apache with PHP e.g.: \url{https://hub.docker.com/_/php/}
+\textbf{\emph{\nth{1} container}}: the web-server container is apache with PHP e.g.: \url{https://hub.docker.com/_/php/}
 
-For the apache support a suitably tagged image file has to be used! For the php mysqli support below version 7 has to
+For the apache support a suitably tagged image file has to be used! For the php mysqli support  version 7 has to
 be used: php:7-apache
 
 By default in this image php mysqli is not installed. To add it a new Dockerfile has to be created and an image has to
@@ -242,7 +242,7 @@ proof that the containers can reach each other on IP level (ping utility)
 For both storing the html/php pages and for the database data use the data volume attached to the host machine (bind
 mount data volume): \url{https://docs.docker.com/engine/admin/volumes/bind-mounts/}
 
-Document the docker commands used in the lab report!
+Document  in the lab report the docker commands used!
 
 Expected result: the web content will be available on the volume mounted to the host machine as a result it can be
 edited on the host machine while the container is running.
@@ -255,8 +255,9 @@ Table name: pagestats
 
 scheme:  url (varchar[80]) primary key, hits (int), since (timestamp)
 
-For creatign the mysql database in the database container the \emph{create\_sql.txt} script can be used:
-\begin{lstlisting}[language=bash,breaklines]mysql -h [host] -u [user] -p < create_sql.txt
+For creating the mysql database in the database container the \emph{create\_sql.txt} script can be used:
+\begin{lstlisting}[language=bash,breaklines]
+mysql -h [host] -u [user] -p < create_sql.txt
 \end{lstlisting}
 
 How is the database accessed from the host machine? What ports are reachable on the container? (commands + answer must
@@ -278,7 +279,7 @@ Running the two application components from a single container. (By default only
 Inside one container using image e.g. linuxconfig/lamp, description
 \url{http://linuxconfig.org/lamp-linux-apache-mariadb-php-stack-docker-image-deployment}
 
-In this image the web directory can be mounted as data volume but it is not prepared for mounting the database
+In this image the web directory can be mounted as data volume but this image is not prepared for mounting the database
 directory. Try and mount the database directory as a data volume similarly as in the previous task. What do we see in
 the docker logs?
 
@@ -288,14 +289,15 @@ Since the default config does not allow to connect to the DB running in the cont
 the container (docker exec) and create the database and scheme required for the page stats application from there using
 the mysql client manually by executing the commands from the create\_sql.txt script.
 
-Create the web content. What has to be modified in the PHP file compare to the previous solution? (How the database is
+Create the web content. What has to be modified in the PHP file compared to the previous solution? (How the database is
 accessed?)
 
 By default one Docker container can run only one process. If running multiple processes is desired then the use of a
 process management device is required e.g. supervisord.
 \url{https://docs.docker.com/engine/articles/using_supervisord/}
 
-Check and understand how the supervisord is configured in the container (/etc/supervisor/conf.d/supervisord.conf)
+Check and understand how the supervisord is configured in the container 
+(/etc/supervisor/conf.d/supervisord.conf)
 
 Create a Dockerfile that allows ssh login into the container. Help can be found
 here:\url{https://docs.docker.com/engine/examples/running_ssh_service/} Modify the specified Dockerfile statements if
