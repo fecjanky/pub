@@ -36,7 +36,7 @@
 The spread of the cloud-based computing is unquestionable in recent years, its penetration has caused the growth of the
 number and size of datacenters. Facebook, Google, Microsoft, Apple, Oracle, Amazon, etc. run data centers made out of
 tens of thousands of computers, and offer a wide variety of services from back-end support of mobile applications
-through virtual computers to content-distributing systems. Needless to say, those smaller data centers are spreading
+through Virtual Machines (VMs) to content-distributing systems. Needless to say, those smaller data centers are spreading
 too, which make the IT infrastructure of even a smaller firm much more simple and manageable by creating a private
 cloud. Beside the great cloud-providers (Amazon, Google, Microsoft, etc.) there are many open-source projects, which
 are capable of creating, managing and installing cloud-based systems. One of these is the widespread and constantly
@@ -47,9 +47,9 @@ firm, while the less critical items get transported into a public cloud.
 Considering the type of the cloud service, the following categories were defined: a cloud-provider can provide Software
 as a Service (SaaS), Platform as a Service (PaaS) and Infrastructure as a Service (IaaS), beside the many other
 solutions that are less wide spread. The easiest to imagine is the infrastructure service, because in this situation
-the customer rents virtual computers, which they can utilize. The price of the rent is determined by the engaged
+the customer rents VMs, which they can utilize. The price of the rent is determined by the engaged
 resources. OpenStack uses the IaaS solution too, that is it assures a virtual infrastructure for its users: the users
-are able to exploit the computing capacity of the virtual computers (on which they are able to install any optional
+are able to exploit the computing capacity of the VMs (on which they are able to install any optional
 software), to manage the storage and virtual networks.
 
 The Platform as a Service is a bit more complicated, this is usually chosen by the renters to handle an own
@@ -69,7 +69,7 @@ benefits in other ways, such as high availability, load-distribution, redundancy
 Scalability means that in case of growth in the traffic of the customer, the capacity of the service installed into the
 cloud is increasable too. This means that just because of a period with expectedly high traffic, getting expensive
 hardware with high capacity - which would be unnecessary after this period - isn't required. These capacities can be
-adjusted, there is always an option to start or stop a virtual computer, to modulate the available capacity. This is
+adjusted, there is always an option to start or stop a VM, to modulate the available capacity. This is
 mostly relevant in those services, which do not have a consistent load.
 
 Virtualization is an important element of the cloud systems. With virtualization, we are able to run isolated
@@ -86,9 +86,9 @@ handles a large amount of computing and storage capacity and network devices, wh
 physical infrastructure. The infrastructure-granting components in OpenStack consist of three main types: compute,
 networking and storage (Figure~\ref{fig:oscomponents}). Dashboard grants the on-line administrative interface for
 users, this can be used to configure resources and create services. The tasks of the servers granting computing
-capacity are running virtual computers and services, as well as receiving commands coming from the administrative
-interface. The component handling the network is responsible for setting up the network between virtual computers, as
-the storage component helps us to assign separate storages to our virtual computers (in a minimal configuration this is
+capacity are running VMs and services, as well as receiving commands coming from the administrative
+interface. The component handling the network is responsible for setting up the network between VMs, as
+the storage component helps us to assign separate storages to our VMs (in a minimal configuration this is
 optional).
 
 \begin{figure}[H]
@@ -102,9 +102,9 @@ The Dashboard is the on-line user interface, which provides the opportunity for 
 computers, thus accessing the resources of the system. A different method for accessing the system is using the
 command-line or programming interface of OpenStack. The network configuration and connections (how the virtual
 computers should connect to each other or to internal/external networks) can also be adjusted through the on-line
-interface. While creating virtual computers, we can choose the number of CPU cores, the amount of physical memory
+interface. While creating VMs, we can choose the number of CPU cores, the amount of physical memory
 (there are predefined patterns – "flavors") and the file containing the operating system (image) - beside many others -
-for our virtual computer.
+for our VM.
 As a preparation for using OpenStack Dashboard (and this lab), going through the following official documentation is
 strongly recommended.
 (During the measurement in the lab, the interface will not exactly match the one detailed in the text, because in the
@@ -162,10 +162,10 @@ functions are the same.)
 \section{High availability}
 
 If it is important for a service to be available any-time, using some technology that provides high availability is
-required. A possible solution for reaching High Availability is to run multiple copies of the virtual computer granting
+required. A possible solution for reaching High Availability is to run multiple copies of the VM granting
 the service, and install a load-balancer functioning as a proxy before them. That is, beside the reliability, we can
 distribute the incoming load. If we take automatic dynamic scaling into consideration - so that we start and stop
-provider virtual computers according to the load -, we are able to adjust to the changing demands and we only use the
+provider VMs according to the load -, we are able to adjust to the changing demands and we only use the
 necessary resources.
 
 One such High Availability-offering TCP/HTTP proxy implementation is HAProxy (\url{http://www.haproxy.org/}), which
@@ -204,7 +204,7 @@ The following link reviews this solution in more detail:
     \item What is IaaS, what are its attributes?
     \item What is OpenStack?
     \item What is the role of virtualization in cloud architecture?
-    \item What are the main available settings at starting a virtual computer using OpenStack?
+    \item What are the main available settings at starting a VM using OpenStack?
     \item What do we call a Project in OpenStack, what functions are available on the online interface concerning a
           Project?
     \item How can we provide high availability for our service running in the cloud?
@@ -217,11 +217,11 @@ The following link reviews this solution in more detail:
 
 The task is configuring a Video service in OpenStack, with high availability. We perform the measurements in groups of
 two. Start: Debian Jessie Live NFS 2015
-The task is running a video server on a virtual computer in the OpenStack cloud, in two settings: HTTP live streaming
+The task is running a video server on a VM in the OpenStack cloud, in two settings: HTTP live streaming
 and Video on Demand (RTSP). HTTP live streaming grants a continuous mediation, all clients connected to the server get
 the same signal, while when using RTSP VoD every client sends a unique request to the server and can control the
 replay.
-Checking the performance with the VLC client. Then configuring the virtual computers started in multiple copies with
+Checking the performance with the VLC client. Then configuring the VMs started in multiple copies with
 high availability and checking their performances.
 OpenStack Dashboard interface: http://192.168.213.108/horizon
 Login: labN/labN, where N=1..8
@@ -232,11 +232,11 @@ proper configuration files and the starting-stopping scripts already installed.
 
 Based to the OpenStack Dashboard syllabus
 \begin{itemize}
-\item create a virtual inner network (later connect the virtual machine to this)
+\item create a virtual inner network (later connect the VM to this)
 \item set up a security group, it's practical to open all TCP and UDP ports
 \item create and assign an SSH key
 \item create a virtual router, through which we connect the inner network to the global internet (ext-net)
-\item set up a virtual computer using the pre-built mereslab-vlc-v2 image
+\item set up a VM using the pre-built mereslab-vlc-v2 image
 \begin{itemize}
 \item m1.small flavor
 \item It starts up slowly (about 2 minutes), the current status can be seen on the console, but first you need to type the following line into the /etc/hosts file:
@@ -245,7 +245,7 @@ Based to the OpenStack Dashboard syllabus
                you will also have to wait for logging in with SSH (about 1 minute)  
        username: ubuntu
 \end{itemize}
-\item Assign a Floating IP to the virtual computer
+\item Assign a Floating IP to the VM
 \end{itemize}
 
 \subsection{Task 2.:Starting and accessing the Video server}
