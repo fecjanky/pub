@@ -163,13 +163,13 @@ functions are the same.)
 
 If it is important for a service to be available any-time, using some technology that provides high availability is
 required. A possible solution for reaching High Availability is to run multiple copies of the VM granting
-the service, and install a load-balancer functioning as a proxy before them. That is, beside the reliability, we can
-distribute the incoming load. If we take automatic dynamic scaling into consideration - so that we start and stop
+the service, and install a load-balancer functioning as a proxy in front of them. That is, beside the reliability, we can
+also distribute the incoming load. If we take automatic dynamic scaling into consideration - so that we start and stop
 provider VMs according to the load -, we are able to adjust to the changing demands and we only use the
 necessary resources.
 
 One such High Availability-offering TCP/HTTP proxy implementation is HAProxy (\url{http://www.haproxy.org/}), which
-receives the requests coming from the client, then passes them on to the provider server, later does the same thing to
+receives the requests incoming from the clients, then passes them on to the provider server, later does the same thing to
 responses in the opposite direction. OpenStack grants load-distribution as a service (also done using HAProxy), that
 means, this feature is also available through the on-line interface of Dashboard, it doesn't need extra installation or
 configuration. The only requirement is setting its parameters.
@@ -215,17 +215,24 @@ The following link reviews this solution in more detail:
 
 \subsection{Lab Introduction}
 
-The task is configuring a Video service in OpenStack, with high availability. We perform the measurements in groups of
-two. Start: Debian Jessie Live NFS 2015
-The task is running a video server on a VM in the OpenStack cloud, in two settings: HTTP live streaming
-and Video on Demand (RTSP). HTTP live streaming grants a continuous mediation, all clients connected to the server get
-the same signal, while when using RTSP VoD every client sends a unique request to the server and can control the
-replay.
-Checking the performance with the VLC client. Then configuring the VMs started in multiple copies with
-high availability and checking their performances.
-OpenStack Dashboard interface: http://192.168.213.108/horizon
-Login: labN/labN, where N=1..8
-For the tasks there is a put-up image file available, with the VLC functioning as a client and video server with the
+The task is to configure a Video service in OpenStack, with high availability. We perform the measurements in groups of
+two. 
+
+\noindent{}\textbf{Start:} Debian Jessie Live NFS 2015
+
+\noindent{}The task is to run a video server on a VM in the OpenStack cloud, in two settings: HTTP live streaming
+and Video on Demand (RTSP). HTTP live streaming provides a continuous broadcast, all clients connected to the server get
+the same video content simultaneously, while when using RTSP VoD every client sends a unique request to the server and can control the
+replay as well.
+
+\noindent{}Check the performance with the VLC client. Then configure the VMs started in multiple instances with
+high availability and check their performances.
+
+\noindent{}\textbf{OpenStack Dashboard interface:} http://192.168.213.108/horizon
+
+\noindent{}\textbf{Login:} labN/labN, where N=1..8
+
+\noindent{}For the tasks there is a pre-built image file available, with VLC installation functioning as a client and video server with the
 proper configuration files and the starting-stopping scripts already installed.
 
 \subsection{Task 1.:Set-up}
@@ -268,7 +275,7 @@ Ask two other measuring groups to connect to our servers, and protocol the CPU l
 \noindent{}The RTSP stream is accessible through the following URL: rtsp://{}\textless{}IP-address{}\textgreater{}:5554/MyVideo
 
 \noindent{}\textbf{Task:} Open the video using our own computers. (You don't need to deal with the error messages concerning audio.)
-Ask two other measuring groups to connect to our servers, and protocol the CPU load caused.
+Ask two other measurement groups to connect to our servers, and protocol the CPU load caused.
 
 \noindent{}\textbf{Stopping RTSP streaming:} sudo killall vlc
 
@@ -290,7 +297,7 @@ Organize the VM instances created into the formerly created Load Balance Pool.
 
 \noindent{}What do we experience when we are playing back on the local host? Through which IP-address is the Load Balance Pool accessible? Do the servers need a floating IP now? Why?
 
-\noindent{}Ask two other measuring groups to connect to our HAProxy, and document the amount of CPU load on the servers caused by this.
+\noindent{}Ask two other measurement groups to connect to our HAProxy, and document the amount of CPU load on the servers caused by this.
 Change the LB algorithm, test and compare the behaviors of these 3 variants!
 
 \subsubsection{RTSP VoD}
