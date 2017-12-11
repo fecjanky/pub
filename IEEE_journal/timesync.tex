@@ -167,7 +167,6 @@ TODO(Pali): 1.oldal
 \section{Architecture of the distributed time synchronized monitoring system}
 
 \subsection{Generic concept}
-TODO(Fec) : 0.5 oldal
 For providing easy adaptation into the existing system and also taking into account FPGA resource usage a hybrid solution
 has been designed that implements network time synchronization on a standalone card that distributes the digital timing 
 information over a dedicated control bus as illustrated by Figure~\ref{fig:concept}. 
@@ -175,7 +174,7 @@ The synchronization framework provides a platform independent agent that
 can be integrated into the existing cards' top level modules and used through a well defined and portable interface. 
 The agent itself has less complexity as a result the solution does not waste CLB resources as if the whole network 
 synchronization stack were instantiated N times on all monitoring node cards also resulting in better internal synchronization
-compared to the replicated stacks as those can have skew to each other as within the boundaries as specified by their protocol.
+compared to the replicated stacks as those can have skew to each other within the boundaries as specified by their protocol.
 
 \begin{figure}[!htb]
     \centering
@@ -190,28 +189,44 @@ protocol provides. This is in the magnitude of milliseconds of a software implem
 this precision can be increased --  and in the magnitude of
 microseconds or nanoseconds depending on the PTP version used and also on the underlying network.
 The key concept is that over the local time distribution bus even greater synchronicity can be achieved as there is less
-perturbation between the HW implementation -- no OS scheduler, no network \emph{etc.}
+perturbation between the HW implementations of the transmitting and receiving ends -- no OS scheduler, no network \emph{etc.} --
+and also frequency synchronization can be easily achieved by implementing a synchronous bus -- \emph{i.e.} transmitting the
+clock signal along with the data.
 
 \subsection{External time synch. subsystem}
 TODO(Fec) : 0.5 oldal PTP vs. NTP ( PTP requires network capabilities)
+keywords: NTP vs. PTPv1, PTPv2 network reliance, selection of NTP consideration
 
 \subsection{Internal time synch. subsystem}
 TODO(Fec) : 0.5 oldal
- - HiSTI
+ \begin{itemize}
+ 	\item draw figure on closed loop control 
+ 	\item describe the figure
+ 	\item deduce the theoretical precision of that
+ \end{itemize}
 
 \section{Implementation details}
 
+- Clock card intro 
+- parameters briefly
+
 \subsection{External time synch. subsystem}
 TODO(Fec) : 0.5 oldal
+ \begin{itemize}
+ 	\item refer to ProtoImpl
+ 	\item add NTP module figure
+ 	\item describe parts
+ \end{itemize}
 
 \subsection{Internal time synch. subsystem}
 TODO(Fec) : 0.5 oldal
+- describe HiSTI
 
 \section{Verification \& Results}
 
 TODO(Fec) : 1.5 oldal
 
-- Describe the verification method
+- Describe the verification method in detail
 - Matlab graph, long-term vs. short-term 
 
 
@@ -220,8 +235,7 @@ TODO(Fec) : 1.5 oldal
 TODO(Fec \& Pali): 0.5 oldal
 
 
-
-Refernces: 0.5 oldal
+References: 0.5 oldal
 
 % http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
 % The IEEEtran BibTeX style support page is at:
