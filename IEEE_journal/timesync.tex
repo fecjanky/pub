@@ -1,6 +1,6 @@
 % !TeX encoding = UTF-8
 %% (requires IEEEtran.cls version 1.7 or later) with an IEEE conference paper.
-\documentclass[journal]{IEEEtran}
+\documentclass[article]{IEEEtran}
 
 \renewcommand\IEEEkeywordsname{Keywords}
 
@@ -110,17 +110,48 @@
 \end{IEEEkeywords}
 
 % no keywords
-\section{Introduction}\label{sec:Motivation}
+\section{Introduction}\label{sec:Intro}
 
 TODO(Pali): 1.oldal
 
-\section{Challenges and Requirements in detail}
+\section{Challenges and Requirements in detail}\label{sec:Challanges}
 
-TODO(Fec) : 0.5 oldal
-- Monotonic clock
-- Remote locations, skewing clock
-- Adaptation to legacy systems 
-- Precision requirements (Fendler Tomi TDK)
+%TODO(Fec) : 0.5 oldal
+%- Monotonic clock
+%- Remote locations, skewing clock
+%- Adaptation to legacy systems 
+%- Precision requirements (Fendler Tomi TDK)
+
+For a distributed monitoring solution described in Section~\ref{sec:Intro} there is a strong requirement for having
+a monotonic clock -- otherwise even with a single monitoring node packet reordering would happen if those are inspected
+based on their timestamps as a consequence the need for monotonic system time is inherent. 
+
+Another challenge comes from the fact that a distributed monitoring system has its components geographically
+separated from each other therefore the clock frequency and the time information of the clocks of the nodes have to be 
+frequency and phase synchronized to each other with some given threshold. This problem has many solutions e.g. using GPS based synchronization 
+systems~\cite{GPS-CLOCK} that requires additional installation expenditures on an indoor site that has no installed 
+antenna system to carry the GPS signal inside the building and could also result in extensive cabling work. 
+A convenient alternative for this is to use network time synchronization that uses a telecommunication network for
+exchanging packets as per a specified protocol to achieve frequency and phase synchronization. Examples for this
+are Network Time Protocol (NTP)~\cite{NTP} and Precision Time Protocol (PTP)~\cite{PTP}.
+
+When speaking about time synchronization the following properties describe a clock:
+\begin{itemize}
+	\item accuracy -- \emph{i.e.} how good is the time information compared to some reference
+	\item precision -- \emph{i.e.} how precise is a tick of the clock compared to some reference
+	\item stability -- \emph{i.e.} how does the clock frequency change  e.g over time or based on external temperature changes etc.
+\end{itemize} 
+
+The biggest challenge of all -- as usual -- is to adapt to the existing monitoring framework described in \ref{sec:SGA-Monitoring} 
+in with minimal modification to the existing solution while satisfying all the precision and accuracy related requirements. 
+This framework is built from FPGA based monitoring cards that are capable of capturing on high-speed network interfaces --
+with fine-grained time-stamping capabilities -- that has their own existing time-keeping facilities. 
+The approach was to provide a new FPGA based card that implements these functions:
+\begin{itemize}
+	\item network time synchronization
+	\item local time synchronization
+	\item interfacing with the existing nodes -- OAMP functionalities
+\end{itemize}
 
 \section{Related Work}
 
@@ -137,7 +168,29 @@ TODO(Pali): 1.oldal
 
 \subsection{Generic concept}
 TODO(Fec) : 0.5 oldal
-- External network sync, local high precision syn
+For providing easy adaptation into the existing system and also taking into account FPGA resource usage a hybrid solution
+has been designed that implements network time synchronization on a standalone card that distributes the digital timing 
+information over a dedicated control bus as illustrated by Figure~\ref{fig:concept}. 
+The synchronization framework provides a platform independent agent that 
+can be integrated into the existing cards' top level modules and used through a well defined and portable interface. 
+The agent itself has less complexity as a result the solution does not waste CLB resources as if the whole network 
+synchronization stack were instantiated N times on all monitoring node cards also resulting in better internal synchronization
+compared to the replicated stacks as those can have skew to each other as within the boundaries as specified by their protocol.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures_raw/concept.png}
+    \caption{Conceptual model of distributed monitoring framework}
+    \label{fig:concept}
+\end{figure}
+
+As seen on Figure~\ref{fig:concept} each node has it's own network synchronization function therefore the accuracy and
+precision between two monitoring nodes can be guaranteed only to an extent that the utilized time synchronization
+protocol provides. This is in the magnitude of milliseconds of a software implementation of NTP -- however with FPGA based implementation
+this precision can be increased --  and in the magnitude of
+microseconds or nanoseconds depending on the PTP version used and also on the underlying network.
+The key concept is that over the local time distribution bus even greater synchronicity can be achieved as there is less
+perturbation between the HW implementation -- no OS scheduler, no network \emph{etc.}
 
 \subsection{External time synch. subsystem}
 TODO(Fec) : 0.5 oldal PTP vs. NTP ( PTP requires network capabilities)
