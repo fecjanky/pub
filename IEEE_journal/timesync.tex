@@ -23,6 +23,8 @@
 
 \usepackage{xcolor}
 
+\usepackage{siunitx}
+
 
 
 % \renewcommand\note[1]{} % uncomment this line to hide notes
@@ -205,7 +207,7 @@ TODO(Fec) : 0.5 oldal
  	\item deduce the theoretical precision of that
  \end{itemize}
 
-\section{Implementation details}
+\section{Implementation details}\label{sec:Impl}
 
 - Clock card intro 
 - parameters briefly
@@ -224,10 +226,46 @@ TODO(Fec) : 0.5 oldal
 
 \section{Verification \& Results}
 
-TODO(Fec) : 1.5 oldal
+%TODO(Fec) : 1.5 oldal
+%- Describe the verification method in detail
+%- Matlab graph, long-term vs. short-term 
 
-- Describe the verification method in detail
-- Matlab graph, long-term vs. short-term 
+For verifying the solution extensive testing and measurements have been done. For inspecting the synchronization 
+to the master NTP clock a packet capturer operating in promiscuous mode was installed on the Ethernet segment on which the FPGA implementation
+of the NTP slave was connected. The NTP packets used for synchronization were captured bidirectionally. This packet
+capture then was filtered for those NTP packets that had all 4 timestamps used in the On-Wire protocol to calculate the 
+offset from the reference clock value. With software based post-processing the offset information was extracted along with the time elapsed from 
+the start of measurement -- which is determined by the first NTP packet present in the packet capture.
+
+\begin{figure*}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures_raw/pcap-NTP.png}
+    \caption{Measurement results - packet capture}
+    \label{fig:pcap-NTP}
+\end{figure*}
+
+
+
+A sample packet capture is visible on Figure~\ref{fig:pcap-NTP}. The statistical parameters -- like the drift and real offset -- of the device was determined by
+fitting a linear curve on the offset values. For the actual measurement presented in this paper the capture was taken for approximately 3 hours. 
+The measurement values and the fitted curve plot can be seen on Figure~\ref{fig:results}.
+
+
+\begin{figure*}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures_raw/plot2.png}
+    \caption{Measurement results - plot of derived data}
+    \label{fig:results}
+\end{figure*}
+
+The curve fitted on this measurement that there was a fix \SI{14.52}{\micro\second} offset compared to the reference clock. As presented in Section~\ref{sec:Challanges} 
+having a precise and stable clock -- with known offset -- is as good as having an accurate one. As for the stability the first order stability of the 
+device is \SI{-0.7}{1/\nano\second}. This precision and stability are considered adequate for satisfying the requirements of the external time synchronization part.
+
+
+As for the internal synchronization part it is by design accurate as it is a synchronous bus system with no disturbances -- under normal operating conditions -- as a
+consequence the clock accuracy over that bus is determined by the bit width and the refresh rate of the digital time-stamp transmitted over the bus. As it was described in Section~\ref{sec:Impl} the 
+time-stamp is 64 bits wide also using the NTP binary fractional representation. Given that the time-stamp is accurate to the last but the theoretical accuracy is \SI{232.83}{\pico\second}.
 
 
 \section{Conclusion}
