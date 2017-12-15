@@ -258,14 +258,14 @@ The measurement values and the fitted curve plot can be seen on Figure~\ref{fig:
     \label{fig:results}
 \end{figure*}
 
-The curve fitted on this measurement that there was a fix \SI{14.52}{\micro\second} offset compared to the reference clock. As presented in Section~\ref{sec:Challanges} 
+The curve fitted on this measurement shows that there was a fix \SI{14.52}{\micro\second} offset compared to the reference clock. As presented in Section~\ref{sec:Challanges} 
 having a precise and stable clock -- with known offset -- is as good as having an accurate one. As for the stability the first order stability of the 
 device is \SI{-0.7}{1/\nano\second}. This precision and stability are considered adequate for satisfying the requirements of the external time synchronization part.
 
 
 As for the internal synchronization part it is by design accurate as it is a synchronous bus system with no disturbances -- under normal operating conditions -- as a
 consequence the clock accuracy over that bus is determined by the bit width and the refresh rate of the digital time-stamp transmitted over the bus. As it was described in Section~\ref{sec:Impl} the 
-time-stamp is 64 bits wide also using the NTP binary fractional representation. Given that the time-stamp is accurate to the last but the theoretical accuracy is \SI{232.83}{\pico\second}.
+time-stamp is 64 bits wide also using the NTP binary fractional representation. Given that the time-stamp is accurate to the last bit then the theoretical accuracy is \SI{232.83}{\pico\second}.
 
 
 \section{Conclusion}
