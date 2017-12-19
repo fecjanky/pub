@@ -200,12 +200,50 @@ TODO(Fec) : 0.5 oldal PTP vs. NTP ( PTP requires network capabilities)
 keywords: NTP vs. PTPv1, PTPv2 network reliance, selection of NTP consideration
 
 \subsection{Internal time synch. subsystem}
-TODO(Fec) : 0.5 oldal
- \begin{itemize}
- 	\item draw figure on closed loop control 
- 	\item describe the figure
- 	\item deduce the theoretical precision of that
- \end{itemize}
+%TODO(Fec) : 0.5 oldal
+% \begin{itemize}
+% 	\item draw figure on closed loop control 
+% 	\item describe the figure
+% 	\item deduce the theoretical precision of that
+% \end{itemize}
+
+The internal time information synchronization function is responsible for having all clocks in all monitoring functions
+to be completely synchronized within a monitoring node. Since this is an internal component the amount of perturbation 
+that potentially affects this subsystem is considered minimal compared to the external time synchronization subsystem.
+
+The elements of this subsystem are:
+\begin{itemize}
+    \item digital bus that is able to transmit time and status information
+    \item a driver module of that bus that resides in the Network clock synchronization function
+    \item receiver modules attached to that bus performing local time synchronization
+\end{itemize}
+
+Internally all FPGA boards implementing a monitoring function can operate from different power supply units as a consequence ground level
+isolation is necessary over the bus. For reducing the physical layer complexity
+a point-to-point bus system has been designed. To be able to maximize the number of connected clients connected the
+bus utilizes an asynchronous serial communication using 2 wires. The communication protocol executed by the driver module
+multiplexes arbitrary data units and the time information over the bus into frames -- equipped with error detection code --
+in an alternating pattern.That results in periodic transmission of valid time information.
+
+The receiver module de-multiplexes the data and the time information received from the bus and feeds the time into a module that
+performs time synchronization using a closed loop control.
+This closed loop control has a simple proportional controller as illustrated on Figure~\ref{fig:closed-loop}. The clock module
+is incrementing a clock counter with an increment in each system clock period. Since the oscillator frequency was not configurable in 
+existing system the way to discipline the clock was through adjusting the time increment itself.
+Even though the increment is adjusted proportionally to the error signal it is a integral controller due to nature of 
+the time increment process that adds the current time increment to the time counter on each clock cycle 
+-- \emph{i.e.} integral of a function of the error signal over time.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures_raw/time_control_loop.png}
+    \caption{Internal clock control loop}
+    \label{fig:closed-loop}
+\end{figure}
+
+In theory a I controller in a closed loop system can eliminate error signal -- \emph{i.e.} the time difference -- completely.
+With this design the solution contains a digital time distribution bus and a module that realizes the 
+closed control loop as seen on Figure~\ref{fig:closed-loop}. The implementation details are presented in Section~\ref{sec:Impl-internal}. 
 
 \section{Implementation details}\label{sec:Impl}
 
