@@ -15,6 +15,7 @@
 % to place figures on a fixed position
 \usepackage{float}
 
+
 % *** PDF, URL AND HYPERLINK PACKAGES ***
 \usepackage{url}
 
@@ -25,6 +26,7 @@
 
 \usepackage{siunitx}
 
+\usepackage{bytefield}
 
 
 % \renewcommand\note[1]{} % uncomment this line to hide notes
@@ -195,17 +197,19 @@ perturbation between the HW implementations of the transmitting and receiving en
 and also frequency synchronization can be easily achieved by implementing a synchronous bus -- \emph{i.e.} transmitting the
 clock signal along with the data.
 
-\subsection{External time synch. subsystem}
+
+\subsection{External time synch. subsystem design and implementation}
 TODO(Fec) : 0.5 oldal PTP vs. NTP ( PTP requires network capabilities)
 keywords: NTP vs. PTPv1, PTPv2 network reliance, selection of NTP consideration
 
-\subsection{Internal time synch. subsystem}
-%TODO(Fec) : 0.5 oldal
-% \begin{itemize}
-% 	\item draw figure on closed loop control 
-% 	\item describe the figure
-% 	\item deduce the theoretical precision of that
-% \end{itemize}
+TODO(Fec) : 0.5 oldal
+ \begin{itemize}
+    \item refer to ProtoImpl
+    \item add NTP module figure
+    \item describe parts
+ \end{itemize}
+
+\subsection{Internal time synch. subsystem design and implementation}\label{sec:Internal-Impl}
 
 The internal time information synchronization function is responsible for having all clocks in all monitoring functions
 to be completely synchronized within a monitoring node. Since this is an internal component the amount of perturbation 
@@ -225,8 +229,41 @@ bus utilizes an asynchronous serial communication using 2 wires. The communicati
 multiplexes arbitrary data units and the time information over the bus into frames -- equipped with error detection code --
 in an alternating pattern.That results in periodic transmission of valid time information.
 
-The receiver module de-multiplexes the data and the time information received from the bus and feeds the time into a module that
-performs time synchronization using a closed loop control.
+The parameters of the physical signalling are:
+\begin{itemize}
+    \item LVCMOS33 logical levels
+    \item asymmetric signal transmission
+    \item \SI{15.625}{\mega\hertz} clock frequency with 4x oversampling
+    \item NRZ coding
+\end{itemize}
+
+The frame format used on the bus is shown on Figure~\ref{fig:HiSTI-frame}. The frame starts with an all 1's preamble 
+followed by a start bit with value 0. The type field is used to discriminate between the payload type, when T=1 it indicates that the payload is 
+time information otherwise it's data -- on this data channel an overlay data communication protocol can be used.
+The time format is in line with the external time synchronization \emph{i.e.} it uses the NTP
+time format for representing the time information. For detecting transmission errors on the bus a CRC-8 value is calculated 
+for the \emph{`Type'} and \emph{`Payload'} fields and appended to the frame that is checked on frame reception for detecting
+transmission errors.
+
+Given the parameters above the frame time is 90/\SI{15.625}{\mega\hertz} = \SI{5.76}{\micro\second} and since every
+other frame carries time information the clock on the receiver side can be disciplined/controlled on a \SI{11.52}{\micro\second} 
+basis. Under such short period of time even low quality, non-temperature controlled crystal oscillators have negligible drift 
+as a result this update period is adequate for the network monitoring use case.
+
+\begin{figure}
+\begin{bytefield}{32}
+\bitheader{0-31} \\       
+\bitbox{16}{All ones} & \bitbox{1}{S} & \bitbox{1}{T} & \bitbox{14}{time/data} \\
+& \wordbox{1}{time/data} \\
+& \bitbox{18}{} & \bitbox{8}{CRC-8}
+\end{bytefield}
+\caption{High-Speed Timestamp Interface frame format}
+\label{fig:HiSTI-frame}
+\end{figure}
+
+The receiver module de-multiplexes the data and the time information from the payload of the received frame. It also 
+verifies that the received frame's CRC-8 value matches the calculated one. If no errors were detected then it feeds the 
+time information into a module that performs time synchronization using a closed loop control.
 This closed loop control has a simple proportional controller as illustrated on Figure~\ref{fig:closed-loop}. The clock module
 is incrementing a clock counter with an increment in each system clock period. Since the oscillator frequency was not configurable in 
 existing system the way to discipline the clock was through adjusting the time increment itself.
@@ -243,24 +280,7 @@ the time increment process that adds the current time increment to the time coun
 
 In theory a I controller in a closed loop system can eliminate error signal -- \emph{i.e.} the time difference -- completely.
 With this design the solution contains a digital time distribution bus and a module that realizes the 
-closed control loop as seen on Figure~\ref{fig:closed-loop}. The implementation details are presented in Section~\ref{sec:Impl-internal}. 
-
-\section{Implementation details}\label{sec:Impl}
-
-- Clock card intro 
-- parameters briefly
-
-\subsection{External time synch. subsystem}
-TODO(Fec) : 0.5 oldal
- \begin{itemize}
- 	\item refer to ProtoImpl
- 	\item add NTP module figure
- 	\item describe parts
- \end{itemize}
-
-\subsection{Internal time synch. subsystem}
-TODO(Fec) : 0.5 oldal
-- describe HiSTI
+closed control loop as seen on Figure~\ref{fig:closed-loop}.
 
 \section{Verification \& Results}
 
@@ -302,7 +322,7 @@ device is \SI{-0.7}{1/\nano\second}. This precision and stability are considered
 
 
 As for the internal synchronization part it is by design accurate as it is a synchronous bus system with no disturbances -- under normal operating conditions -- as a
-consequence the clock accuracy over that bus is determined by the bit width and the refresh rate of the digital time-stamp transmitted over the bus. As it was described in Section~\ref{sec:Impl} the 
+consequence the clock accuracy over that bus is determined by the bit width and the refresh rate of the digital time-stamp transmitted over the bus. As it was described in Section~\ref{sec:Internal-Impl} the 
 time-stamp is 64 bits wide also using the NTP binary fractional representation. Given that the time-stamp is accurate to the last bit then the theoretical accuracy is \SI{232.83}{\pico\second}.
 
 
