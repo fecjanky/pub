@@ -199,15 +199,64 @@ clock signal along with the data.
 
 
 \subsection{External time synch. subsystem design and implementation}
-TODO(Fec) : 0.5 oldal PTP vs. NTP ( PTP requires network capabilities)
-keywords: NTP vs. PTPv1, PTPv2 network reliance, selection of NTP consideration
 
-TODO(Fec) : 0.5 oldal
- \begin{itemize}
-    \item refer to ProtoImpl
-    \item add NTP module figure
-    \item describe parts
- \end{itemize}
+When selecting the candidate for implementing the external time synchronization function
+three protocols were considered:
+\begin{itemize}
+    \item Network Time Protocol
+    \item Precision Time Protocol v1
+    \item Precision Time Protocol v2
+\end{itemize}
+
+In order to achieve the best synchronization between PTPv2 clocks the protocol requires PTPv2 enabled switches/routers in the network for bookkeeping the processing delay values in the synchronization packets as they traverse through the network.
+In a multi-hop network without having that feature the achievable synchronicity is around the same that can be reached using
+PTPv1. 
+That concluded in either selecting NTP or PTPv1. Nevertheless PTPv1 has way more mode of operation compared to NTP but 
+when comparing these two protocols they are semantically operating based on the same principle to determine the round trip time and offset
+compared to a reference clock entity. However there are significant differences coming from the packet structure, the timestamp format and the nomenclature that could result in slower implementation had the latter protocol been chosen.
+While in NTP the timestamp format is ... TODO(fecjanky): compare  NTP and PTP timestamps
+The design decision based on the considerations above led to selecting NTP protocol to be used for synchronizing the
+FPGA based monitoring cards through a card that is responsible for implementing the external and internal (see Section!\ref{sec:Internal-Impl}) time synchronized function called SGA-Clock.
+
+
+FPGA based packet processing and networking protocol implementations have their own complexity. There are several readily available implementations that can be used for packet processing in FPGAs with more or less flexibility when it comes to interconnecting it
+with other modules. The one that has been used for the implementation is a flexible solution for  Protocol Implementations within FPGAs detailed in \cite{ProtoImpl} which provides a generic framework in VHSIC Hardware Description Language (VHDL) that enables rapid prototyping of networking protocols. Among many other things it provides the following main features
+\begin{itemize}
+    \renewcommand \labelitemi{--}
+    \item supports protocol module interconnection via layering;
+    \item handles reception and transmission of PDUs with queuing;
+    \item provides a high level interface for separating and combining  Protocol Control Information (PCI) and SDU,
+          forwarding, pausing or dropping SDUs;
+    \item provides a unified way to handle ICI, SDU, and PDU events (e.g error signalling);
+    \item adds support of auxiliary information that travels along with messages
+    \item provides components for common tasks recurring during implementing networking protocols
+          (de/serialization, arbitration etc.).
+\end{itemize}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.4\textwidth]{figures_raw/system_sketch.pdf}
+    \caption{Fundamental building block of the FPGA networking framework used for the protocol stack implementation}
+    \label{fig:system_sketch}
+\end{figure}
+
+The framework's basic building block (shown on Figure~\ref{fig:system_sketch}) was used for implementing pure FPGA hardware based
+UDP/IP protocol stack with ARP on top of 802.3 Ethernet that provides a platform with deterministic timing for the likewise FPGA based
+implementation of NTP. For each of these protocols the corresponding protocol specific parts have been described in VHDL using the generic framework. 
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures_raw/ntp-sketch.pdf}
+    \caption{NTP module block diagram of components}
+    \label{fig:ntp-impl}
+\end{figure}
+
+The internal structure of the NTP module is shown on Figure~\ref{fig:ntp-impl}. The NTP Poller component is responsible for the NTP packet transmission and reception and implementing the On-Wire protocol 
+for determining the offset  -- based on the packet messages. The network packet handling part is also implemented through the Protocol Implementations framework. The NTP ClockFilter component is there to regulate the offset values presented by the poller by ordering the results by delay, updating internal state variables, calculating jitter, and suppressing spikes based on jitter and last successful test time. If the offset data passed the filter stage it is forwarded for further processing by the discipline module.
+
+The NTP Discipline module controls the clock module -- by adjusting the time increment -- based on the filtered offset data. The NTP clock module provides an interface for controlling the time increment that itself is added to the clock register in each system clock cycle thus 
+implementing the clock functionality. The time information is fed back to each module as illustrated on Figure~\ref{fig:ntp-impl}.
+This chain of modules with the feedback is another realization of a closed loop control chain as described in Section~\ref{sec:Internal-Impl}.
 
 \subsection{Internal time synch. subsystem design and implementation}\label{sec:Internal-Impl}
 
@@ -231,7 +280,7 @@ in an alternating pattern.That results in periodic transmission of valid time in
 
 The parameters of the physical signalling are:
 \begin{itemize}
-    \item LVCMOS33 logical levels
+    \item LVCMOS33 levels for representing logical values
     \item asymmetric signal transmission
     \item \SI{15.625}{\mega\hertz} clock frequency with 4x oversampling
     \item NRZ coding
