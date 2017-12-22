@@ -86,14 +86,17 @@
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{Ferenc Nándor Janky} %\thanks{Ferenc Nándor Janky	is with the Department of \mbox{Telecommunications} and
-%        \mbox{MediaInformatics},
-%        Faculty of Electrical Engineering and Informatics, Budapest University of Technology and \mbox{Economics},
-%        Magyar tudósok
-%        körútja 2., 1117 Budapest, Hungary (\mbox{phone: +36704213213}; \mbox{e-mail:
-%            fecjanky@gmail.com})}%
-%}%
+\author{Ferenc Nandor Janky and Pal Varga}
+%\IEEEauthorblockN{Ferenc N\'{a}ndor Janky and P\'{a}l Varga}
+%\IEEEauthorblockA{Dept. of Telecommunications and Media Informatics\\Budapest University of Technology and Economics\\
+%2 Magyar Tud\'{o}sok krt., Budapest, Hungary, H-1117\\
+%Email: \{fjanky, pvarga\}@tmit.bme.hu }
 
+\thanks{The authors are with the Department of \mbox{Telecommunications} and
+\mbox{MediaInformatics}, Faculty of Electrical Engineering and Informatics,
+\\Budapest University of Technology and \mbox{Economics},
+\\Magyar tudósok körútja 2., 1117 Budapest, Hungary (\mbox{phone: +36704213213}; \mbox{e-mail: fecjanky@gmail.com and pvarga@tmit.bme.hu})}%
+%}%
 %\markboth{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22,
 %    2017.}%
 %{}
@@ -116,7 +119,75 @@
 % no keywords
 \section{Introduction}\label{sec:Intro}
 
-TODO(Pali): 1.oldal
+Network monitoring has a well-established practice at telecommunication operators. There are fundamentally different solutions available -- depending on the what kind of data are initially available and how it is gathered. The least flexible solutions are based on the functional networking elements: they can provide pre-digested reports, statistical counters, and occasionally (when not under heavy load), even detailed information on the actual messages. Some operators use standalone protocol analyzers, which do not suffer from the temporal, load-related bottlenecks, rather, they have spatial data capture issues: only a segment of the network is visible at any given time. On the other hand, complete traffic information can be gathered by network-wide traffic monitoring. These latter solutions are based on passive, distributed probes; central processing entities; and client software -- also distributed -- at the operating personnel. This paper discusses a peculiar problem of such systems: effective time synchronization among the entities.
+
+Network traffic analysis requires the understanding of the order of the messages appearing in the network, even if they appear at different interfaces. This makes high resolution and high precision timestamping the basic requirement, beside lossless message capture. 
+Although there are standardized network protocols available for tackling this issue, there are practical obstacles in their network-wide usage. Although the Network Time Protocol (NTP) is widely available \cite{NTP_standard}, it cannot be used as a general purpose synchronization protocol, since the message transfer delay between NTP clients and servers are not compensated, hence the different nodes end up setting their local time to a clock value with a random delay. Precision Time Protocol (PTP), on the other hand covers the delay-compensation issue well \cite{PTP_standard}. Unfortunately, PTP is not at all wide-spread, even after 10 years of commercialization for PTPv2. The concept, however, necessitates that all network nodes in the path have PTPv2 capability. Otherwise -- even if one node cannot compute and share its delay data --, compensation of time information is not possible.
+
+This paper introduces a solution for the time synchronization issues of systems with FPGA-based monitoring probes. What makes FPGA a key player here is that hardware-acceleration removes the jitter of operating system and protocol-stack delay from the equation. The delay of handling time information within an FPGA is constant, we can calculate with it precisely.
+
+All of these management tasks get extreme importance when evaluating network performance against Service Level Agreements (SLAs). 
+
+Another example of high synchronization accuracy is monitoring multiple links of a router. This is the case of the performance evaluation of a routing device. In this arrangement, each link is measured by a dedicated monitoring probe. A packet seen by one probe may be forwarded to an outgoing interface of the router that is monitored by another probe. Typical order of the forwarding delay in today’s core routers is in the 0.5-5 microseconds range.  This low level of delay demands for highly accurate clock synchronization between monitoring probes.
+
+Monitoring systems should be prepared for the worst case scenario, and therefore internal clocks have to be synchronized so that the order of message pairs can be clearly determined. There are several solutions for this purpose (e.g., Network Time Protocol - NTP, Precision Time Protocol - PTP and Global Positioning System - GPS), providing different levels of accuracy. Since NTP is typically implemented as a software solution, it is not capable to provide synchronization accuracy better that 1 ms in LAN environment, and 100-1000 ms in longer distances. Accordingly, the software- and network-related constraints do not enable its application in high performance measurement systems. In contrast to NTP, PTP has significantly higher accuracy, but requires hardware support in each device throughout the network path. Monitoring systems involve both GPS and PTP as an enabling technology to support high accuracy clock synchronization throughout the distributed system. 
+
+Considering network monitoring, the properties and the performance of a timestamping engine is determined by the maximum rate of packet arrivals and the type of measurements. In the presented monitoring system we implemented an NTP-based clock synchronization supported by in-probe clock distribution between all elements (e.g. interface cards) that are responsible for timestamping.
+
+\subsection{Network Monitoring}
+
+The distributed network monitoring architecture depicted by Figure xyz supports local pre-processing (timestamping, requirement-based packet chunking, filtering criteria-based distribution) and deep analysis (correlation of messages and transactions, data record compilation, statistics generation), even on-the-fly \cite{old_5}. The time-based ordering and interleaving of messages are enabled by the hardware-accelerated timestaming, providing nanosecond-range resolution with sub-microsecond precision. The information stored locally at the distributed Monitors can be accessed by client applications of the operator. Besides, the Monitors send periodic reports containing their calculated statistics.
+
+Since user data and control data are often carried over the same channels, their division requires message analysis on network- or transaction-level (e.g., IP- or TCP-level). The changing traffic patterns force the operators to look for new tools to process even the user traffic. The first step towards this is the compilation of XDRs (eXtended Data Records) based on control- and user-plane messages and transactions. These often contain message-level timestamps, as well. Based on these data, the deep traffic analysis tools provide valuable information towards business-intelligence and network optimization. 
+
+Operators use the network-wide, passive monitoring for fault detection, service quality assurance, and resource planning, among others. Besides lossless data capture, network monitoring covers further functions, as well:
+- precise timestamping, ordering;
+- compilation, search and fetch of Call Data Records (CDRs) and Extended Data Records (XDRs);
+- calculation and reporting of Key Performance Indicators, KPIs;
+- Call Tracing at various complexity levels;
+-  bit-wise message decoding for protocol analysis; etc. 
+
+All these functions are present in the network monitoring practice, since beside user-level data analysis, network analysis is important from connection-level to application-level, as well.
+
+%%%%%%%%%%%%%%%%%%% by Pali %%%% start %%%%%%%%%
+%%%%%%%% to be revised %%%%%%%%%
+\subsection{Probe clock synchronization for network monitoring}
+
+%%%%%%%%%% az alábbibol mi illik ide? PTP-képesség...? %%%%%%%%
+The system is able to synchronize its high precision local clock with a PTPv1 (IEEE 1588-2002 compliant [old..15]) master device. The monitor probe operates as slave in the PTPv1 communication and uses one of its Gigabit Ethernet interfaces for this purpose. Clock synchronization mechanism was tested through software as well as hardware solutions.
+%%%%%%%%%%%%%%%%%%% by Pali %%%% finish %%%%%%%%%
+
+\subsection{FPGA based packet processing}
+ TODO(Pali): 1.oldal
+%%%%%%%%%%%%%%%%%%% by Pali %%%% start %%%%%%%%%
+%%%%%%%% to be revised %%%%%%%%%
+%%%% more %%%%
+The reconfigurable property of the FPGA chip enables to turn its hardware platform into a high performance networking device, e.g., network monitor, switch, router, firewall or intrusion detection system. The general packet processing capabilities of the system is described in this paper, together with showing its host \emph{network monitoring} and \emph{switching} functionalities.
+
+Beside providing sufficient resources for switching and routing at 1 or 10 Gbit/s, the design of SGA-GPLANAR \cite{GPLANAR} and SGA-10GED \cite{10GED} includes some special, network monitoring-related requirements, namely 
+\begin{itemize}
+\renewcommand\labelitemi{--}
+\item lossless packet capture,
+\item 64-bit timestamping with sub-microsecond resolution,
+\item header-only capture: configurable depth of decoding,
+\item on-the-fly packet parsing by hardware,
+\item parameterized packet/flow generator for mass testing.
+\end{itemize}
+
+Various applications then require other supported functionalities. As an example,
+the high-speed monitoring application consists of the following sub-modules:
+\begin{itemize}
+\renewcommand\labelitemi{--}
+\item timestamping every frame upon reception;
+\item packet decoding from layer 2  up to the application layer;
+\item packet filtering with a reconfigurable rule-set to decide what we do with a given packet;
+\item packet chunking: packets can be truncated depending on the matching rule;
+\item packet distribution: to distribute packets by different criteria: IP flows, fragment steering, steering based on mobile core network parameters, etc.;
+\item packet headering: monitoring information is stored in a specified header format.
+\end{itemize}
+
+In this paper, we introduce time synchronization solution for a high performance, lossless network monitoring system called SGA-7N that is based on a reconfigurable architecture. The probes of the system are called ``Monitors'', which consists of three main building blocks: a high performance Field Programmable Gate Array (FPGA)-based custom hardware platform, a firmware dedicated for network monitoring, and the probe software. The reconfigurable property of the FPGA chip enables to turn the Monitor hardware platform into a high performance networking device, e.g., network monitor, switch, router, firewall or intrusion detection system. Nevertheless, as a network monitoring system, it supports distributed and lossless packet level monitoring of Ethernet links for 1 or 10 Gbit/s.
+%%%%%%%%%%%%%%%%%%% by Pali %%%% finish %%%%%%%%%
 
 \section{Challenges and Requirements in detail}\label{sec:Challanges}
 
