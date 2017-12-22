@@ -144,7 +144,7 @@ When speaking about time synchronization the following properties describe a clo
 \begin{itemize}
     \item accuracy -- \emph{i.e.} how good is the time information compared to some reference
     \item precision -- \emph{i.e.} how precise is a tick of the clock compared to some reference
-    \item stability -- \emph{i.e.} how does the clock frequency change  e.g over time or based on external
+    \item stability -- \emph{i.e.} how does the clock frequency change	e.g over time or based on external
           temperature changes etc.
 \end{itemize}
 
@@ -209,7 +209,7 @@ and also frequency synchronization can be easily achieved by implementing a sync
 the
 clock signal along with the data.
 
-\subsection{External time synch. subsystem design and implementation}
+\subsection{External time synch. subsystem design and implementation}\label{sec:External-Impl}
 
 When selecting the candidate for implementing the external time synchronization function
 three protocols were considered:
@@ -279,7 +279,8 @@ The internal structure of the NTP module is shown on Figure~\ref{fig:ntp-impl}. 
 for the NTP packet transmission and reception and implementing the On-Wire protocol
 for determining the offset  -- based on the packet messages. The network packet handling part is also implemented
 through the Protocol Implementations framework. The NTP ClockFilter component is there to regulate the offset values
-presented by the poller by ordering the results by delay, updating internal state variables, calculating jitter, and
+presented by the poller by ordering the results based on delay, updating internal state variables, calculating jitter,
+and
 suppressing spikes based on jitter and last successful test time. If the offset data passed the filter stage it is
 forwarded for further processing by the discipline module.
 
@@ -376,21 +377,36 @@ completely.
 With this design the solution contains a digital time distribution bus and a module that realizes the
 closed control loop as seen on Figure~\ref{fig:closed-loop}.
 
+\subsection{Realized system}
+
+The realized system with all internal components is shown on Figure~\ref{fig:realized-system} where the external time
+synchronization -- as presented in Section~\ref{sec:External-Impl} -- is done by the SGA Clock card -- visible in the
+bottom right part -- and the internal time synchronization -- described in Section~\ref{sec:Internal-Impl} --
+is performed over the local bus with agent modules synthesized in all monitoring cards acting as slaves on the
+high-speed timestamp interfaces also driven by the SGA Clock card acting as a master.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures_raw/clock_architecture.png}
+    \caption{The realized system with all internal components}
+    \label{fig:realized-system}
+\end{figure}
+
 \section{Verification \& Results}
 
 %TODO(Fec) : 1.5 oldal
 %- Describe the verification method in detail
 %- Matlab graph, long-term vs. short-term 
 
-For verifying the solution extensive testing and measurements have been done. For inspecting the synchronization
-to the master NTP clock a packet capturer operating in promiscuous mode was installed on the Ethernet segment on which
-the FPGA implementation
-of the NTP slave was connected. The NTP packets used for synchronization were captured bidirectionally. This packet
-capture then was filtered for those NTP packets that had all 4 timestamps used in the On-Wire protocol to calculate the
+For verifying the solution extensive testing and measurements have been carried out. For inspecting the degree of
+synchronization to the master NTP clock a packet capturer operating in promiscuous mode was installed on the Ethernet
+segment on which the FPGA implementation of the NTP slave was connected. The NTP packets used for synchronization were
+captured bidirectionally. This packet capture then was filtered for those NTP packets that had all 4 timestamps used in
 
-offset from the reference clock value. With software based post-processing the offset information was extracted along
-with the time elapsed from
-the start of measurement -- which is determined by the first NTP packet present in the packet capture.
+the On-Wire protocol to calculate the offset from the reference clock value. With software based post-processing the
+offset information was extracted along with the time elapsed from the start of measurement -- which is determined by
+the
+first NTP packet present in the packet capture.
 
 \begin{figure*}[!htb]
     \centering
