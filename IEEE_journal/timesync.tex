@@ -1,6 +1,6 @@
 % !TeX encoding = UTF-8
 %% (requires IEEEtran.cls version 1.7 or later) with an IEEE conference paper.
-\documentclass[article]{IEEEtran}
+\documentclass[journal]{IEEEtran}
 
 \renewcommand\IEEEkeywordsname{Keywords}
 
@@ -15,7 +15,6 @@
 % to place figures on a fixed position
 \usepackage{float}
 
-
 % *** PDF, URL AND HYPERLINK PACKAGES ***
 \usepackage{url}
 
@@ -28,15 +27,14 @@
 
 \usepackage{bytefield}
 
-
 % \renewcommand\note[1]{} % uncomment this line to hide notes
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-
-
+%
+%
 % LaTeX quick ref
 %
 % \cite{refname} to place citation
@@ -71,51 +69,51 @@
 % `is single quoted' , ``is double qouted"
 %
 % to autoformat with latexindent: latexindent -w  -m -l defaultSettings.yaml ProtoImplFPGA.tex
-
-
-\begin{document}
+%
+%
+\begin{document}%
 % conference papers do not typically use \thanks and this command
 % is locked out in conference mode. If really needed, such as for
 % the acknowledgment of grants, issue a \IEEEoverridecommandlockouts
 % after \documentclass
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{Time synchronization solution for FPGA based distributed Network Monitoring}
+\title{Time synchronization solution for FPGA based distributed Network Monitoring}%
 %\titleheader{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22, 2017.}
-
+%
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{Ferenc Nandor Janky and Pal Varga}
+\author{Ferenc Nandor Janky and Pal Varga}%
 %\IEEEauthorblockN{Ferenc N\'{a}ndor Janky and P\'{a}l Varga}
 %\IEEEauthorblockA{Dept. of Telecommunications and Media Informatics\\Budapest University of Technology and Economics\\
 %2 Magyar Tud\'{o}sok krt., Budapest, Hungary, H-1117\\
 %Email: \{fjanky, pvarga\}@tmit.bme.hu }
-
-\thanks{The authors are with the Department of \mbox{Telecommunications} and
-\mbox{MediaInformatics}, Faculty of Electrical Engineering and Informatics,
-\\Budapest University of Technology and \mbox{Economics},
-\\Magyar tudósok körútja 2., 1117 Budapest, Hungary (\mbox{phone: +36704213213}; \mbox{e-mail: fecjanky@gmail.com and pvarga@tmit.bme.hu})}%
+%
+\thanks{The authors are with the Department of Telecommunications and %
+MediaInformatics, Faculty of Electrical Engineering and Informatics, %
+Budapest University of Technology and Economics, %
+Magyar tudósok körútja 2., 1117 Budapest, Hungary (phone: +36704213213; e-mail: fecjanky@gmail.com and pvarga@tmit.bme.hu)}%
 %}%
 %\markboth{25th Telecommunications forum TELFOR 2017 \hfill Serbia, Belgrade, November 21-22,
 %    2017.}%
 %{}
-
+%
 %\IEEEpubid{\makebox[\columnwidth]{978-1-5386-3073-0/17/\$31.00~\copyright~2017 IEEE\hfill}
 %    \hspace{\columnsep}\makebox[\columnwidth]{ }}
-
+%
 % make the title area
-\maketitle
-
-\begin{abstract}
-    \boldmath
-    TODO(Pali)
-\end{abstract}
-
-\begin{IEEEkeywords}
-    FPGA, Networking, Protocol stack, VHDL
-\end{IEEEkeywords}
-
+\maketitle%
+%
+\begin{abstract}%
+    \boldmath%
+    TODO(Pali)%
+\end{abstract}%
+%
+\begin{IEEEkeywords}%
+    FPGA, Networking, Protocol stack, VHDL%
+\end{IEEEkeywords}%
+%
 % no keywords
 \section{Introduction}\label{sec:Intro}
 
@@ -299,9 +297,11 @@ PTPv1.
 That concluded in either selecting NTP or PTPv1. Nevertheless PTPv1 has way more mode of operation compared to NTP but
 when comparing these two protocols they are semantically operating based on the same principle to determine the round
 trip time and offset
-compared to a reference clock entity. However there are significant differences coming from the packet structure, the
-timestamp format and the nomenclature that could result in slower implementation had the latter protocol been chosen.
-While in NTP the timestamp format is ... TODO(fecjanky): compare  NTP and PTP timestamps
+compared to a reference clock entity. However there are significant differences originated from the packet structure, the
+timestamp format and also the epoch that could result in more complex implementation if the latter protocol would be chosen.
+NTP timestamp format includes a 32-bit unsigned seconds field spanning 136 years and a 32-bit fraction field resolving 232 
+picoseconds the prime epoch, or base date of era 0, is 0 h 1 January 1900 UTC -- \emph{i.e.}when all bits are zero.
+
 The design decision based on the considerations above led to selecting NTP protocol to be used for synchronizing the
 FPGA based monitoring cards through a card that is responsible for implementing the external and internal (see
 Section!\ref{sec:Internal-Impl}) time synchronized function called SGA-Clock.
