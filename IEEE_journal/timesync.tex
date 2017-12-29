@@ -519,9 +519,9 @@ CLK_{skew} = \lfloor  \lvert \frac{T_{frame}}{T_{sys}} - T_{frame} \times f_{sys
 f_{sys} = 1/T_{sys}
 \end{equation}
 
-Where T\textsubscript{frame} is \SI{11.52}{\micro\second} and typical values for the system clock are
-f\textsubscript{sys} is \SI{125}{\mega\hertz} and E\textsubscript{oscillator} is $\pm$ 50 ppm. Substituting these values
-into \eqref{eq:clkerr} gives that it is $\lfloor 0.072 \rfloor = 0$ clock periods.
+Where T\textsubscript{frame} (frame time of the internal time synchronization) is \SI{11.52}{\micro\second} and typical values for the system clock are
+f\textsubscript{sys} (system clock frequency) is \SI{125}{\mega\hertz} and E\textsubscript{oscillator} (relative frequency error) is $\pm$ 50 ppm.
+Substituting these values into \eqref{eq:clkerr} gives that it is $\lfloor 0.072 \rfloor = 0$ clock periods.
 
 Based on the considerations above the accuracy simply equals to the resolution of the digital timestamp given by \eqref{eq:resolution}.
 \begin{equation}\label{eq:resolution}
