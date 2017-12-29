@@ -504,12 +504,33 @@ the first order stability of the
 device is \SI{-0.7}{1/\nano\second}. This precision and stability are considered adequate for satisfying the
 requirements of the external time synchronization part.
 
-As for the internal synchronization part, it is by design accurate as it is a synchronous bus system with no
+As for the internal synchronization part, it is by design accurate as it is a message synchronous bus system with no
 disturbances -- even under real-life (but normal) operating conditions. As a
 consequence, the clock accuracy over that bus is determined by the bit width (in time duration) and the refresh rate of the digital
-time-stamp transmitted over the bus. As it was described in Section~\ref{sec:Internal-Impl}, the
-time-stamp is 64 bits wide also using the NTP binary fractional representation. Given that the time-stamp is accurate
-to the last bit, then the theoretical accuracy is \SI{232.83}{\pico\second}.
+time-stamp transmitted over the bus. 
+The proof for that error of the oscillators can be neglected under the refresh time period can be deduced from 
+calculating the skew of the clock periods under a frame time 
+
+\begin{equation}\label{eq:clkerr}
+CLK_{skew} = \lfloor  \lvert \frac{T_{frame}}{T_{sys}} - T_{frame} \times f_{sys} \times E_{oscillator} \rvert \rfloor
+\end{equation}
+
+\begin{equation}
+f_{sys} = 1/T_{sys}
+\end{equation}
+
+Where T\textsubscript{frame} is \SI{11.52}{\micro\second} and typical values for the system clock are
+f\textsubscript{sys} is \SI{125}{\mega\hertz} and E\textsubscript{oscillator} is $\pm$ 50 ppm. Substituting these values
+into \eqref{eq:clkerr} gives that it is $\lfloor 0.072 \rfloor = 0$ clock periods.
+
+Based on the considerations above the accuracy simply equals to the resolution of the digital timestamp given by \eqref{eq:resolution}.
+\begin{equation}\label{eq:resolution}
+Resolution = 2^{-N/2} \SI{}{\second}
+\end{equation}
+
+As it was described in Section~\ref{sec:Internal-Impl}, the
+time-stamp is 64 bits wide -- also using the NTP binary fractional representation -- 
+with N=64 then the theoretical accuracy is \SI{232.83}{\pico\second}.
 
 %%%%%%%%%%%% mit jelent az a stabilitás az extrernal esetben? Hogyan számítódik?
 %%%%%%%%%%%% hogyan számítódik ez a "theoretical accuracy"?
