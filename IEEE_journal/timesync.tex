@@ -28,6 +28,7 @@
 
 \usepackage{bytefield}
 
+\usepackage{amsmath}
 
 % \renewcommand\note[1]{} % uncomment this line to hide notes
 
@@ -395,7 +396,15 @@ for the \emph{`Type'} and \emph{`Payload'} fields and appended to the frame that
 detecting
 transmission errors.
 
-Given the parameters above, the frame time is 90/\SI{15.625}{\mega\hertz} = \SI{5.76}{\micro\second}. Since every
+\begin{equation}\label{eq:tframe}
+T_{frame} = N_{bits} \times T_{bit}
+\end{equation}
+where
+\begin{equation}\label{eq:tbit}
+T_{bit} = 1/f_{signalling}
+\end{equation}
+
+Given the parameters above and \eqref{eq:tframe} and \eqref{eq:tbit}, the frame time is 90/\SI{15.625}{\mega\hertz} = \SI{5.76}{\micro\second}. Since every
 other frame carries time information, the clock on the receiver side can be disciplined/controlled on a
 \SI{11.52}{\micro\second}
 basis. Under such short period of time even low quality, non-temperature controlled crystal oscillators have negligible
@@ -496,7 +505,7 @@ device is \SI{-0.7}{1/\nano\second}. This precision and stability are considered
 requirements of the external time synchronization part.
 
 As for the internal synchronization part, it is by design accurate as it is a synchronous bus system with no
-disturbances -- even under under real-life (but normal) operating conditions. As a
+disturbances -- even under real-life (but normal) operating conditions. As a
 consequence, the clock accuracy over that bus is determined by the bit width (in time duration) and the refresh rate of the digital
 time-stamp transmitted over the bus. As it was described in Section~\ref{sec:Internal-Impl}, the
 time-stamp is 64 bits wide also using the NTP binary fractional representation. Given that the time-stamp is accurate
@@ -514,7 +523,8 @@ In this paper, we introduced a general time synchronization solution for a high 
 ...
 
 References: 0.5 oldal
-
+\bibliographystyle{IEEEtran}
+\bibliography{references}
 
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figures_raw/fj_profile.png}}]{Ferenc Nandor Janky} 
 received the MSc degree in Electrical Engineering from BME, Budapest, Hungary, in 2013.
