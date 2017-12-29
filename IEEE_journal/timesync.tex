@@ -28,6 +28,7 @@
 
 \usepackage{bytefield}
 
+
 % \renewcommand\note[1]{} % uncomment this line to hide notes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,7 +144,7 @@ In this paper we focus of the time synchronization challenges of a monitoring si
 \section{Network Monitoring supported by FPGA-based Probes}\label{sec:NetMon}
 \subsection{The Generic Concept of Distributed Network Monitoring}
 
-The distributed network monitoring architecture depicted by Figure~\ref{fig:network_monitoring} supports local, probe-based pre-processing (timestamping, requirement-based packet chunking, filtering criteria-based distribution) and central, deep analysis (correlation of messages and transactions, data record compilation, statistics generation), even on-the-fly \cite{old_5}. The time-based ordering and interleaving of messages are enabled by the hardware-accelerated timestaming, providing nanosecond-range resolution with sub-microsecond precision. The information stored locally at the distributed Monitoring Probes can be accessed by client applications of the operator. Besides, the Monitoring Probes send pre-digested data to the Servers for correlation (creating e.g. Call Data Records, CDRs), as well as periodic reports containing their calculated statistics.
+The distributed network monitoring architecture depicted by Figure~\ref{fig:network_monitoring} supports local, probe-based pre-processing (timestamping, requirement-based packet chunking, filtering criteria-based distribution) and central, deep analysis (correlation of messages and transactions, data record compilation, statistics generation), even on-the-fly \cite{old_5}. The time-based ordering and interleaving of messages are enabled by the hardware-accelerated timestamping, providing nanosecond-range resolution with sub-microsecond precision. The information stored locally at the distributed Monitoring Probes can be accessed by client applications of the operator. Besides, the Monitoring Probes send pre-digested data to the Servers for correlation (creating e.g. Call Data Records, CDRs), as well as periodic reports containing their calculated statistics.
 
 Since user data and control data are often carried over the same channels, their division requires message analysis on network- or transaction-level (e.g., IP- or TCP-level). The changing traffic patterns force the operators to look for new tools to process even the user traffic. The first step towards this is the compilation of XDRs (eXtended Data Records) based on control- and user-plane messages and transactions. These often contain message-level timestamps, as well. Based on these data, the deep traffic analysis tools provide valuable information towards business-intelligence and network optimization. Besides, all nodes can be configured to report directly to the NOC (Network Operations Center).
 
@@ -213,7 +214,7 @@ When speaking about time synchronization, the following properties describe a cl
 \begin{itemize}
     \item accuracy -- \emph{i.e.} how good is the time information compared to some reference
     \item precision -- \emph{i.e.} how precise is a tick of the clock compared to some reference
-    \item stability -- \emph{i.e.} how does the clock frequency change	e.g., over time or based on external
+    \item stability -- \emph{i.e.} how does the clock frequency change  e.g., over time or based on external
           temperature changes etc.
 \end{itemize}
 
@@ -268,8 +269,7 @@ clock signal along with the data.
 
 \subsection{External time synch. subsystem design and implementation}\label{sec:External-Impl}
 
-When selecting the candidate for implementing the external time synchronization function,
-three protocols were considered:
+When selecting the candidate for implementing the external time synchronization function, three protocols were considered:
 \begin{itemize}
     \item Network Time Protocol (NTP),
     \item Precision Time Protocol v1 (PTPv1),
@@ -300,7 +300,7 @@ the following main features
     \renewcommand \labelitemi{--}
     \item supports protocol module interconnection via layering;
     \item handles reception and transmission of Protocol Data Units (PDUs) with queuing;
-    \item provides a high level interface for separating and combining	Protocol Control Information (PCI) and Service Data Unite (SDU),
+    \item provides a high level interface for separating and combining  Protocol Control Information (PCI) and Service Data Unite (SDU),
           forwarding, pausing or dropping SDUs;
     \item provides a unified way to handle Interface Control Information (ICI), SDU, and PDU events (e.g., error signalling);
     \item adds support of auxiliary information that travels along with messages
@@ -346,52 +346,61 @@ This chain of modules with the feedback is another realization of a closed loop 
 
 \subsection{Internal time synch. subsystem design and implementation}\label{sec:Internal-Impl}
 
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures_raw/TimeSynch_distribution.png}
+    \caption{Time synchronization within a monitoring site -- methods for external and internal subsystems differ to allow high precision and accuracy in timestamping}
+    \label{fig:TymeSinchArch}
+\end{figure}
+
+Since timestamping is done by the monitoring interface cards, the time synchronization information has to be spread around all interface cards of all monitoring units within the site. This time synchronization is an internal matter of the monitoring system. The relationship between ``external'' and ``internal'' time synchronization is shown by Figure~\ref{fig:TymeSinchArch}.
+
 The internal time information synchronization function is responsible for having all clocks in all monitoring functions
-to be completely synchronized within a monitoring node. Since this is an internal component the amount of perturbation
+to be completely synchronized \emph{within a monitoring node}. Since this is an internal component, the amount of perturbation
 that potentially affects this subsystem is considered minimal compared to the external time synchronization subsystem.
 
 The elements of this subsystem are:
 \begin{itemize}
-    \item digital bus that is able to transmit time and status information
-    \item a driver module of that bus that resides in the Network clock synchronization function
-    \item receiver modules attached to that bus performing local time synchronization
+    \item digital bus that is able to transmit time and status information;
+    \item a driver module of that bus that resides in the Network clock synchronization function;
+    \item receiver modules attached to that bus performing local time synchronization.
 \end{itemize}
 
-Internally all FPGA boards implementing a monitoring function can operate from different power supply units as a
-consequence ground level
-isolation is necessary over the bus. For reducing the physical layer complexity
-a point-to-point bus system has been designed. To be able to maximize the number of connected clients connected the
-bus utilizes an asynchronous serial communication using 2 wires. The communication protocol executed by the driver
-module
+Internally to each monitoring probe, all FPGA boards that implement a monitoring function can operate from different power supply units. As a
+consequence, ground level
+isolation is necessary over the bus. For reducing the physical layer complexity,
+a point-to-point bus system has been designed. In order to be able to maximize the number of clients connected the
+bus, it utilizes an asynchronous serial communication using 2 wires. The communication protocol executed by the driver
+module (the internal time synch distribution module in Figure~\ref{fig:TymeSinchArch})
 multiplexes arbitrary data units and the time information over the bus into frames -- equipped with error detection
 code --
-in an alternating pattern.That results in periodic transmission of valid time information.
+in an alternating pattern. That results in periodic transmission of valid time information.
 
 The parameters of the physical signalling are:
 \begin{itemize}
-    \item LVCMOS33 levels for representing logical values
-    \item asymmetric signal transmission
-    \item \SI{15.625}{\mega\hertz} clock frequency with 4x oversampling
-    \item NRZ coding
+    \item LVCMOS33 levels for representing logical values;
+    \item asymmetric signal transmission;
+    \item \SI{15.625}{\mega\hertz} clock frequency with 4x oversampling;
+    \item NRZ coding.
 \end{itemize}
 
-The frame format used on the bus is shown on Figure~\ref{fig:HiSTI-frame}. The frame starts with an all 1's preamble
-followed by a start bit with value 0. The type field is used to discriminate between the payload type, when T=1 it
+The frame format used on the bus is shown in Figure~\ref{fig:HiSTI-frame}. The frame starts with an all 1's preamble, and it is
+followed by a start bit with value 0. The type field is used to differentiate the payload types. When T=1 it
 indicates that the payload is
-time information otherwise it's data -- on this data channel an overlay data communication protocol can be used.
-The time format is in line with the external time synchronization \emph{i.e.} it uses the NTP
-time format for representing the time information. For detecting transmission errors on the bus a CRC-8 value is
+time information otherwise it is data -- hence an overlay data communication protocol can be used on this data channel.
+The time format is in line with the external time synchronization, i.e., it uses the NTP
+time format for representing the time information. For detecting transmission errors on the bus, a CRC-8 value is
 calculated
 for the \emph{`Type'} and \emph{`Payload'} fields and appended to the frame that is checked on frame reception for
 detecting
 transmission errors.
 
-Given the parameters above the frame time is 90/\SI{15.625}{\mega\hertz} = \SI{5.76}{\micro\second} and since every
-other frame carries time information the clock on the receiver side can be disciplined/controlled on a
+Given the parameters above, the frame time is 90/\SI{15.625}{\mega\hertz} = \SI{5.76}{\micro\second}. Since every
+other frame carries time information, the clock on the receiver side can be disciplined/controlled on a
 \SI{11.52}{\micro\second}
 basis. Under such short period of time even low quality, non-temperature controlled crystal oscillators have negligible
-drift
-as a result this update period is adequate for the network monitoring use case.
+drift.
+As a result, this update period is adequate for the network monitoring use case.
 
 \begin{figure}
     \begin{bytefield}{32}
@@ -404,18 +413,9 @@ as a result this update period is adequate for the network monitoring use case.
     \label{fig:HiSTI-frame}
 \end{figure}
 
-The receiver module de-multiplexes the data and the time information from the payload of the received frame. It also
+The receiver module (i.e., in the FPGA-based Clock Card in Figure~\ref{fig:TymeSinchArch}) de-multiplexes the data and the time information from the payload of the received frame. It also
 verifies that the received frame's CRC-8 value matches the calculated one. If no errors were detected then it feeds the
-
 time information into a module that performs time synchronization using a closed loop control.
-This closed loop control has a simple proportional controller as illustrated on Figure~\ref{fig:closed-loop}. The clock
-module
-is incrementing a clock counter with an increment in each system clock period. Since the oscillator frequency was not
-configurable in
-existing system the way to discipline the clock was through adjusting the time increment itself.
-Even though the increment is adjusted proportionally to the error signal it is a integral controller due to nature of
-the time increment process that adds the current time increment to the time counter on each clock cycle
--- \emph{i.e.} integral of a function of the error signal over time.
 
 \begin{figure*}[!htb]
     \centering
@@ -424,18 +424,27 @@ the time increment process that adds the current time increment to the time coun
     \label{fig:closed-loop}
 \end{figure*}
 
-In theory a I controller in a closed loop system can eliminate error signal -- \emph{i.e.} the time difference --
+This closed loop control has a simple proportional controller as illustrated by Figure~\ref{fig:closed-loop}. The clock
+module
+is incrementing a clock counter with an increment in each system clock period. Since the oscillator frequency was not
+configurable in the
+existing system, the clock has to be disciplined through adjusting the time increment itself.
+Even though the increment is adjusted proportionally to the error signal, it is a integral controller due to nature of
+the time increment process that adds the current time increment to the time counter on each clock cycle
+-- i.e. the integral of a function of the error signal over time.
+
+In theory a I controller within a closed loop system can eliminate the error signal -- i.e. the time difference --
 completely.
 With this design the solution contains a digital time distribution bus and a module that realizes the
-closed control loop as seen on Figure~\ref{fig:closed-loop}.
+closed control loop as shown by Figure~\ref{fig:closed-loop}.
 
-\subsection{Realized system}
+\subsection{Implementation}
 
-The realized system with all internal components is shown on Figure~\ref{fig:realized-system} where the external time
+The realized system with all internal components is shown by Figure~\ref{fig:realized-system}, where the external time
 synchronization -- as presented in Section~\ref{sec:External-Impl} -- is done by the SGA Clock card -- visible in the
-bottom right part -- and the internal time synchronization -- described in Section~\ref{sec:Internal-Impl} --
-is performed over the local bus with agent modules synthesized in all monitoring cards acting as slaves on the
-high-speed timestamp interfaces also driven by the SGA Clock card acting as a master.
+bottom right part. Similarly, the internal time synchronization -- described in Section~\ref{sec:Internal-Impl} --
+is performed over the local bus with agent modules. These modules run in all the FPGA-based monitoring cards acting as slaves at the
+high-speed timestamp interfaces; all are driven by the SGA Clock card acting as a master.
 
 \begin{figure}[H]
     \centering
@@ -450,49 +459,54 @@ high-speed timestamp interfaces also driven by the SGA Clock card acting as a ma
 %- Describe the verification method in detail
 %- Matlab graph, long-term vs. short-term 
 
-For verifying the solution extensive testing and measurements have been carried out. For inspecting the degree of
-synchronization to the master NTP clock a packet capturer operating in promiscuous mode was installed on the Ethernet
+There has been extensive testing and measurements carried out for verifying the solution. In order to analyze the degree of
+synchronization to the master NTP clock, a packet capturer was installed on the Ethernet
 segment on which the FPGA implementation of the NTP slave was connected. The NTP packets used for synchronization were
 captured bidirectionally. This packet capture then was filtered for those NTP packets that had all 4 timestamps used in
-
-the On-Wire protocol to calculate the offset from the reference clock value. With software based post-processing the
-offset information was extracted along with the time elapsed from the start of measurement -- which is determined by
+the On-Wire protocol to calculate the offset from the reference clock value. Our  dedicated post-processing utility then extracted the
+offset information along with the time elapsed from the start of measurement -- which is determined by
 the
 first NTP packet present in the packet capture.
 
 \begin{figure*}[!htb]
     \centering
     \includegraphics[width=0.9\textwidth]{figures_raw/pcap-NTP.png}
-    \caption{Measurement results - packet capture}
+    \caption{Measurement result -- a typical example of an NTP packet containing four timestamps}
     \label{fig:pcap-NTP}
 \end{figure*}
 
-A sample packet capture is visible on Figure~\ref{fig:pcap-NTP}. The statistical parameters -- like the drift and real
+A sample packet capture is shown by Figure~\ref{fig:pcap-NTP}. The statistical parameters -- like the clock drift and real
 offset -- of the device was determined by
-fitting a linear curve on the offset values. For the actual measurement presented in this paper the capture was taken
+fitting a linear curve on the offset values. There were various measurements carried out -- for the actual measurement presented in this paper, the capture was taken
 for approximately 3 hours.
-The measurement values and the fitted curve plot can be seen on Figure~\ref{fig:results}.
+The results and the fitted curve plot can be seen on Figure~\ref{fig:results}.
 
 \begin{figure*}[!htb]
     \centering
     \includegraphics[width=0.9\textwidth]{figures_raw/plot2.png}
-    \caption{Measurement results - plot of derived data}
+    \caption{Measurement result -- plot of derived offset-measurement data}
     \label{fig:results}
 \end{figure*}
 
 The curve fitted on this measurement shows that there was a fix \SI{14.52}{\micro\second} offset compared to the
 reference clock. As presented in Section~\ref{sec:Challanges}
-having a precise and stable clock -- with known offset -- is as good as having an accurate one. As for the stability
+having a precise and stable clock -- with known offset -- is as good as having an accurate one. As for stability,
 the first order stability of the
 device is \SI{-0.7}{1/\nano\second}. This precision and stability are considered adequate for satisfying the
 requirements of the external time synchronization part.
 
-As for the internal synchronization part it is by design accurate as it is a synchronous bus system with no
-disturbances -- under normal operating conditions -- as a
-consequence the clock accuracy over that bus is determined by the bit width and the refresh rate of the digital
-time-stamp transmitted over the bus. As it was described in Section~\ref{sec:Internal-Impl} the
+As for the internal synchronization part, it is by design accurate as it is a synchronous bus system with no
+disturbances -- even under under real-life (but normal) operating conditions. As a
+consequence, the clock accuracy over that bus is determined by the bit width (in time duration) and the refresh rate of the digital
+time-stamp transmitted over the bus. As it was described in Section~\ref{sec:Internal-Impl}, the
 time-stamp is 64 bits wide also using the NTP binary fractional representation. Given that the time-stamp is accurate
-to the last bit then the theoretical accuracy is \SI{232.83}{\pico\second}.
+to the last bit, then the theoretical accuracy is \SI{232.83}{\pico\second}.
+
+%%%%%%%%%%%% mit jelent az a stabilitás az extrernal esetben? Hogyan számítódik?
+%%%%%%%%%%%% hogyan számítódik ez a "theoretical accuracy"?
+%%%%%%%%%%%% kellene ide két képlet (legalább)
+
+As a real-life verification, the above described time-synchronization system has been put into operation at Magyar Telekom. The system hardware (with its FPGA firmware) has been installed beside the SGA-7N network monitoring system, and showed the expected result. The system provides accurate time information to the monitoring cards ever since, and it is planned to be expanded for covering all related monitoring cards, network-wide.
 
 \section{Conclusion}
 
@@ -504,13 +518,14 @@ References: 0.5 oldal
 
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figures_raw/fj_profile.png}}]{Ferenc Nandor Janky} 
 received the MSc degree in Electrical Engineering from BME, Budapest, Hungary, in 2013.
-He gained experienced while working for various telecommunication companies including Vodafone,AITIA International Inc. and Ericsson.
+He gained experienced while working for various telecommunication companies including Vodafone, AITIA International Inc. and Ericsson.
 His main areas of interest are network protocols, FPGA programming and software development. 
 Ferenc is currently working as a C++ software developer for an international corporate bank.
 \end{IEEEbiography}
 
+
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figures_raw/VP_profile.jpg}}]{Pal Varga}
- is Associate Professor at BME, Hungary, where he got his M.Sc. (1997) and Ph.D. (2011) degrees from. Besides, he is director in AITIA International Inc.  Earlier he was working for Ericsson Hungary and Tecnomen Ireland, as software design engineer and system architect, respectively.  His main research interest include communication systems, network performance measurements, root cause analysis, fault localisation, traffic classification, end-to-end QoS and SLA issues, as well as hardware acceleration, and Internet of Things.
+ is Associate Professor at BME, Hungary, where he got his M.Sc. (1997) and Ph.D. (2011) degrees from. Besides, he is director in AITIA International Inc. Earlier he was working for Ericsson Hungary and Tecnomen Ireland, as software design engineer and system architect, respectively. His main research interest include communication systems, network performance measurements, root cause analysis, fault localization, traffic classification, end-to-end QoS and SLA issues, as well as hardware acceleration, and Internet of Things.
 % He has been involved in various industrial as well as European research and development projects in these topics.
 
 \end{IEEEbiography}
@@ -521,9 +536,9 @@ Ferenc is currently working as a C++ software developer for an international cor
 % The IEEEtran BibTeX style support page is at:
 % http://www.michaelshell.org/tex/ieeetran/bibtex/
 
-\bibliographystyle{IEEEtran}
+%\bibliographystyle{IEEEtran}
 % argument is your BibTeX string definitions and bibliography database(s)
-\bibliography{references}
+%\bibliography{references}
 
 %
 % <OR> manually copy in the resultant .bbl file
