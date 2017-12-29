@@ -215,7 +215,7 @@ When speaking about time synchronization, the following properties describe a cl
 \begin{itemize}
     \item accuracy -- \emph{i.e.} how good is the time information compared to some reference
     \item precision -- \emph{i.e.} how precise is a tick of the clock compared to some reference
-    \item stability -- \emph{i.e.} how does the clock frequency change  e.g., over time or based on external
+    \item stability -- \emph{i.e.} how does the clock frequency change	e.g., over time or based on external
           temperature changes etc.
 \end{itemize}
 
@@ -301,7 +301,7 @@ the following main features
     \renewcommand \labelitemi{--}
     \item supports protocol module interconnection via layering;
     \item handles reception and transmission of Protocol Data Units (PDUs) with queuing;
-    \item provides a high level interface for separating and combining  Protocol Control Information (PCI) and Service Data Unite (SDU),
+    \item provides a high level interface for separating and combining	Protocol Control Information (PCI) and Service Data Unite (SDU),
           forwarding, pausing or dropping SDUs;
     \item provides a unified way to handle Interface Control Information (ICI), SDU, and PDU events (e.g., error signalling);
     \item adds support of auxiliary information that travels along with messages
@@ -404,6 +404,7 @@ where
 T_{bit} = 1/f_{signalling}
 \end{equation}
 
+Where T\textsubscript{bit} is the bit time, f\textsubscript{signalling} is the signalling frequency on the internal bus, and N\textsubscript{bits} is the number of bits in the frame.
 Given the parameters above and \eqref{eq:tframe} and \eqref{eq:tbit}, the frame time is 90/\SI{15.625}{\mega\hertz} = \SI{5.76}{\micro\second}. Since every
 other frame carries time information, the clock on the receiver side can be disciplined/controlled on a
 \SI{11.52}{\micro\second}
@@ -509,19 +510,19 @@ disturbances -- even under real-life (but normal) operating conditions. As a
 consequence, the clock accuracy over that bus is determined by the bit width (in time duration) and the refresh rate of the digital
 time-stamp transmitted over the bus. 
 The proof for that error of the oscillators can be neglected under the refresh time period can be deduced from 
-calculating the skew of the clock periods under a frame time 
+calculating the skew of the clock periods under a timestamp update period: 
 
 \begin{equation}\label{eq:clkerr}
-CLK_{skew} = \lfloor  \lvert \frac{T_{frame}}{T_{sys}} - T_{frame} \times f_{sys} \times E_{oscillator} \rvert \rfloor
+CLK_{skew} = \lfloor  \lvert \frac{2 \times T_{frame}}{T_{sys}} \times E_{oscillator} \rvert \rfloor
 \end{equation}
 
 \begin{equation}
-f_{sys} = 1/T_{sys}
+ T_{sys} = 1/f_{sys}
 \end{equation}
 
-Where T\textsubscript{frame} (frame time of the internal time synchronization) is \SI{11.52}{\micro\second} and typical values for the system clock are
+Where T\textsubscript{frame} (frame time over the internal synchornization bus) is \SI{5.76}{\micro\second} and typical values for the system clock are
 f\textsubscript{sys} (system clock frequency) is \SI{125}{\mega\hertz} and E\textsubscript{oscillator} (relative frequency error) is $\pm$ 50 ppm.
-Substituting these values into \eqref{eq:clkerr} gives that it is $\lfloor 0.072 \rfloor = 0$ clock periods.
+Substituting these values into \eqref{eq:clkerr} gives that the skew in terms of clock cycles is $\lfloor 0.072 \rfloor = 0$ clock periods.
 
 Based on the considerations above the accuracy simply equals to the resolution of the digital timestamp given by \eqref{eq:resolution}.
 \begin{equation}\label{eq:resolution}
@@ -531,7 +532,6 @@ Resolution = 2^{-N/2} \SI{}{\second}
 As it was described in Section~\ref{sec:Internal-Impl}, the
 time-stamp is 64 bits wide -- also using the NTP binary fractional representation -- 
 with N=64 then the theoretical accuracy is \SI{232.83}{\pico\second}.
-
 %%%%%%%%%%%% mit jelent az a stabilitás az extrernal esetben? Hogyan számítódik?
 %%%%%%%%%%%% hogyan számítódik ez a "theoretical accuracy"?
 %%%%%%%%%%%% kellene ide két képlet (legalább)
@@ -546,6 +546,7 @@ In this paper, we introduced a general time synchronization solution for a high 
 References: 0.5 oldal
 \bibliographystyle{IEEEtran}
 \bibliography{references}
+
 
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figures_raw/fj_profile.png}}]{Ferenc Nandor Janky} 
 received the MSc degree in Electrical Engineering from BME, Budapest, Hungary, in 2013.
