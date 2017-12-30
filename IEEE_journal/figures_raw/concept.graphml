@@ -15,6 +15,7 @@
   <graph edgedefault="directed" id="G">
     <data key="d0"/>
     <node id="n0">
+      <data key="d5"/>
       <data key="d6">
         <y:SVGNode>
           <y:Geometry height="56.231998443603516" width="35.095298767089844" x="332.6955909729004" y="256.88400077819824"/>
@@ -36,6 +37,7 @@
       </data>
     </node>
     <node id="n1">
+      <data key="d5"/>
       <data key="d6">
         <y:SVGNode>
           <y:Geometry height="76.72100067138672" width="81.71900177001953" x="414.14049911499023" y="246.63949966430664"/>
@@ -58,18 +60,19 @@
     </node>
     <node id="n2" yfiles.foldertype="group">
       <data key="d4"/>
+      <data key="d5"/>
       <data key="d6">
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="195.37646484375" width="217.5" x="535.0587196350098" y="226.62353515625"/>
+              <y:Geometry height="195.37646484375" width="197.349609375" x="542.2091102600098" y="226.62353515625"/>
               <y:Fill color="#F5F5F5" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="bold" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="217.5" x="0.0" y="0.0">Monitoring Node</y:NodeLabel>
+              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="197.349609375" x="0.0" y="0.0">Monitoring Node</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-              <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="13" rightF="13.0" top="0" topF="0.0"/>
+              <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
             </y:GroupNode>
             <y:GroupNode>
               <y:Geometry height="50.0" width="50.0" x="0.0" y="60.0"/>
@@ -86,12 +89,13 @@
       </data>
       <graph edgedefault="directed" id="n2:">
         <node id="n2::n0">
+          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="BevelNodeWithShadow">
-              <y:Geometry height="42.0" width="131.0" x="550.0587196350098" y="264.0"/>
-              <y:Fill color="#FFFFFF" transparent="false"/>
-              <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="126.712890625" x="2.1435546875" y="4.298828125">Network clock synch.
+              <y:Geometry height="42.0" width="114.0" x="558.5587196350098" y="264.0"/>
+              <y:Fill color="#FF9900" transparent="false"/>
+              <y:BorderStyle hasColor="false" type="line" width="1.0"/>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="116.69921875" x="-1.349609375" y="4.298828125">Network clock synch.
 function<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
@@ -103,12 +107,13 @@ function<y:LabelModel>
           </data>
         </node>
         <node id="n2::n1">
+          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="BevelNode">
               <y:Geometry height="47.0" width="71.0" x="558.5587196350098" y="360.0"/>
-              <y:Fill color="#FFFFFF" transparent="false"/>
-              <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="69.314453125" x="0.8427734375" y="6.798828125">Monitoring 
+              <y:Fill color="#FF9900" transparent="false"/>
+              <y:BorderStyle hasColor="false" type="line" width="1.0"/>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="63.361328125" x="3.8193359375" y="6.798828125">Monitoring 
 function<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
@@ -120,12 +125,13 @@ function<y:LabelModel>
           </data>
         </node>
         <node id="n2::n2">
+          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="BevelNode">
               <y:Geometry height="47.0" width="71.0" x="653.5587196350098" y="360.0"/>
-              <y:Fill color="#FFFFFF" transparent="false"/>
-              <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="69.314453125" x="0.8427734375" y="6.798828125">Monitoring 
+              <y:Fill color="#FF9900" transparent="false"/>
+              <y:BorderStyle hasColor="false" type="line" width="1.0"/>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="63.361328125" x="3.8193359375" y="6.798828125">Monitoring 
 function<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
@@ -137,6 +143,7 @@ function<y:LabelModel>
           </data>
         </node>
         <node id="n2::n3">
+          <data key="d5"/>
           <data key="d6">
             <y:ShapeNode>
               <y:Geometry height="3.01541119999996" width="159.0" x="558.5587196350098" y="333.4845888"/>
@@ -149,23 +156,25 @@ function<y:LabelModel>
       </graph>
     </node>
     <node id="n3">
+      <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="18.701171875" width="120.056640625" x="626.5020790100098" y="316.041708125"/>
+          <y:Geometry height="18.701171875" width="120.056640625" x="619.5020790100098" y="316.041708125"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="0" modelName="internal" modelPosition="c" textColor="#000000" verticalTextPosition="bottom" visible="true" width="132.671875" x="-6.3076171875" y="0.0">Local time distribution</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="0" modelName="internal" modelPosition="c" textColor="#000000" verticalTextPosition="bottom" visible="true" width="120.056640625" x="0.0" y="0.0">Local time distribution</y:NodeLabel>
           <y:Shape type="rectangle"/>
         </y:ShapeNode>
       </data>
     </node>
     <node id="n4">
+      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="BevelNode">
-          <y:Geometry height="49.47999999999996" width="73.13950088500974" x="418.43024955749513" y="360.0"/>
-          <y:Fill color="#FFFFFF" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="65.98046875" x="3.579516067504869" y="8.038828124999952">Monitoring
+          <y:Geometry height="45.0" width="64.56" x="422.71999999999997" y="372.52000000000004"/>
+          <y:Fill color="#FF9900" transparent="false"/>
+          <y:BorderStyle hasColor="false" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="60.02734375" x="2.2663281250000296" y="5.798828125">Monitoring
 Node<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
@@ -177,6 +186,7 @@ Node<y:LabelModel>
       </data>
     </node>
     <edge id="e0" source="n0" target="n1">
+      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -187,6 +197,7 @@ Node<y:LabelModel>
       </data>
     </edge>
     <edge id="e1" source="n1" target="n2::n0">
+      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -197,6 +208,7 @@ Node<y:LabelModel>
       </data>
     </edge>
     <edge id="n2::e0" source="n2::n0" target="n2::n3">
+      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="-22.5" ty="0.06638729297912474"/>
@@ -207,6 +219,7 @@ Node<y:LabelModel>
       </data>
     </edge>
     <edge id="n2::e1" source="n2::n3" target="n2::n1">
+      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-44.0" sy="0.17931185778094244" tx="0.0" ty="0.0"/>
@@ -217,6 +230,7 @@ Node<y:LabelModel>
       </data>
     </edge>
     <edge id="n2::e2" source="n2::n3" target="n2::n2">
+      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="51.0" sy="0.06638729297912474" tx="0.0" ty="0.0"/>
@@ -227,6 +241,7 @@ Node<y:LabelModel>
       </data>
     </edge>
     <edge id="e2" source="n1" target="n4">
+      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
