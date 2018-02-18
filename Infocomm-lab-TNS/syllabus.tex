@@ -90,8 +90,17 @@ The output of the test case execution is the \emph{verdict}. The hypothesis is t
 
 \subsection{Testing of web portals}
 
+The testing of web portals are mostly checking user stories that appear as a browsing process for the the testers. Even today the testing process is mostly manual but there are several frameworks exist for script based automation. The browsing process is split into test steps that are basically raising events sequentially that are visible on the page. The source of an event can be something like following a link, filling out and submitting a form or some other JavaScript based event. During the browsing process the test verifies that as a result of following a link the correct page is shown that has the expected content.
 
+The testing of web portals and protocols are analogous. The web portal can be viewed as a black box from the user's perspective where the user can't peek into the back-end database. The web portal can also be viewed as a state machine where a state is a concrete view of the portal that is a result of the similar URIs visible in the browser's search bar. The navigation between the pages can be seen as the state transitions of the state machines. A state transition is made out of 2 messages: a HTTP request and a corresponding HTTP response. The message types are classified based on the URI found in the request and the message formats are defined by the format of the HTTP request body format. The precondition phase of a test case is navigating to the given site  and the postcondition phase verifies that the page view after the given user event under test is correct or not.
+When testing web portal there are only 3 possible verdicts:
+\begin{itemize}
+  \item \emph{pass}, if the navigation to the destination site was OK, and the resulting content was the expected
+  \item \emph{fail}, when either the navigation fails or the content mismatches
+  \item \emph{error}, when the web portal returns with an unexpected error code or present an error page
+\end{itemize}
 
+The main difference between testing web portals and telecommunication protocols is that while the former one is always deterministic the latter one is non-deterministic due to the nature of the underlying non-reliable medium. Another difference is that while testing protocols enough time must be provided for the response messages to arrive due to network latency and deadlock evasion so timers are utilized extensively. When testing web portals these effects has lesser significance as a consequence timers are used less frequently.
 
 
 \section{Further Reading}
