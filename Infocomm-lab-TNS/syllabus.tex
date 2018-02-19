@@ -103,6 +103,69 @@ When testing web portal there are only 3 possible verdicts:
 The main difference between testing web portals and telecommunication protocols is that while the former one is always deterministic the latter one is non-deterministic due to the nature of the underlying non-reliable medium. Another difference is that while testing protocols enough time must be provided for the response messages to arrive due to network latency and deadlock evasion so timers are utilized extensively. When testing web portals these effects has lesser significance as a consequence timers are used less frequently.
 
 
+\section{LAP-B}
+
+During this lab the implementation of  \emph{Link Access Procedure, Balanced} (LAPB) is going to be tested. LAPB is the X.25 protocol stack's data link layer protocol with HDLC framing. This protocol is rarely used nowadays but it still can be used for demonstrating protocol entity operation. LAPB provides connection oriented, bit based, reliable, in-order transmission service with error detection between a \emph{Data Terminal Equipment} (DTE) and a \emph{Data Circuit-terminating Equipment}. For higher level protocols it provides the following service primitives:
+\begin{itemize}
+\item connect request
+\item disconnect request
+\item data request (request data transmission)
+\end{itemize}
+Towards upper layer protocols it provides the following indications:
+\begin{itemize}
+\item connect indication
+\item disconnect indication
+\item connect confirmation
+\item disconnect confirmation
+\item data indication
+\end{itemize}
+
+\subsection{Message types and frame formats}
+
+The frame data is encapsulated in 01111110 (0x7E) flag. For transparent data transmission inside the frame body the sending device inserts a 0 bit after each consecutive 1 bit that are removed at the receiving side (this is called bit stuffing).
+
+LAP-B frames have 4 main parts as seen on Figure~\ref{fig:lapbframe}. The first part is the address field followed by the control field followed by the information field -- that is present only in some of the frame types. The frame's last component is a 2 byte frame check sequence.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/lapbframe.png}
+  \caption{The structure of LAP-B frames}
+  \label{fig:lapbframe}
+\end{figure}
+
+The address field determines the direction of the communication (DTE-DCE or DCE-DTE) and whether the message is multicast or not. Furthermore it has a C/R bit that indicates whether the frame is a command or a request.
+
+The control field carries an ID that discriminates the type of the frame and a sequence number that is required for detecting and correcting missing frames. LAP-B utilizes three different types of frames:
+\begin{itemize}
+\item U frame (Unnumbered). This frame type is used for establishing and disconnecting  LAP-B connections and also for sending acknowledgments.
+\item I frame (Information). This frame type is used for transparent transmission of the network layer protocol data units.
+\item S frame (Supervisory). This frame type is used for controlling the transmission of I frames in terms of congestion and flow control.
+\end{itemize}
+
+The control field has 3 different format corresponding to the frame types above. The common part in each that they have a P/F (Poll/Final) bit. A sender of a frame with P=1 expects the peer to respond with a frame that has F=1. When P=0 the sender does not expect the peer to respond. For unsolicited response messages (e.g. error indication) F=0.
+The unnumbered frame's control field contains a message type field that can have the following values:
+\begin{itemize}
+\item SABM: command frame to establish connection between the DTE and DCE using modulo 8 sequence numbering
+\item SABME: command frame to establish connection between the DTE and DCE using modulo 128 sequence numbering
+\item UA: response frame for acknowledging the connection establishment or disconnection
+\item DISC: command frame for disconnecting a connection
+\item DM: response frame for acknowledging the connection establishment or disconnection
+  (kind of similar to UA, for some messages UA is a positive acknowledgment and DM is the negative and for some others vice versa)
+\item FRMR: response frame for error indication
+\end{itemize}
+
+The I frame's control field carries two sequence numbers: the seq. no. of the sent frame -- N(S) -- and the seq. no. of the next expected frame -- N(R).
+N(R) simultaneously serves as an acknowledgment of receiving frames up until N(R)-1.
+
+The supervisory frame's control field contains a message type and an expected seq. no. field that can be used for positive acknowledgment similarly to I frames. Based on the message type field the following supervisory frames are recognized:
+\begin{itemize}
+\item RR: I frame acknowledgment if there is no message to send in the opposite direction or for signaling the end of the previously signaled RNR state's end
+\item RNR: temporarily the entity is not ready for reception of I frames
+\item REJ: request for retransmission of I frames starting from N(R)
+\end{itemize}
+
+
+
 \section{Further Reading}
 
 \begin{itemize}
