@@ -104,14 +104,17 @@ sequence of these atomic test events can be combined into a test step arbitraril
 
 The operations executed during a test case run can be split into four phases:
 \begin{itemize}
-    \item Reset the system. Some protocols have reset message others don't. In that case an appropriate message sequence
+    \item Reset the system. Some protocols have reset message others don't. In that case an appropriate message
+          sequence
           has to be executed that guarantees to drive the protocol's state machine into the starting state.
     \item Prefix event sequence: the system is driven from the starting state to the state where the goal of the test
-          purpose is verified. This is usually the shortest event sequence denoted by the spanning tree of the system's state
+          purpose is verified. This is usually the shortest event sequence denoted by the spanning tree of the system's
+          state
           machine originated from the starting state.
     \item Execute the operations that verifies the completion of the test case's goal and check whether the system
           responded appropriately.
-    \item We are not done yet at this point! We have to check as a post-condition that the system ended up in the correct
+    \item We are not done yet at this point! We have to check as a post-condition that the system ended up in the
+          correct
           state that is checked using a post-condition operations sequence.
 \end{itemize}
 
@@ -204,9 +207,11 @@ multicast or not. Furthermore it has a C/R bit that indicates whether the frame 
 The control field carries an ID that discriminates the type of the frame and a sequence number that is required for
 detecting and correcting missing frames. LAP-B utilizes three different types of frames:
 \begin{itemize}
-    \item U frame (Unnumbered). This frame type is used for establishing and disconnecting	LAP-B connections and also for
+    \item U frame (Unnumbered). This frame type is used for establishing and disconnecting	LAP-B connections and
+          also for
           sending acknowledgments.
-    \item I frame (Information). This frame type is used for transparent transmission of the network layer protocol data
+    \item I frame (Information). This frame type is used for transparent transmission of the network layer protocol
+          data
           units.
     \item S frame (Supervisory). This frame type is used for controlling the transmission of I frames in terms of
           congestion and flow control.
@@ -222,7 +227,8 @@ The unnumbered frame's control field contains a message type field that can have
     \item UA: response frame for acknowledging the connection establishment or disconnection
     \item DISC: command frame for disconnecting a connection
     \item DM: response frame for acknowledging the connection establishment or disconnection
-          (kind of similar to UA, for some messages UA is a positive acknowledgment and DM is the negative and for some others
+          (kind of similar to UA, for some messages UA is a positive acknowledgment and DM is the negative and for some
+          others
           vice versa)
     \item FRMR: response frame for error indication
 \end{itemize}
@@ -235,7 +241,8 @@ The supervisory frame's control field contains a message type and an expected se
 positive acknowledgment similarly to I frames. Based on the message type field the following supervisory frames are
 recognized:
 \begin{itemize}
-    \item RR: I frame acknowledgment if there is no message to send in the opposite direction or for signaling the end of
+    \item RR: I frame acknowledgment if there is no message to send in the opposite direction or for signaling the end
+          of
           the previously signaled RNR state's end
     \item RNR: temporarily the entity is not ready for reception of I frames
     \item REJ: request for retransmission of I frames starting from N(R)
@@ -265,11 +272,13 @@ The protocol has several state variables:
           \verb!extended! is in use (7 bit seq. no.)
     \item (\verb!busy!) status: there was a congestion during data processing
     \item (\verb!rejecting!) status: subsequent data transmission is not possible to a previous error
-    \item (\verb!pending!) status: there are processed but not yet acknowledged messages, acknowledgment has to
+    \item (\verb!pending!) status: there are processed but not yet acknowledged messages, acknowledgment
+          has to
           be sent
     \item (\verb!window!): integer variable, determines the maximal size of the sent but not acknowledged
           buffer
-    \item \verb!vs!: the sequence no. of the last sent message, last element in the acknowledgment queue
+    \item \verb!vs!: the sequence no. of the last sent message, last element in the acknowledgment
+          queue
     \item \verb!va!: sequence number of the oldest unacknowledged message, the first element in the
           acknowledgment queue
     \item \verb!vr!: the expected seq. no. in the last received message
@@ -282,7 +291,8 @@ The protocol has 5 states that define the state of the data connection:
     \item disconnected: both sides are in disconnected state, starting state
     \item disconnecting: the disconnection is half-way done, the entity is waiting for the peer to acknowledge the
           disconnect request
-    \item connecting): the connection is half-open, one side is waiting for the other for a positive acknowledgment for the
+    \item connecting): the connection is half-open, one side is waiting for the other for a positive acknowledgment for
+          the
           connection initiation request
     \item connected: both sides are in connected state, data transmission is possible
     \item frame reject: temporary error on either side, rejects all request until re-connection
@@ -538,7 +548,8 @@ response must be DM else nothing. The next state is unchanged. In connected stat
           \end{itemize}
     \item If frame is receive with out of order sequence no.,
           \begin{itemize}
-              \item if reject status is set and P=1 in the received frame an RR is sent, pending status is set and T2 timer is
+              \item if reject status is set and P=1 in the received frame an RR is sent, pending status is set and T2
+                    timer is
                     started
               \item if reject status is not set then set reject status and send REJ message
           \end{itemize}
@@ -601,7 +612,8 @@ acknowledgment pending status set. If this timer fires an RR frame is sent and t
 In this lab exercise a LAP-B over HTTP implementation has to be tested. The implementation is done based on the source
 of LAP-B implementation from the Linux kernel
 \footnote{\url{https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/include/net/lapb.h?id=refs/tag
-        s/v4.4.1}}. The LAP-B messages are transmitted in the body of the HTTP POST messages towards the web server acting as a
+        s/v4.4.1}}. The LAP-B messages are transmitted in the body of the HTTP POST messages towards the web server
+acting as a
 DTE or DCE that responds with LAP-B frames, service primitives and error messages embedded in the body of the HTTP
 response messages.
 
@@ -811,10 +823,19 @@ The JSON format of LAP-B I frame is:
 }
 \end{verbatim}
 
-The \verb!session! is designated for separating student HTTP sessions so that each user has its own state machine, state variables, etc. For this reason use the Neptun ID as session value!  The \verb!frame! is a simplified version of a LAP-B
-frame in JSON format. The \verb!cr! is the Command/Response bit from the address field, the allowed values are \verb!command! or \verb!response! depending on the actual frame type. The \verb!pf! is the Poll/Final bit from the control field, the value varies between \verb!pollon! and \verb!polloff! depending on the actual frame. The \verb!type! is the type of the LAP-B frame valid values are \verb!i!, \verb!rr!, \verb!rnr!, \verb!rej!,
-\verb!sabm!, \verb!sabme!, \verb!disc!, \verb!dm!, \verb!ua! or
-\verb!frmr!. In case of supervisory or information frames there is an additional field in the JSON object called \verb!nr! that holds an integral value.
+The \verb!session! is designated for separating student HTTP sessions so that each user has its own state
+machine, state variables, etc. For this reason use the Neptun ID as session value!  The \verb!frame! is
+a simplified version of a LAP-B
+frame in JSON format. The \verb!cr! is the Command/Response bit from the address field, the allowed
+values are \verb!command! or \verb!response! depending on the actual frame type. The
+\verb!pf! is the Poll/Final bit from the control field, the value varies between
+\verb!pollon! and \verb!polloff! depending on the actual frame. The
+\verb!type! is the type of the LAP-B frame valid values are \verb!i!,
+\verb!rr!, \verb!rnr!, \verb!rej!,
+\verb!sabm!, \verb!sabme!, \verb!disc!, \verb!dm!,
+\verb!ua! or
+\verb!frmr!. In case of supervisory or information frames there is an additional field in the JSON
+object called \verb!nr! that holds an integral value.
 In case of an I frame there is also a \verb!ns! entry also with an integral value.
 
 \subsection{The format of JSON response}
@@ -841,13 +862,19 @@ The format of the JSON response messages is the following:
 }
 \end{verbatim}
 
-The name of the next state is represented by the \verb!state! entry in the response object in string format with potential values as the name of the states namely 
+The name of the next state is represented by the \verb!state! entry in the response object in string
+format with potential values as the name of the states namely
 \verb!connected!,
 \verb!connecting!, \verb!disconnected!,
 \verb!disconnecting! and \verb!frame_reject!.
-If there was an error then the response object will have an entry with \verb!error! key having a string value representing the error text.
-The \verb!pdu! field has a JSON array as value containing the LAP-B frames whose structure matches the structure of the \verb!frame! field in the request JSON object.
-The \verb!address_field! will match with the request \verb!session! value. It is deliberately not present on the HTTP response level as the system can generate more than 1 response messages as a result of one request message. If a service primitive is invoked during the communication it will be present in the \verb!sdu! array in string format.
+If there was an error then the response object will have an entry with \verb!error! key having a string
+value representing the error text.
+The \verb!pdu! field has a JSON array as value containing the LAP-B frames whose structure matches
+the structure of the \verb!frame! field in the request JSON object.
+The \verb!address_field! will match with the request \verb!session! value. It is deliberately not
+present on the HTTP response level as the system can generate more than 1 response messages as a result of one request
+message. If a service primitive is invoked during the communication it will be present in the
+\verb!sdu! array in string format.
 
 Here is an example of a server generated response message:
 \begin{verbatim}
@@ -864,9 +891,6 @@ Here is an example of a server generated response message:
   ]
 }
 \end{verbatim}
-
-
-
 
 \section{Further Reading}
 
