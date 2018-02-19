@@ -164,7 +164,484 @@ The supervisory frame's control field contains a message type and an expected se
 \item REJ: request for retransmission of I frames starting from N(R)
 \end{itemize}
 
+The protocol defines two timers:
+\begin{itemize}
+\item T1: the retransmission timer
+\item T2: the (\verb!pending!) status timer
+\end{itemize}
 
+
+\subsection{Protocol state-machine}
+
+The protocol has two queues:
+\begin{itemize}
+\item message queue: this is the queue of the not yet sent messages arriving from the upper layers
+\item acknowledgment queue: the queue of the messages sent but not yet acknowledged by the peer entity
+\end{itemize}
+
+The message get into the former queue as a result of using a data request service primitive from where the message is transferred to the latter queue as result of sending an I frame. The message is removed from the queue finally when a positive acknowledgment is received for it. Disconnection causes flushing of both queues.
+
+The protocol has several state variables: 
+\begin{itemize}
+\item \verb!mode!: \verb!basic! - means that 3 bit sequence numbers or
+   \verb!extended! is in use (7 bit seq. no.)
+\item (\verb!busy!) status: there was a congestion during data processing
+\item (\verb!rejecting!) status: subsequent data transmission is not possible to a previous error
+\item (\verb!pending!) status: there are processed but not yet acknowledged messages, acknowledgment has to be sent
+\item (\verb!window!): integer variable, determines the maximal size of the sent but not acknowledged buffer
+\item \verb!vs!: the sequence no. of the last sent message, last element in the acknowledgment queue
+\item \verb!va!: sequence number of the oldest unacknowledged message, the first element in the acknowledgment queue
+\item \verb!vr!: the expected seq. no. in the last received message
+\item \verb!n2!: the maximal retransmission count of a message
+\item \verb!n2_count!: the retry count of the last sent message
+\end{itemize}
+
+The protocol has 5 states that define the state of the data connection:
+\begin{itemize}
+\item disconnected: both sides are in disconnected state, starting state
+\item disconnecting: the disconnection is half-way done, the entity is waiting for the peer to acknowledge the disconnect request
+\item connecting): the connection is half-open, one side is waiting for the other for a positive acknowledgment for the connection initiation request
+\item connected: both sides are in connected state, data transmission is possible
+\item frame reject: temporary error on either side, rejects all request until re-connection
+\end{itemize}
+
+The processing of service primitives from the upper layers are permitted in every state. The state transition table is detailed further down. The columns stand for the the messages the rows represent the current state. The cell value holds the index of the next state and the sent message separated by \verb./. symbol. The data request primitive sends the next message in the message queue not the one that's currently under reception.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+  &\verb!connect_request!&\verb!disconnect_request!&\verb!data_request!\\
+\hline
+ disconnected (0)& 1/SABM or SABME& 0/-& 0/-\\
+\hline
+ connecting (1) & 1/- & 0/DISC & 2/-\\
+\hline
+ disconnecting (2) & 1/SABM or SABME& 0/-& 2/-\\
+\hline
+ connected (3) & 3/-& 2/DISC& 3/I\\
+\hline
+ frame reject (4) & 4/- & 2/DISC& 4/I\\
+\hline
+\end{tabular}
+\end{center}
+}
+
+The SABM message has to replied with a UA message towards the peer and a \verb!connect_indication! has to be signaled towards the upper layer client if the \verb!mode! state variable is \verb/basic/. The response is DM if the \verb!mode! is \verb/extended/.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+ SABM &mode=basic&mode=extended\\
+\hline
+ disconnected (0)& 3/UA and \verb!connect_indication!& 0/DM\\
+\hline
+ connecting (1) & 1/UA and I & 1/DM and I \\
+\hline
+ disconnecting (2) & 2/DM& 2/DM\\
+\hline
+ connected (3) & 3/UA and I& 3/DM and I\\
+\hline
+ frame reject (4) & 3/UA & 4/DM\\
+\hline
+\end{tabular}
+\end{center}
+}
+
+In case of a SABME message everything is the other way around.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+ SABME &mode=basic&mode=extended\\
+\hline
+ disconnected (0)& 0/DM & 3/UA and \verb!connect_indication! \\
+\hline
+ connecting (1) & 1/UA and I & 1/DM and I \\
+\hline
+ disconnecting (2) & 2/DM& 2/DM\\
+\hline
+ connected (3) & 3/DM and I& 3/UA and I\\
+\hline
+ frame reject (4) & 4/DM & 3/UA\\
+\hline
+\end{tabular}
+\end{center}
+}
+
+
+The events after receiving a DISC message is shown by the table below. During frame reject state reception of a DISC message is not permitted. In connected state an I frame is sent if there some data to be transmitted or retransmission is required.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+ DISC & state/action\\
+\hline
+ disconnected (0)& 0/DM \\
+\hline
+ connecting (1) & 1/DM and I \\
+\hline
+ disconnecting (2) & 2/UA\\
+\hline
+ connected (3) & 0/DM and \verb!disconnect_indication! and I\\
+\hline
+ frame reject (4) & 4/- \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+
+The state transition after receiving a DM message is show in the table below. It is not permitted to receive a DISC message in disconnected or frame reject states.In connected state an I frame is sent if there some data to be transmitted or retransmission is required.  
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+ DM & poll=on & poll=off\\
+\hline
+ disconnected (0)& 0/- & 0/- \\
+\hline
+ connecting (1) & 0/\verb!disconnect_indication! and I & 1/I\\
+\hline
+ disconnecting (2) & 0/\verb!disconnect_confirmation! & 2/-\\
+\hline
+ connected (3) & 0/\verb!disconnect_indication! and I & 0/\verb!disconnect_indication! and I\\
+\hline
+ frame reject (4) & 4/- & 4/- \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+The valid state transitions upon receiving a UA message are shown in the table below. Reception of a UA frame is not permitted in connected and frame reject states.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+ UA & poll=on & poll=off\\
+\hline
+ disconnected (0)& 0/- & 0/- \\
+\hline
+ connecting (1) & 3/\verb!connect_confirmation! and I & 1/I\\
+\hline
+ disconnecting (2) & 0/\verb!disconnect_confirmation! & 2/-\\
+\hline
+ connected (3) & 3/- & 3/- \\
+\hline
+ frame reject (4) & 4/- & 4/-\\
+\hline
+\end{tabular}
+\end{center}
+}
+
+
+The state transitions after receiving an FRMR message are shown in the table below. Only allowed in connected state.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+ UA & state/action \\
+\hline
+ disconnected (0)& 0/- \\
+\hline
+ connecting (1) & 1/- \\
+\hline
+ disconnecting (2) & 2/- \\
+\hline
+ connected (3) & 1/I  \\
+\hline
+ frame reject (4) & 4/- \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+
+State transitions after receiving an RR message are shown in the table below. Only allowed in states connected and disconnecting. This table assumes $va \leq N(R) \leq vs$ otherwise the message is invalid. Reception of RR clears the busy state, sending of an RR message clears pending status. In connected state an I frame is sent if there is any data to be send or retransmission is required.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+ RR & command, poll=on & response, poll=on & otherwise \\
+\hline
+ disconnected (0) & 0/- & 0/- & 0/- \\
+\hline
+ connecting (1) & 1/- & 1/- & 1/- \\
+\hline
+ disconnecting (2) & 2/DM & 2/DM & 2/- \\
+\hline
+ connected (3) & 3/RR+I & 3/I & 3/I  \\
+\hline
+ frame reject (4) & 4/- & 4/- & 4/- \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+State transitions after receiving an RNR message are shown in the table below. Only allowed in states connected and disconnecting. This table assumes $va \leq N(R) \leq vs$ otherwise the message is invalid. Reception of RNR sets the busy state, sending of an RR message clears pending status. In connected state an I frame is sent if there is any data to be send or retransmission is required.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+ RNR & command, poll=on & response, poll=on & otherwise \\
+\hline
+ disconnected (0) & 0/- & 0/- & 0/- \\
+\hline
+ connecting (1) & 1/- & 1/- & 1/- \\
+\hline
+ disconnecting (2) & 2/DM & 2/DM & 2/- \\
+\hline
+ connected (3) & 3/RR+I & 3/I & 3/I  \\
+\hline
+ frame reject (4) & 4/- & 4/- & 4/- \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+State transitions after receiving an REJ message are shown in the table below. Only allowed in states connected and disconnecting. This table assumes $va \leq N(R) \leq vs$, otherwise the message is invalid. Reception of REJ clears the busy state, sending of an RR message clears pending status. In connected state an I frame is sent if there is any data to be send or retransmission is required.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+ REJ & command, poll=on & response, poll=on & otherwise \\
+\hline
+ disconnected (0) & 0/- & 0/- & 0/- \\
+\hline
+ connecting (1) & 1/- & 1/- & 1/- \\
+\hline
+ disconnecting (2) & 2/DM & 2/DM & 2/- \\
+\hline
+ connected (3) & 3/RR+I & 3/I & 3/I  \\
+\hline
+ frame reject (4) & 4/- & 4/- & 4/- \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+Reception of an I frame is only valid in connected and disconnecting states. In disconnecting sate if the P=1 then the response must be DM else nothing. The next state is unchanged. In connected state there are other rules to follow:
+
+\begin{itemize}
+\item If $va \leq N(R) \leq vs$, then the message is valid, otherwise invalid
+\item If $N(S) = vr$, then we received a message with the expected seq.no. increment $vr$ by one.
+\begin{itemize}
+\item  If poll bit is set beside these RR frame is sent otherwise pending status is set.
+\end{itemize}
+\item If frame is receive with out of order sequence no., 
+\begin{itemize}
+\item if reject status is set and P=1 in the received frame an RR is sent, pending status is set and T2 timer is started
+\item if reject status is not set then set reject status and send REJ message
+\end{itemize}
+\item If the message queue is not empty also send an I frame
+\end{itemize}
+In case of valid messages the next state stays the connected state.
+
+The reception of a message with invalid FCS or  $va \geq N(R) \geq vs$ sequence number -- i.e. corrupted frame -- has the following state transitions:
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+ UA & state/action \\
+\hline
+ disconnected (0)& 0/- \\
+\hline
+ connecting (1) & 1/- \\
+\hline
+ disconnecting (2) & 2/- \\
+\hline
+ connected (3) & 4/I  \\
+\hline
+ frame reject (4) & 4/- \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+T1 timer is responsible for message retransmission. If the current retransmission count (\verb!n2_count!) is less than the maximal retransmission count (\verb!n2!) then the retransmission count is increased by one and the last sent message is retransmitted.
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+ T1 &$n2 < n2_count$&$n2 = n2_count$\\
+\hline
+ disconnected (0)& 0/DM & 0/DM\\
+\hline
+ connecting (1) & 1/SABM or SABME & 0/\verb!disconnect_indication! \\
+\hline
+ disconnecting (2) & 2/DISC & 0/\verb!disconnect_indication!\\
+\hline
+ connected (3) & 3/I& 0/\verb!disconnect_indication!\\
+\hline
+ frame reject (4) & 4/FRMR & 0/\verb!disconnect_indication!\\
+\hline
+\end{tabular}
+\end{center}
+}
+
+T2 timer is only valid in connected state and it is responsible for sending periodic acknowledgments in case of acknowledgment pending status set. If this timer fires an RR frame is sent and the next state is going to be connected.
+
+\section{LAP-B over HTTP}
+
+In this lab exercise a LAP-B over HTTP implementation has to be tested. The implementation is done based on the source of LAP-B implementation from the Linux kernel  \footnote{\url{https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/include/net/lapb.h?id=refs/tags/v4.4.1}}. The LAP-B messages are transmitted in the body of the HTTP POST messages towards the web server acting as a DTE or DCE that responds with LAP-B frames, service primitives and error messages embedded in the body of the HTTP response messages.
+
+\subsection{Web UI}
+
+On the web UI a web page corresponds to a given state (see Figure~\ref{fig:web}). The name of the state is visible in the browsers address bar or alternatively in  a \verb!<H1>! HTML tag.
+Under \verb!<H2>Outputs</H2>! tag one can find the responses generated by the web server, the service primitives sent towards upper layers and LAP-B frames sent to the web client as a result of previous HTTP requests.
+Under \verb!<H2>Inputs</H2>! tag there is a form for each receivable LAP-B frame, active timers and upper layer events and a corresponding push button to trigger that specific event. The values of the fields of the LAP-B frame to be sent towards the web server can be tweaked by adjusting the form values. The P/F and C/R bit value and N(R) acknowledgment sequence number -- in case of a supervisory frame -- and the N(S) sequence number -- in case of an I frame --  can be set using a drop-down list on the form. The events indicating the expiry of timers are not parameterizable. From the list of events towards the upper layers the \verb!Send data request SDU! form -- corresponding to \verb!data request! -- has a text input field that contains the payload in string format.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\textwidth]{figures/web.png}
+  \caption{LAB-P over HTTP web UI}
+  \label{fig:web}
+\end{figure}
+
+Debug mode can be enabled by appending \verb!/on! or \verb!/off! path component to the URI as illustrated by Figure~\ref{fig:web2}. In debug mode the current state if the protocol entity is observable including the sequence number values, state variables, timer states, message queue contents etc. 
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\textwidth]{figures/web2.png}
+  \caption{LAB-P over HTTP web UI in debug mode}
+  \label{fig:web2}
+\end{figure}
+
+\subsection{JSON API}
+In order to ease the automation of testing the web portal its JSON API is going to be used for interacting with it.
+
+\subsection{JSON requests}\label{sec:json_req}
+
+The JSON requests has to be addressed to the web server in embedded in a HTTP POST message body with \verb!application/json! MIME type specified as Content-Type parameter. For example the following console command can be used for doing so:
+
+\begin{verbatim}
+curl -H "Content-Type: application/json" \
+-X POST \
+-d '{"session": "a", "frame": 
+{ "cr": "command", "pf": "polloff",  "type": "sabm"}}' \
+http://152.66.246.231:3000/disconnected/sabm.json
+\end{verbatim}
+
+The format of the HTTP request URI path portion is the form of \url{<state>/<message type>}. For example \url{http://152.66.246.231:3000/disconnected/sabm}. The possible state - message type combinations are listed in the following table:
+
+{\scriptsize
+\begin{center}
+\begin{tabular}[h]{|l|l|l|}
+  \hline
+  Path & State & Message\\
+  \hline
+\verb'connected/sabm' & connected & SABM\\
+  \hline
+\verb'connected/sabme' & connected & SABME\\
+  \hline
+\verb'connected/disc' & connected & DISC\\
+  \hline
+\verb'connected/dm' & connected & DM\\
+  \hline
+\verb'connected/rnr' & connected & RNR\\
+  \hline
+\verb'connected/rr' & connected & RR\\
+  \hline
+\verb'connected/rej' & connected & REJ\\
+  \hline
+\verb'connected/i' & connected & I\\
+  \hline
+\verb'connected/frmr' & connected & FRMR\\
+  \hline
+\verb'connected/t1' & connected & T1 timeout\\
+  \hline
+\verb'connected/t2' & connected & T2 timeout\\
+  \hline
+\verb'connected/connect_request' & connected & connect request\\
+  \hline
+\verb'connected/disconnect_request' & connected & disconnect request\\
+  \hline
+\verb'connected/data_request' & connected & data request\\
+  \hline
+\verb'connecting/sabm' & connecting & SABM\\
+  \hline
+\verb'connecting/sabme' & connecting & SABME\\
+  \hline
+\verb'connecting/disc' & connecting & DISC\\
+  \hline
+\verb'connecting/ua' & connecting & UA\\
+  \hline
+\verb'connecting/dm' & connecting & DM\\
+  \hline
+\verb'connecting/t1' & connecting & T1 timeout\\
+  \hline
+\verb'connecting/connect_request' & connecting & connect request\\
+  \hline
+\verb'connecting/disconnect_request' & connecting & disconnect request\\
+  \hline
+\verb'connecting/data_request' & connecting & data request\\
+  \hline
+\verb'disconnected/sabm' & disconnected & SABM\\
+  \hline
+\verb'disconnected/sabme' & disconnected & SABME\\
+  \hline
+\verb'disconnected/disc' & disconnected & DISC\\
+  \hline
+\verb'disconnected/t1' & disconnected & T1 timeout\\
+  \hline
+\verb'disconnected/connect_request' & disconnected & connect request\\
+  \hline
+\verb'disconnected/disconnect_request' & disconnected & disconnect request\\
+  \hline
+\verb'disconnected/data_request' & disconnected & data request\\
+  \hline
+\verb'disconnecting/sabm' & disconnecting & SABM\\
+  \hline
+\verb'disconnecting/sabme' & disconnecting & SABME\\
+  \hline
+\verb'disconnecting/disc' & disconnecting & DISC\\
+  \hline
+\verb'disconnecting/ua' & disconnecting & UA\\
+  \hline
+\verb'disconnecting/dm' & disconnecting & DM\\
+  \hline
+\verb'disconnecting/i' & disconnecting & I\\
+  \hline
+\verb'disconnecting/rej' & disconnecting & REJ\\
+  \hline
+\verb'disconnecting/rnr' & disconnecting & RNR\\
+  \hline
+\verb'disconnecting/rr' & disconnecting & RR\\
+  \hline
+\verb'disconnecting/t1' & disconnecting & T1 timeout\\
+  \hline
+\verb'disconnecting/connect_request' & disconnecting & connect request\\
+  \hline
+\verb'disconnecting/disconnect_request' & disconnecting & disconnect request\\
+  \hline
+\verb'disconnecting/data_request' & disconnecting & data request\\
+  \hline
+\verb'frame_reject/sabm' & frame reject & SABM\\
+  \hline
+\verb'frame_reject/sabme' & frame reject & SABME\\
+  \hline
+\verb'frame_reject/t1' & frame reject & T1 timeout\\
+  \hline
+\verb'frame_reject/connect_request' & frame reject & connect request\\
+  \hline
+\verb'frame_reject/disconnect_request' & frame reject & disconnect request\\
+  \hline
+\verb'frame_reject/data_request'  & frame reject & data request\\
+  \hline
+\end{tabular}
+\end{center}
+}
 
 \section{Further Reading}
 
