@@ -766,6 +766,108 @@ following table:
 \end{center}
 }
 
+\subsection{JSON requests format}
+
+The format of the JSON requests -- in case of \verb!curl! found after \verb!-d!
+switch -- is the following for an unnumbered LAP-B frame:
+\begin{verbatim}
+{
+"session":"a", 
+"frame": 
+  {
+  "cr": "command", 
+  "pf": "polloff", 
+  "type":"sabme"
+  }
+}
+\end{verbatim}
+
+The JSON request format for a supervisory LAP-B frame is the following:
+\begin{verbatim}
+{
+"session":"a", 
+"frame": 
+  {
+  "cr": "command", 
+  "pf": "polloff", 
+  "type":"rr",
+  "nr":6
+  }
+}
+\end{verbatim}
+
+The JSON format of LAP-B I frame is:
+\begin{verbatim}
+{
+"session": "a", 
+"frame": 
+  {
+  "cr":"command",
+  "pf":"pollon",
+  "type":"i",
+  "nr":6,
+  "ns":0
+  }
+}
+\end{verbatim}
+
+The \verb!session! is designated for separating student HTTP sessions so that each user has its own state machine, state variables, etc. For this reason use the Neptun ID as session value!  The \verb!frame! is a simplified version of a LAP-B
+frame in JSON format. The \verb!cr! is the Command/Response bit from the address field, the allowed values are \verb!command! or \verb!response! depending on the actual frame type. The \verb!pf! is the Poll/Final bit from the control field, the value varies between \verb!pollon! and \verb!polloff! depending on the actual frame. The \verb!type! is the type of the LAP-B frame valid values are \verb!i!, \verb!rr!, \verb!rnr!, \verb!rej!,
+\verb!sabm!, \verb!sabme!, \verb!disc!, \verb!dm!, \verb!ua! or
+\verb!frmr!. In case of supervisory or information frames there is an additional field in the JSON object called \verb!nr! that holds an integral value.
+In case of an I frame there is also a \verb!ns! entry also with an integral value.
+
+\subsection{The format of JSON response}
+
+The format of the JSON response messages is the following:
+\begin{verbatim}
+{
+"state": "<state>",
+"error": "<error message>",
+"pdu":[
+  {
+  "address_field":"a",
+  "type":"i",
+  "nr": 0,
+  "ns": 3,
+  "pf": "pollon",
+  "cr": "response"
+  }
+]
+"sdu":
+  [
+    "data_indication"
+  ]
+}
+\end{verbatim}
+
+The name of the next state is represented by the \verb!state! entry in the response object in string format with potential values as the name of the states namely 
+\verb!connected!,
+\verb!connecting!, \verb!disconnected!,
+\verb!disconnecting! and \verb!frame_reject!.
+If there was an error then the response object will have an entry with \verb!error! key having a string value representing the error text.
+The \verb!pdu! field has a JSON array as value containing the LAP-B frames whose structure matches the structure of the \verb!frame! field in the request JSON object.
+The \verb!address_field! will match with the request \verb!session! value. It is deliberately not present on the HTTP response level as the system can generate more than 1 response messages as a result of one request message. If a service primitive is invoked during the communication it will be present in the \verb!sdu! array in string format.
+
+Here is an example of a server generated response message:
+\begin{verbatim}
+{
+"state":"connected",
+"pdu":
+  [
+    {
+      "address_field":"a",
+      "type":"ua",
+      "pf":"polloff",
+      "cr":"response"
+    }
+  ]
+}
+\end{verbatim}
+
+
+
+
 \section{Further Reading}
 
 \begin{itemize}
