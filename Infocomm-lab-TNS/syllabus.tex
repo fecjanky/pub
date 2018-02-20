@@ -27,6 +27,31 @@
 
 \begin{document}
 
+\lstdefinelanguage{TTCN3}
+{
+  morekeywords={
+    import,from,all,
+    integer,boolean,bitstring,charstring,false,true,omit,
+    var,const,type,record,set,union,enumerated,of,
+    template,modifies,
+    port,message,in,out,inout,component,timer,map,create,connect,unmap,
+    function,return,runs,on,testcase,system,control,execute,self,
+    send,receive,timeout,pass,fail,inconc,alt,value,start,stop,
+    and,or,if,else,
+    fail,pass,inconc,setverdict,log,
+    int2float,int2str,int2char,lengthof,str2int
+  },
+  sensitive=true, % keywords are not case-sensitive
+  morecomment=[l]{//}, % l is for line comment
+  morecomment=[s]{/*}{*/}, % s is for start and end delimiter
+  morestring=[b]" % defines that strings are enclosed in double quotes
+}
+\lstset{language=TTCN3}
+\lstset{frame=single}
+\lstset{breaklines=true}
+\lstset{backgroundcolor=\color{yellow}}
+\lstset{keywordstyle=\color{blue}\bf}
+
 \maketitle
 
 \tableofcontents
@@ -892,8 +917,534 @@ Here is an example of a server generated response message:
 }
 \end{verbatim}
 
+\section{Development and test execution environment overview}
+
+\subsection{Development environment overview}
+
+The dev and test execution environment is a TITAN Eclipse plugin that can be started by clicking on the Eclipse icon on the VM's desktop.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/eclipse.png}
+  \caption{Development and test execution environment UI}
+  \label{fig:eclipse}
+\end{figure}
+
+After launching the application a project will be auto opened that contains test cases whose sources have to be modified during this lab. The UI is shown on Figure~\ref{fig:eclipse}.
+
+There are two perspectives available on the right side of the toolbar:
+\textit{TITAN Executing perspective} and \textit{TITAN Editing perspective} labels, the former is used during this lab. The \textit{Project explorer} pane on the left shows the project sources, the binaries compiled from them and also the log files. The central pane contains the sources to be modified, only \verb!LAPB_Test.ttcn! file is the candidate for modification, the other files contain API and configuration settings.
+The logs on message exchanges will be visible in the bottom part of the UI. 
+
+\subsection{Building, running, logging}
+
+The executable binary can be built from the TTCN-3 sources -- after selecting the build candidate project in the \textit{Project Explorer} view -- either from the \textit{Project} menu or from the context menu available when right-clicking on the project's name and selecting \textit{Build Project} (see Figure~\ref{fig:build}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/build.png}
+  \caption{Building the project, take caution that the right project has been selected}
+  \label{fig:build}
+\end{figure}
+
+To run the executable right-click on the file \textit{LAPB{\textunderscore}Test.cfg} in the project sources in \textit{TITAN Executing perspective} view and select \textit{Run as}/\textit{TITAN Parallel launcher} from the pop-up menu.(Figure~\ref{fig:run}.)
+The run results will be available on the \textit{TITAN Notifications} tab in the bottom. The log file will be available in the \textit{log} directory amongst the \textit{Project explorer} binaries. Those can be opened by double clicking on them.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/run.png}
+  \caption{Running the project}
+  \label{fig:run}
+\end{figure}
+
+The log is in tabular format as illustrated by Figure~\ref{fig:log}. It is advised to turn on filtering by clicking on the funnel icon and filter for user events. In that case only the results of \verb!log()! calls from the source code will be visible with the corresponding JSON document.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/log.png}
+  \caption{Examining the log file of a test execution}
+  \label{fig:log}
+\end{figure}
+
+\section{TTCN-3 basics}
+\subsection{TTCN-3}
+TTCN-3 programming language is specifically designed for describing conformance tests. Its syntax resembles C++, there are many similarities between them however it contains some language constructs that can be used to express higher level concepts that can be used for efficient description of conformance testing specific behavior. TTCN-3 is an abbreviates Testing and Test Control Notation version 3. The full specification can be found in the ETSI TTCN-3 standard \cite{ttcn3}
+\footnote{\url{http://www.ttcn-3.org/index.php/downloads/standards}}.
+
+The top level construct of a TTCN-3 code is called module. Source code is composed from modules. A module has two main parts: the definition and the control parts. In the definition part are the type declaration of the messages exchanged with SUT, the definitions of concrete messages to be send, the definition of templates used for verifying received messages furthermore the declarations of the test ports and test components used. Also here can be found the definitions of the test cases and functions describing the dynamic behavior of the tests. The control part of the module contains the test case calls necessary for executing the test.
+
+\subsubsection{Variable and constants}
+
+Variables can be declared in the following way in TTCN-3:
+
+{\footnotesize
+\begin{lstlisting}
+var integer myVariable;
+\end{lstlisting}
+}
+
+The initial value can be specified at declaration or later:
+{\footnotesize
+\begin{lstlisting}
+myVariable := 1;
+\end{lstlisting}
+}
+
+Constant values have to be initialized after declaration their value remain unchanged during test execution:
+
+{\footnotesize
+\begin{lstlisting}
+const integer myConstant := 1;
+\end{lstlisting}
+} 
+
+Variables can be declared in control part, test cases and inside functions and also in test component types declarations. Variable declaration in the definition part is not allowed, TTCN-3 doesn't support global variables. Constants can be defined both in definition and control sections.
+
+\subsubsection{Importing definition from other modules}
+TTCN-3 supports importing other module's definitions in a module definition section so that the imported definitions can be used there. For this \verb.import. keyword has to be used:
+{\footnotesize
+\begin{lstlisting}
+import from MyModule all;
+\end{lstlisting}
+}
+
+\subsubsection{Data types and type conversion}
+TTCN-3 supports primitive and composite types.
+The most important primitive types are:
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|}
+\hline
+\verb/integer/ \\
+\hline 
+\verb/float/ \\
+\hline
+\verb/boolean/ \\
+\hline 
+\verb/bitstring/ \\
+\hline 
+\verb/charstring/ \\
+\hline 
+\verb/verdicttype/ \\
+\hline
+\verb!enumerated! \\
+\hline
+\end{tabular}
+\end{center}
+}
+
+Most of these types can be found in other programming languages however \verb!verdicttype! is a TTCN-3 specific type that holds the value of the conformance test result of the SUT.
+
+TTCN-3 composite types are:
+
+{\footnotesize
+\begin{center}
+\begin{tabular}{|l|l|} 
+\hline
+\verb!record! & field order is fixed\\
+\hline
+\verb!record of! & field order fixed, homogeneous collection (e.g. \verb!record of integer!)\\
+\hline
+\verb!set! & fields are unordered\\
+\hline
+\verb!set of! & fields are unordered, homogeneous collection (e.g. \verb!set of float!)\\
+\hline
+\verb!union! & only one of its field can have a value\\
+\hline
+\end{tabular}
+\end{center}
+}
+
+Example for defining composite types:
+{\footnotesize
+\begin{lstlisting}
+type record MyRecordType{
+  charstring city,
+  integer district optional
+}
+type set MySetType{
+  charstring city,
+  integer district optional
+}
+type union MyUnionType{
+  charstring passport-no,
+  charstring personal-ID
+}
+type enumerated MyEnumeratedType{male, female}
+\end{lstlisting}
+}
+
+The \verb!optional! keyword indicates that the it is not mandatory to have a value for that field.
+
+The next example illustrates how to declare a \verb!record of! type and how to set a value of it (\verb!set of! works similarly):
+{\footnotesize
+\begin{lstlisting}
+type record of integer MyIntegerListType;
+var MyIntegerListType myIntegerList := {1, 4, 6, 5, 2}
+\end{lstlisting}
+}
+
+Data types can be declared in the definition section.
+
+During this lab these type conversion functions will be used in TTCN-3:
+
+{\footnotesize
+\begin{tabular}{|l|l|}
+\hline
+Integer to char string &\verb.int2str.\\
+\hline
+Char string to Integer  &\verb.str2int.\\
+\hline
+\end{tabular}
+}
+
+{\footnotesize
+\begin{lstlisting}
+int2str(65) == "65"
+str2int("65") == 65
+\end{lstlisting}
+}
+
+\subsubsection{Operators and control structures}
+Just like in other languages in TTCN-3 we build expressions out of variables, literals and values. The most frequently used operators in expressions are:
+
+{\footnotesize
+\begin{tabular}{{|l|l|l|l|}}
+\hline
+  + &addition& != &not equal\\
+\hline
+ \& & string concatenation &>& greater\\
+\hline
+- &subtraction &<& less\\
+\hline
+* &multiplication &>= &greater or equal\\
+\hline
+/ &division &<=& less or equal\\
+\hline 
+== &equal &:= &assignment\\
+\hline
+\end{tabular}
+}
+
+
+The syntax of TTCN-3 control structures:
+
+
+{\footnotesize
+\begin{tabular}{{|l|l|l|l|}}
+\hline
+\verb/if/-\verb/then/-\verb/else/-structure & \verb/if (condition) {...} else {...}/\\
+\hline
+\verb.for.-loop & \verb/for (start;end;increment) {...}/\\
+\hline
+\verb/while/-loop & \verb/while (condition) {...}/\\
+\hline
+\verb/do/-\verb/while/-loop &\verb/do {...} while (condition)/\\
+\hline
+\end{tabular}
+}
+
+
+
+\subsubsection{Templates}
+Templates has dual purpose. We can use them to define a sent message that matches an already defined type or to describe patterns that can be used for verifying messages arriving from the SUT.
+Here's an example for defining a template based on the above declared \verb/MyRecordType/
+{\footnotesize
+\begin{lstlisting}
+template MyRecordType myTemplate := {
+  city := "Budapest",
+  district := 2
+}
+\end{lstlisting}
+}
+
+\verb/MyRecordType/ has record type as a consequence it is not necessary to specify the name of the fields when defining a template, it's also adequate to provide values in order:
+{\footnotesize
+\begin{lstlisting}
+template MyRecordType myTemplate := {"Budapest", 2}
+\end{lstlisting}
+}
+
+For set types qualified assignment has to be used:
+{\footnotesize
+\begin{lstlisting}
+template MySetType mySet := {
+  city := "Budapest",
+  district := 2
+}
+\end{lstlisting}
+}
+
+Example for pattern matching for messages arriving from the SUT
+{\footnotesize
+\begin{lstlisting}
+template MyRecordType myPattern1 := {
+  city := "Budapest",
+  district := ?
+}
+\end{lstlisting}
+}
+
+It is possible to validate incoming messages against this template.
+In the template definition the \verb/?/ character means that the field can have any value but it must be present in the incoming message.
+
+If we'd like to allow that the district field can be omitted from the message we can replace \verb/?/ with \verb/*/ :
+{\footnotesize
+\begin{lstlisting}
+template MyRecordType myPattern2 := {
+  city := "Budapest",
+  district := *
+}
+\end{lstlisting}
+}
+
+For omitting optional values \verb/omit/ keyword can be used:
+{\footnotesize
+\begin{lstlisting}
+template MyRecordType myIncomingMessage3 := {
+  city := "Budapest",
+  district := omit
+}
+\end{lstlisting}
+}
+
+A subclass of templates are parametrized templates whose parameters can be specified during runtime:
+
+{\footnotesize
+\begin{lstlisting}
+template MyRecordType myParTemplate (integer myParameter) := {
+  city := "Budapest",
+  district := myParameter
+}
+\end{lstlisting}
+}
+
+A template like this can be useful for sending 23 different templates successively without having to define 23 different templates. The value of district can be set based on the value of a loop iterator.
+
+\subsubsection{Communication ports}
+
+The test components can communicate with each other and the SUT using ports. A port's responsibility is to send and receive messages. To send a message execute \verb/portName.send/ \verb/(value)/ and to receive call execute \verb/portName.receive/ \verb/(templateName)/. Send operation is considered completed right after execution \verb/send/ while verb/receive/ operation a blocking operation.
+
+A port type can be define in the following way:
+{\footnotesize
+\begin{lstlisting}
+type port MyPort message {
+  in integer, boolean;
+  out bitstring;
+  inout charstring
+}
+\end{lstlisting}
+}
+
+This declares a port that communicates with \verb/message/s that can receive integer or boolean values, can send bit strings and can both send and receive charstrings.
+
+\subsubsection{Test components}
+A test component implements a specific behavior towards the SUT. For example when testing a HTTP server test components can emulate individual user software components connecting to the server.
+Components can communicate with each other and the SUT through their ports. The collection of test components create the test configuration. Based on their role we distinguish two types of test components: MTC -- Main Test Component -- and PTC -- Parallel Test Component. There can only be one MTC in a test environment. During this lab we won't use PTC as a consequence thew won't be detailed any further.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/TC.png}
+  \caption{Test configuration}
+  \label{fig:tc}
+\end{figure}
+
+The following example illustrates how to create a component containing 2 ports:
+
+{\footnotesize
+\begin{lstlisting}
+type component MyComponentType{
+  port MyPort P0;
+  port MyPort P1;
+  timer MyTimer T1;
+  var MyVar v1
+}
+\end{lstlisting}
+}
+
+\subsubsection{Building the test configuration}
+
+The test environment dynamic behavior can be described using functions, test cases, timers and alternative behavior branching. Before the test environment can send and receive messages the test case running on MTC has to have a valid test configuration. In this case that means to interconnect the corresponding \verb!mtc! and \verb!system! ports using the \verb/map/ statement : e.g. \verb!map(mtc: p1, system: p1)!.
+
+The components can be referenced using the following references:
+
+{\footnotesize
+\begin{tabular}{|l|p{11cm}|}
+\hline
+ \verb/mtc/ &Reference to MTC\\
+\hline
+ \verb/self/ &Reference from the component to itself\\
+\hline
+ \verb/system/ &Reference to the SUT\\
+\hline
+\end{tabular}
+}
+
+
+The \verb/system/ is responsible for mapping the Real Test System Interface (RTS) and abstract world described in TTCN-3.
+The RTS can be connected directly through the network to the SUT.
+All this ends up in being able to only observe test configuration until the \verb/system/ boundary. During this lab we have to only deal with this abstract component.
+
+\subsubsection{Idõzítõk}
+Timers can be declared using the \verb/timer/ keyword and their value is specified in seconds using a \verb.float. Example:
+{\footnotesize
+\begin{lstlisting}
+timer T0 := 2.0;
+T0.start;
+timer T1;
+T1.start(2.0)
+\end{lstlisting}
+}
+
+The timer can be stopped using the \verb/timerName.stop/.
+To block on a timer one can use the \verb!timerName.timeout! function.
+
+\subsubsection{Alternative behavior}
+
+A TTCN-3 nyelv egyik legfontosabb, a tesztkomponensek, a SUT válaszától függõ, alternatív
+viselkedésének leírását lehetõvé tévõ vezérlési szerkezete az \verb.alt. utasítás. Akkor használjuk,
+ha a teszt végrehajtása egy olyan pontra ér, ahonnan több módon is továbbhaladhat, attól
+függõen, hogy a tesztelt rendszer milyen választ küld, ha egyáltalán küld választ. Például
+képzeljük el azt az egyszerû esetet, mikor a tesztelt rendszer sikeres konformancia-tesztje
+azon áll, vagy bukik, hogy a legutóbb kiküldött \textit{keres} üzenetre mint gerjesztésre a
+\textit{jovalasz} vagy a \textit{rosszvalasz} üzenetet küldi-e vissza. Amennyiben nem érkezik
+válasz \verb/1/ másodpercen belül, a teszt kimenetele inkonkluzív lesz. A következõ kódrészlet
+szemlélteti a fent leírt mûködést:
+
+{\footnotesize
+\begin{lstlisting}
+timer T0;
+P0.send("keres");
+T0.start(1.0);
+alt {
+  [] P0.receive("jovalasz") {setverdict(pass);}
+  [] P0.receive("rosszvalasz") {setverdict(fail);}
+  [] T0.timeout {setverdict(inconc);}
+}
+\end{lstlisting}
+}
+
+Valamennyi \verb/alt/-ág egy szögletes zárójelekbe zárt õrfeltétellel (guard) kezdõdik, amely ha
+nem teljesül, a mögötte levõ ágat egyszerûen nem vesszük figyelembe. Ha az õrfeltétel üres,
+mindig teljesül. 
+
+Az õrfeltétel után áll az
+az esemény (event), amely bekövetkezte esetén az esemény után kapcsos zárójelben lévõ
+utasítássorozatot végrehajtva, majd az \verb/alt/-szerkezetet elhagyva folytatódik a végrehajtás.
+Amennyiben az adott ág végrehajtása után nem kívánjuk elhagyni az \verb/alt/-szerkezetet, hanem
+az elejére kívánunk ugrani, úgy az adott ágon szereplõ utasítások után egy \verb/repeat/ utasítást
+kell elhelyeznünk.
+
+Ezek után vizsgáljuk meg kicsit közelebbrõl az \verb/alt/ utasítás mûködését! Nagyon fontos
+megjegyezni, hogy egy \verb/alt/ utasítás nem olyan, mint az \verb/if..then..else/ szerkezet, abban
+az értelemben, hogy az utasítást elérve még nem tudjuk, merre fogunk továbbhaladni. Amikor
+a tesztvégrehajtás egy ilyen pontra ér, egy pillanatkép (snapshot) készül a rendszer állapotáról,
+amely tartalmazza portok bemeneti sorait, valamint a változók és az idõzítõk értékeit. Ezek után kiszûrjük
+azon ágakat, amelyek õrfeltétele a pillanatkép szerint igaz, azaz az aktív ágakat, amelyek közül
+az elsõ olyat választjuk ki és hajtjuk végre, amelyhez tartozó esemény a pillanatkép alapján bekövetkezett.
+
+Ha egyik esemény sem
+következett be, egy újabb pillanatkép készül a rendszerrõl. A végrehajtás tehát addig
+blokkolódik, amíg valamely esemény be nem következik. Ha az \verb!alt!
+utasításban az összes lehetséges eseményt figyelembe vesszük, akkor
+nem lesz blokkolás.
+
+
+\subsubsection{Az ítéletek kezelése}
+A teszt futása során az \verb!mtc! kialakít egy ítéletet a tesztelt rendszerrõl. A
+korábban említettek szerint egy ítélet értéke lehet \verb/none/, \verb/pass/, \verb/inconc/, \verb/fail/ valamint
+\verb/error/. Ez a sorrend szigorúsági sorrendet és egyúttal egy hierarchiát is jelent az ítéletértékek
+között (a \verb/none/ a legenyhébb, míg az \verb/error/ a legszigorúbb
+ítélet). 
+
+Azaz, ha valamikor hoztunk egy \verb/pass/ ítéletet, %a tesztkomponens
+                                %futása során, 
+azt egy \verb/fail/ ítélettel késõbb felülírhatjuk, viszont egy már meglévõ \verb/fail/ ítéletet egy
+késõbbi \verb/pass/ ítélettel nem írhatunk felül, tehát az 
+ítéletek idõrendiségétõl függetlenül mindig a legszigorúbb ítélet jut érvényre.
+
+
+\subsubsection{Függvények}
+A függvények szerepe kettõs a TTCN-3-ban is, akárcsak a többi programozási nyelvben.
+Egyrészt kiszámolhatunk velük valamit, másrészt egy viselkedést írhatunk le velük.
+
+
+Egy függvény definiálásának szintaktikáját a következõ példa
+szemlélteti:
+{\footnotesize
+\begin{lstlisting}
+function MyFunction (in integer myPar) runs on MyComponentType return charstring
+{
+  ...
+}
+\end{lstlisting}
+}
+A fenti példát egy ponton illeti magyarázat, méghozzá a függvény paramétereinek
+megadásánál. Itt az \verb/in/ kulcsszót akkor használjuk, ha a
+paraméter bemenõ paraméter (C++ \verb/const/ vagy Java \verb/final/), az \verb/out/
+kulcsszót akkor, ha kimenõ, míg az \verb/inout/ kulcsszót akkor, ha
+kétirányú paraméter. Az \verb/in/ kulcsszó elhagyható. 
+Amennyiben a függvényt egy komponens viselkedésének leírására használjuk, és a függvény a
+komponensben definiált változókat, konstansokat, idõzítõket vagy portokat használja, úgy a
+\verb/runs on/ kulcsszavak után meg kell adnunk annak a komponensnek a
+típusát, amelyen futni fog. Végül a \verb/return/ kulcsszóval adhatjuk meg a
+függvény visszatérési értékét, ha van.
+
+
+A függvény futását
+leállítani a \verb/stop/ utasítással lehet.
+Függvényeket a definíciós részben definiálhatunk.
+
+\subsubsection{Tesztesetek}
+A tesztesetek olyan speciális függvények, amelyek az MTC-n futnak. A teszt\-e\-se\-tek\-ben nem
+használhatjuk a \verb/return/ utasítást, visszatérési értékük egy ítélet a tesztelt rendszer
+megfelelõségérõl. Teszteseteket a következõképpen definiálhatunk:
+{\footnotesize
+\begin{lstlisting}
+testcase MyTestCase() runs on MyComponentType
+system MySystemType
+{
+  ...
+}
+\end{lstlisting}
+}
+A teszteset definiálása tehát nagyban hasonlít a függvényéhez, azzal a különbséggel, hogy a
+\verb.testcase. kulcsszó vezeti be, illetve megadhatjuk a tesztelt rendszer típusát is a \verb.system.
+kulcsszó után.
+
+A teszteseteket az
+\verb/execute(/ \verb/tesztesetnév(/ \verb/paraméterek))/ utasítással indíthatjuk el a modulvezérlõ részben. Ekkor automatikusan létrejön a
+teszt\-e\-set fejlécében megadott típusú MTC példány, majd ezen elindul a teszteset. A
+tesztesetek felelõsek a tesztkonfiguráció felépítéséért is.
+
+
+Teszteseteket a definíciós részben definiálhatunk.
+
+\subsubsection{A modulvezérlõ rész}
+A modulvezérlõ részt a modulon belül a \verb/control/ kulcsszó vezeti be, ezután következik
+kapcsos zárójelek között a teszteseteket indító szakasz. A teszt\-e\-se\-tek indítása az \verb/execute/
+kulcsszóval történik. Egy teszteset elindításakor automatikusan létrejön az MTC, amelynek
+típusa a teszteset fejlécében megadott komponenstípus.
+
+
+%Változók és konstansok 
+%Definíciók importálása más modulokból
+%Adattípusok és típuskonverzió
+%Operátorok és vezérlési szerkezetek
+%Adatsablonok (template-ek) 
+%Kommunikációs portok 
+%Tesztkomponensek 
+%A tesztkonfiguráció felépítése
+%Üzenetek küldése és fogadása
+% Idozítok
+% Alternatív viselkedések
+% Az ítéletek kezelése 
+% Függvények
+% Tesztesetek
+% A modulvezérlo rész
+
+
 %TODO: 
-%- finish up translation of execution env
 %- read TTCN chapter
 %- collect english links that covers the topic
 %- translate sample exercise
@@ -945,5 +1496,15 @@ Here is an example of a server generated response message:
 \section{Lab exercises}
 
 \subsection{Lab environment}
+
+\begin{thebibliography}{9}
+
+\bibitem{ttcn3}
+ETSI,
+``{ETSI} {ES} 201 873-1 3 4.1 - Methods for Testing and Specification ({MTS}); The
+Testing and Test Control Notation version 3; Part 1: {TTCN-3} Core Language {TTCN-3}
+Edition 3.4.1 Core Language'', 
+2008.09.04.
+\end{thebibliography}
 
 \end{document}
