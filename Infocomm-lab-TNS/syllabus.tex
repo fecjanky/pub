@@ -11,6 +11,8 @@
 
 \usepackage{color}
 
+\usepackage{enumitem}
+
 % *** GRAPHICS RELATED PACKAGES ***
 %\usepackage[pdftex]{graphicx}
 \usepackage{graphicx}
@@ -132,7 +134,7 @@ The operations executed during a test case run can be split into four phases:
     \item Reset the system. Some protocols have reset message others don't. In that case an appropriate message
           sequence
           has to be executed that guarantees to drive the protocol's state machine into the starting state.
-    \item Prefix event sequence: the system is driven from the starting state to the state where the goal of the test
+    \item Preamble event sequence: the system is driven from the starting state to the state where the goal of the test
           purpose is verified. This is usually the shortest event sequence denoted by the spanning tree of the system's
           state
           machine originated from the starting state.
@@ -1328,7 +1330,7 @@ The RTS can be connected directly through the network to the SUT.
 All this ends up in being able to only observe test configuration until the \verb/system/ boundary.
 During this lab we have to only deal with this abstract component.
 
-\subsubsection{Idõzítõk}
+\subsubsection{Timers}
 Timers can be declared using the \verb/timer/ keyword and their value is specified in seconds using a
 \verb.float. Example:
 {\footnotesize
@@ -1449,73 +1451,322 @@ by the test case execution section inside braces. The execution of test cases ca
 \verb/execute/ keyword. When launching a test case an MTC is instantiated automatically based on the type
 specified in the corresponding test case header.
 
-%Változók és konstansok 
-%Definíciók importálása más modulokból
-%Adattípusok és típuskonverzió
-%Operátorok és vezérlési szerkezetek
-%Adatsablonok (template-ek) 
-%Kommunikációs portok 
-%Tesztkomponensek 
-%A tesztkonfiguráció felépítése
-%Üzenetek küldése és fogadása
-% Idozítok
-% Alternatív viselkedések
-% Az ítéletek kezelése 
-% Függvények
-% Tesztesetek
-% A modulvezérlo rész
 
-%TODO: 
-%- read TTCN chapter
-%- collect english links that covers the topic
-%- translate sample exercise
-%- final readthrough and wording corrections
+\section{Sample exercise}
 
-\section{Further Reading}
-
+The basis for the lab exercise is the sample described in this section. In this sample 5 files are used from the source directory:
 \begin{itemize}
-    \item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/a19-lantz.pdf}{A Network in a
-              Laptop: Rapid Prototyping for Software-Defined Networks}
-    \item
-
-          \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/mininet-hotnets2010-final.pdf}{Presentation
-              of conference proceedings on Mininet}
-    \item	Mininet page: \url{http://mininet.org/}
-    \item	Mininet wiki: \url{https://github.com/mininet/mininet/wiki}
-    \item	Mininet introduction: \url{https://github.com/mininet/mininet/wiki/  Introduction-to-Mininet}
-    \item	Mininet Python API: \url{http://mininet.org/api/hierarchy.html}
+\item \verb/HTTPmsg_Types.ttcn/:  HTTP request and response format definition in TTCN-3
+\item \verb/HTTPmsg_PortType.ttcn/: The interface between TITAN and HTTP
+\item \verb!LAPB_Types!: LAP-B data types and JSON converter functions
+\item \verb!LAPB_Test.cfg!: Configuration file for the test execution
+\item \verb!LAPB_Test.ttcn!: The file to edit that contains the test cases
 \end{itemize}
+
+\subsection{Test configuration}
+The test configuration sets up the address and port of the web server and the security settings of HTTP. This is done in both the configuration file and the test case modules.
+
+{\footnotesize
+\begin{lstlisting}
+  charstring  HttpServerHostName    := "152.66.246.231";
+  integer     HttpServerPort        := 3000;
+  boolean     HTTPClientUseSSL      := false;
+  integer     HttpServerListenPort  := 3000;
+  boolean     HttpServerUseSSL      := false
+\end{lstlisting}
+}
+
+The test environment acts as a client so the last two parameters are not significant.
+
+\subsection{HTTP API}
+The TITAN HTTP test port has its own state. The test port connects to the server using the \verb!Connect! message and HTTP messages can be sent towards the server until a \verb!Close! message. There are some other operations that can modify parameters of the TCP connection that are defined in \verb/HTTPmsg_PortType.ttcn/.
+
+From the HTTP data structure 6 will be used: \verb/Connect/, 
+\verb!Close!,\verb/HeaderLines/,
+\verb/HTTPRequest/, \verb!HTTPResponse! and \verb!HTTPMessage!.
+
+\verb/Connect/ initializes the HTTP ports with the configuration settings. \verb!Close! closes the HTTP port.
+
+In \verb/HeaderLines/ the HTTP request header fields can be adjusted, two of them is important for us now:
+\begin{itemize}
+\item \verb!Content-Type!:  The MIME type of the body of HTTP request body. This has to be set to \verb!application/json! because JSON text is sent inside the body of the request. This will be the same for all request as a consequence it's enough to set it up once.
+\item \verb!Content-Length!: The length of the body in bytes. This has to be adjusted on a per message basis based on the size of the JSON text.
+\end{itemize}
+
+In the \verb/HTTPRequest/ the following parameters have to be adjusted:
+\begin{itemize}
+\item \verb!method!: HTTP method, value is always \verb'POST'
+\item \verb'uri': The URI inside the HTTP request, this has to be modified on a per message basis.
+\item \verb!version_minor! and \verb!version_major!: HTTP version, both fields are set to \verb!1! if we'd like to use HTTP 1.1
+\item \verb!hd!: The \verb/HeaderLines/ type field of the HTTP header
+\item \verb!body!: The body of the HTTP request as a string that is assigned to the JSON text.
+\end{itemize}
+
+From the \verb!HTTPResponse! structure only the  \verb!body! field is used that carries the body of the HTTP response supposedly carrying a JSON text.
+
+\verb!HTTPMessage! is a \verb!union! : either its \verb!request! field is set to a value of type \verb/HTTPRequest/ or its \verb!response! field is set to a value of type \verb!HTTPResponse!.
+
+\subsection{LAP-B API}
+
+LAP-B API defines four types.\verb/LAPB_Poll/ is an enumeration that represents the LAP-B frame's P/F bit and it has two values: \verb/Polloff/ and \verb/Pollon/. 
+\verb/LAPB_Type/ enumeration represents the type of the LAP-B frame with values: \verb/I/, \verb/RR/, \verb/RNR/, \verb/REJ/,
+\verb/SABM/, \verb/SAMBE/, \verb/DISC/, \verb/DM/, \verb/UA/ and
+\verb/FRMR/. 
+\verb/LAPB_CR/ enumeration represents the LAP-B frame's C/R bit with two values: \verb/Command/ and \verb/Response/.
+
+\verb!LAPB_Frame! is the simplified data structure of a LAP-B frame on TTCN-3 language:
+\begin{itemize}
+\item \verb/addr/: Terminal identifier, for separating student session (this is not standard)
+\item \verb!poll!:  P/F bit of type \verb/LAPB_Poll/ 
+\item  \verb!t!: The type of the LAP-B frame with type \verb/LAPB_Type/
+\item \verb!cr!: C/R bit of type \verb/LAPB_CR/ 
+\item \verb!ns!: The sent sequence number if applicable
+\item \verb!nr!: The received sequence number if applicable
+\item \verb!data!: Payload data
+\end{itemize}
+
+\verb!LAPB_Frames! type is an array of type \verb!LAPB_Frame!.
+
+\verb!LAPB_Types.ttcn! defines many other useful coding/decoding functions beside these that can be used in test case definitions:
+\begin{itemize}
+\item \verb!string2poll!: converts a \verb!HTTPResponse! \verb!body! field string to a value of type \verb!LAPB_Poll!.
+\item \verb!string2cr!: converts a \verb!HTTPResponse! \verb!body! field string to a
+  value of type \verb!LAPB_CR!.
+\item \verb!string2type!: converts a \verb!HTTPResponse! \verb!body! field string to a
+  value of type \verb!LAPB_Type!.
+\item \verb!type2string!: converts an object of type \verb!LAPB_Type! to string
+\item \verb!json2frames!: converts a JSON object's \verb!pdu! field  of array of strings extracted from a \verb!HTTPResponse! \verb!body! field to a value of \verb!LAPB_Frames!(an array with records of type \verb!LAPB_Frame!)
+\item \verb!json2frame!: converts an element of a JSON object's \verb!pdu! field of array of string extracted from a \verb!HTTPResponse! \verb!body! field to a record of \verb!LAPB_Frame!
+\item \verb!json2state!: decodes a JSON object's \verb!state! field of string extracted from a \verb!HTTPResponse! \verb!body!
+\item \verb!json2user!: decodes a JSON object's \verb!sdu! field of string extracted from a \verb!HTTPResponse! \verb!body!
+\item \verb!frame2json!: creates the JSON representation of a record of type \verb!LAPB_Type!
+\end{itemize}
+
+
+\subsection{Communication using LAP-B over HTTP -- sample}
+
+The entry point of the sample is \verb!control! that calls test case \verb!tc_basic!
+
+{\footnotesize
+\begin{lstlisting}
+control {
+  execute(tc_basic());
+}
+\end{lstlisting}
+}
+
+The definition of the test case acts as the HTTP client in the test configuration:
+
+{\footnotesize
+\begin{lstlisting}
+testcase tc_basic() runs on HTTP_client
+{
+}
+\end{lstlisting}
+}
+
+A connection is created between the test port and the web server. The \verb!mtc! is the test port and the \verb!system! is the web server.
+
+{\footnotesize
+\begin{lstlisting}
+map(mtc:HTTP_client_port, system:HTTP_client_port);
+\end{lstlisting}
+}
+
+A variable is defined for the HTTP headers and 2 of the fields are initialized for the predefined values. The header can be reused multiple times only the \verb!Content-Length! value has to be adjusted:
+
+{\footnotesize
+\begin{lstlisting}
+var HeaderLines hd := { 
+ {header_name := "Host", header_value := HttpServerHostName},
+ {header_name := "Content-Type", header_value := "application/json"},
+ {header_name := "Content-Length", header_value := "0" }
+};
+\end{lstlisting}
+}
+
+A variable is defined for the HTTP request that can be reused also. Only the \verb!uri! has to be adjusted to the values found in Section~\ref{sec:json_req}.
+
+{\footnotesize
+\begin{lstlisting}
+var HTTPRequest http_req := { 
+ client_id := omit, 
+ method := "POST", 
+ uri := "/connected/sabme.json", 
+ version_major := 1, 
+ version_minor := 1, 
+ header := hd, 
+ body := ""
+};
+\end{lstlisting}
+}
+
+The \verb!Connect! and \verb!Close! messages that are used for HTTP port initialization has to be defined only once:
+
+{\footnotesize
+\begin{lstlisting}
+var Connect conn := { 
+ hostname := HttpServerHostName,
+ portnumber := HttpServerPort, 
+ use_ssl := HTTPClientUseSSL
+};
+var Close c := { client_id := omit };
+\end{lstlisting}
+}
+
+A reusable timer is declared that is set before every request sent and initialized to 5 seconds by default:
+
+{\footnotesize
+\begin{lstlisting}
+timer T_guard := 5.0;
+\end{lstlisting}
+}
+
+The LAP-B frame to be send is declared and transformed to JSON text and the length is reflected in the HTTP header:
+
+{\footnotesize
+\begin{lstlisting}
+var LAPB_Frame frame := { poll := Polloff, t := SABME, cr := Command}
+var charstring frame_str := frame2json(frame, "a")
+hd[2].header_value := int2str(lengthof(frame_str))
+\end{lstlisting}
+}
+
+The URI parameter of the HTTP request is set based on the current state and the recently initialized header is assigned to the request:
+
+{\footnotesize
+\begin{lstlisting}
+var charstring state := "connected";
+http_req.body := frame_str;
+http_req.uri := "/"&state&"/"&type2string(frame.t)&".json"
+http_req.header := hd;
+\end{lstlisting}
+}
+
+Two HTTP messages are required: one for the request and another for the response furthermore 2 additional string variables are used for storing the error message and the message towards the upper layer:
+
+{\footnotesize
+\begin{lstlisting}
+var charstring errorMsg;
+var charstring userMsg;
+var HTTPMessage send_req := { request := http_req };
+var HTTPMessage http_resp;
+\end{lstlisting}
+}
+
+After these initialization the test port can be started by sending the \verb!Connect! message.
+
+{\footnotesize
+\begin{lstlisting}
+HTTP_client_port.send(conn);
+\end{lstlisting}
+}
+
+The HTTP request is sent and the timer is started. This step has to be repeated for each sent request.
+
+{\footnotesize
+\begin{lstlisting}
+HTTP_client_port.send(send_req);
+T_guard.start;
+\end{lstlisting}
+}
+
+Then the code waits for a response from the server that can be a HTTP response, a \verb!Half_close! message from the test port due to the disconnection of the TCP connection, any other message or timer expiry. All of these events have to be handled. In case of a HTTP response the results are logged and the connection is closed using the \verb!Close! message and set a \verb!pass! verdict. A longer test case would continue with sending new message instead of sending a \verb!Close! message.
+
+{\footnotesize
+\begin{lstlisting}
+alt {
+ [] HTTP_client_port.receive(recv_resp)-> value http_resp {
+   log("HTTP response message: ", http_resp)
+   var LAPB_Frames recv_frames;
+   var charstring body := http_resp.response.body;
+   log("JSON body: ", body)
+   state := json2state(body)
+   log("State: ", state)
+   if (state != "connected") { setverdict(fail) }
+   else
+   {
+      errorMsg := json2error(body)
+    log("Errors: ", errorMsg)
+      if (errorMsg != "") { setverdict(fail) }
+   }
+   userMsg := json2user(body)
+   log("PDUs: ", userMsg)
+   recv_frames := json2frames(body)
+   if (recv_frames[0].t == UA and recv_frames[0].cr == Response) { setverdict(pass)}
+   else {setverdict(fail)}
+   log("Frame2JSON: ", frame2json(recv_frames[0], "a"))
+   HTTP_client_port.send(c);
+   setverdict(pass);
+ }
+ [] HTTP_client_port.receive(h) { 
+   HTTP_client_port.send(c);
+   setverdict(fail);
+ }
+ [] HTTP_client_port.receive {
+   HTTP_client_port.send(c); 
+   setverdict(fail); 
+ }  
+ [] T_guard.timeout {
+   setverdict(inconc); 
+ }  
+};
+\end{lstlisting}
+}
 
 \appendix
 
 \section{Entry quiz sample questions}
 
-%\begin{enumerate}
+\begin{enumerate}
 
-%  \item  Miért nemdeterminisztikus egy távköző rendszer?
-%  \item  Milyen ítéletet hozunk, ha a tesztelendő rendszer nem válaszol egy kérésre?
-%  \item  Milyen esetekben hozunk inconc ítéletet?
-%  \item  Mi az üzenetformátum analógiája webportál esetén?
-%  \item  Mi az üzenettípus analógiája webportál esetén?
-%  \item  Mi a protokoll állapotátmenet analógiája webportál esetén?
-%  \item  Miért van szükség az előfeltételeket beállító eseménysorozatra egy tesztesetben?
-%  \item  Milyen válaszokra kell felkészülnük egy tesztesetben egy üzenet kiküldése után?
-%  \item  Hogyan kerülhet holtpontra egy rendszer?
-%  \item  Mi a tesztvégrehajtás eredménye, ha a teszteset bugot tartalmaz?
-%  \item  Mi a kapcsolat a TTCN-3 template-ek és típusok között?
-%  \item  Mi a kapcsolat a TTCN-3 template-ek és értékek között?
-%  \item  Melyik lehet az alábbi, publikus interfészen deklarált C függvény tesztelését lehetővé tevő TTCN-3 porttípus definíciójának törzse?
-%     int f(const char *c)
-%        in integer, out charstring
-%        out integer, in charstring
-%        in integer, inout charstring
-%        out integer, inout charstring 
-%  \item Definiáljon egy TTCN-3 rekord típust, ami képes egy válasz üzenetet tárolni! (Pontos szintakszis nem elvárt) 
-%\end{enumerate}
+  \item  Why is a telecommunication system non-deterministic?
+  \item  What is the verdict when a SUT does not respond to a request?
+  \item  In which cases the verdict is going to be inconc?
+  \item  What is the analogy of the message format in case of a web portal?
+  \item  What is the analogy of the message type in case of a web portal?
+  \item  What is the analogy of a state transition in case of a web portal?
+  \item  Why do we need the preamble event sequence in a test case?
+  \item  What kinds of responses should we anticipate in a test case after sending a message?
+  \item  How can a system get into a stale sate?
+  \item  What is the result of test execution if the test case contains a bug?
+  \item  What is the connection between TTCN-3 templates and types?
+  \item  What is the connection between TTCN-3 templates and values?
+  \item Which of the following TTCN-3 port type definition corresponds to the C function signature int f(const char *c)?
+  \begin{itemize}
+    \item in integer, out charstring
+    \item out integer, in charstring
+    \item in integer, inout charstring
+    \item out integer, inout charstring 
+  \end{itemize}
+  \item  Define a TTCN-3 record type that is capable of holding a response message (exact syntax is not required).
+\end{enumerate}
 
 \section{Lab exercises}
 
-\subsection{Lab environment}
+The lab exercises are split into two groups. Exercises 1-4. are mandatory to complete. From exercises out of 5-8. two arbitrarily exercises must be completed.
+
+\subsection{Mandatory exercises}
+\begin{enumerate}
+    \item Try out the \href{http://152.66.246.231:3000/}{LAP-B over HTTP} web UI by triggering events and observe the protocol's state!
+    \item By using curl command from the console try out the LAP-B JSON API based on the examples from the syllabus and examine the state of the protocol
+    \item Execute the sample test cases from the syllabus and examine the log results. Document the results in the lab report!
+    \item Find out whether the protocol operates in basic or extended mode. Create a test case that documents the result! 
+\end{enumerate}
+
+\subsection{Optional exercises(2 must be completed!)}
+\begin{enumerate}[resume]
+    \item Modify the test case source so it can test the transmission of a client data unit!
+    \item Modify the test case source in a way that it forces the SUT into the frame reject state then into connected state and then disconnect the connection. While doing the transition log the expected state of the protocol!
+    \item Determine the window size from the web UI then create a test case that checks what happens when more than the window size unacknowledged frames are sent. 
+    \item Determine the maximal retry count (n2) from the web UI and create a test case that check what happens if this threshold is passed!
+    \item Determine the packet loss probability using statistical methods!
+\end{enumerate}
+
+\subsection{Bonus exercise for a better grade}
+\begin{enumerate}[resume]
+  \item If you find a bug in the LAB-P over HTTP implementation, write a test case that reproduces it!
+\end{enumerate}
 
 \begin{thebibliography}{9}
 
