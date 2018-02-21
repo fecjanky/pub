@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage{url}
-\usepackage[hidelinks]{hyperref}
+\usepackage[]{hyperref}
 
 \usepackage{caption}
 
@@ -23,8 +23,8 @@
 \usepackage[margin=1in]{geometry}
 
 \title{Testing of Network Services}
-\author{}
-\date{}
+\author{Kovács Gábor, Adamis Gusztáv, Erõs Levente, (Translated by: Ferenc Janky)}
+\date{2016.}
 
 
 \begin{document}
@@ -60,12 +60,12 @@
 
 \section{Introduction}
 
-The purpose of this lab is to give an insight on system test and to be a teaser to the world of script based automated
-test execution. During this lab we are going to test LAP-B protocol which is the second layer of the X.25 protocol
+The purpose of this lab is to give an insight on system testing and to serve a teaser to the world of script based automated
+test execution. During this lab we are going to test a LAP-B protocol implementation which is the second layer of the X.25 protocol
 stack. What makes this lab exotic is that the transmission medium of the protocol is not going to be a physical layer
 but HTTP instead. The protocol entity to be tested is a web application running on a server : JSON text inside HTTP
 POST messages can be used for sending LAP-B frames destined for the device under test that will respond with frames in
-JSON data in HTTP likewise. As consequence this architecture will give insight on:
+JSON data in HTTP likewise. As a consequence this architecture will give insight on:
 \begin{itemize}
     \item script based black-box testing
     \item automated testing of web applications
@@ -76,7 +76,7 @@ JSON data in HTTP likewise. As consequence this architecture will give insight o
 \section{Lab environment}
 
 The software and hardware components that are used during this lab can be seen on Fig.~\ref{fig:lab-arch}.
-A virtual machine -- with Ubuntu Linux installed -- is used that contains an Ericsson TITAN test execution environment,
+A virtual machine -- with Ubuntu Linux installed -- is utilized that contains an Ericsson TITAN test execution environment,
 a TITAN Eclipse plug-in that is used for creating test scripts and for controlling the execution. As TITAN is a general
 purpose test execution framework a \emph{test port} has to be used for defining the way of message transmission and
 reception that are used in the test cases. Since a web server is on the receiving end of the communication the TITAN
@@ -106,23 +106,23 @@ The login credentials for the VM (user/pass): \textbf{\emph{ttcn/ttcn}}
 
 \subsection{System test}
 
-The purpose of system test is to make a verdict on the test candidate system in terms of conformance with the
-functional and non-functional specification. During system test the test candidate is only accessed through its
+The purpose of a system test is to make a verdict on the test candidate system in terms of conformance with the
+functional and non-functional specification. During a system test the test candidate is only accessed through its
 external interfaces -- the internal state is unknown at any time point, it acts like a black box.
 
-When testing the test environment (\emph{tester} in the following) sees the System Under Test (\emph{SUT}) as a
-black-box. The tester can only send and receive messages from the direction of the SUT through the Point of Control and
+When testing, the test environment (\emph{tester} in the following) sees the System Under Test (\emph{SUT}) as a
+black-box. The tester can only send and receive messages to/from the direction of the SUT through the Point of Control and
 Observations (PCO). The conformance is verified only through the observable behavior of the SUT over the PCOs.
-In a system test the operations declared in the public interface of the system can be executed in an arbitrary sequence
-with arbitrarily many times therefore the possible sequence and length of an event vector is unbounded/infinite. The
+In a system test the operations declared in the public interface of the system can be executed in an arbitrary sequence,
+arbitrarily many times, therefore a possible sequence and length of an event vector is unbounded/infinite. The
 result of such unbounded event vector can not be verified therefore a representative selection of them is made what is
-called \emph{test suite}. The hypothesis is that a thorough test suite guarantees the system's conformance with the
+called a \emph{test suite}. The hypothesis is that a thorough test suite guarantees the system's conformance with the
 specs with high probability.
 
 \subsection{Black-box testing}
 
 In order to execute a test a test suite has to be created. The structure of a test suite is a hierarchy whose basic
-component is called \emph{test case}. Each test case has a \emph{test purpose} that is basically checking that SUT
+component is called \emph{test case}. Each test case has a \emph{test purpose} that is basically checking that the SUT
 satisfies one of the criteria of the system specification. Test cases can be further break down into \emph{test steps}
 that can contain further test steps recursively or \emph{test events}. Test events are considered to be at the lowest
 level of the hierarchy and to be atomic.
@@ -150,13 +150,13 @@ non-deterministic delays over the communication channels. Errors can occur such 
 caused by a bit error in the physical layer or message duplication or reordering of messages because of other reasons.
 As a consequence beside of the positive outcome a test case must be prepared for handling unexpected events as a result
 of message sending. All messages sent have to be protected with a timer so that in case of a message loss or deadlock
-in the SUT it won't not block the tester and the test execution.
+in the SUT it won't block the tester and the test execution system.
 
 The output of the test case execution is the \emph{verdict}. The hypothesis is that if a system responded with the
 correct output during the 4 phases described above then our terminal state was correct resulting in a \emph{pass}
 verdict of the test case. If we receive an unexpected message during any message exchange the test case ends in a
 \emph{fail} verdict also blocking further execution of steps. If the system failed to respond to a request -- that
-could be caused by network congestion -- it can not be decided whether the operation was correct or not. In such case
+could have been caused by network congestion -- it can not be decided whether the operation was correct or not. In such case
 the verdict is \emph{inconclusive}. There are two more verdicts: \emph{none} when there is no verdict as a result of a
 test case and \emph{error} where some error occurred during test case execution.
 
@@ -214,7 +214,7 @@ Towards upper layer protocols it provides the following indications:
 \subsection{Message types and frame formats}
 
 The frame data is encapsulated in 01111110 (0x7E) flag. For transparent data transmission inside the frame body the
-sending device inserts a 0 bit after each consecutive 1 bit that are removed at the receiving side (this is called bit
+sending device inserts a 0 bit after each 5 consecutive 1 bit that are removed at the receiving side (this is called bit
 stuffing).
 
 LAP-B frames have 4 main parts as seen on Figure~\ref{fig:lapbframe}. The first part is the address field followed by
@@ -297,12 +297,12 @@ The protocol has several state variables:
 \begin{itemize}
     \item \verb!mode!: \verb!basic! - means that 3 bit sequence numbers or
           \verb!extended! is in use (7 bit seq. no.)
-    \item (\verb!busy!) status: there was a congestion during data processing
-    \item (\verb!rejecting!) status: subsequent data transmission is not possible to a previous error
-    \item (\verb!pending!) status: there are processed but not yet acknowledged messages, acknowledgment
+    \item \verb!busy! status: there was a congestion during data processing
+    \item \verb!rejecting! status: subsequent data transmission is not possible to a previous error
+    \item \verb!pending! status: there are processed but not yet acknowledged messages, acknowledgment
           has to
           be sent
-    \item (\verb!window!): integer variable, determines the maximal size of the sent but not acknowledged
+    \item \verb!window!: integer variable, determines the maximal size of the sent but not acknowledged
           buffer
     \item \verb!vs!: the sequence no. of the last sent message, last element in the acknowledgment
           queue
@@ -318,7 +318,7 @@ The protocol has 5 states that define the state of the data connection:
     \item disconnected: both sides are in disconnected state, starting state
     \item disconnecting: the disconnection is half-way done, the entity is waiting for the peer to acknowledge the
           disconnect request
-    \item connecting): the connection is half-open, one side is waiting for the other for a positive acknowledgment for
+    \item connecting: the connection is half-open, one side is waiting for the other for a positive acknowledgment for
           the
           connection initiation request
     \item connected: both sides are in connected state, data transmission is possible
@@ -420,7 +420,7 @@ is required.
 \end{center}
 }
 
-The state transition after receiving a DM message is show in the table below. It is not permitted to receive a DISC
+The state transition after receiving a DM message is shown in the table below. It is not permitted to receive a DISC
 message in disconnected or frame reject states.In connected state an I frame is sent if there some data to be
 transmitted or retransmission is required.
 
@@ -677,11 +677,11 @@ including the sequence number values, state variables, timer states, message que
 \end{figure}
 
 \subsection{JSON API}
-In order to ease the automation of testing the web portal its JSON API is going to be used for interacting with it.
+In order to ease the automation of testing the web portal's JSON API is going to be used for interacting with it.
 
 \subsection{JSON requests}\label{sec:json_req}
 
-The JSON requests has to be addressed to the web server in embedded in a HTTP POST message body with
+The JSON requests has to be addressed to the web server embedded in a HTTP POST message body with
 \verb!application/json! MIME type specified as Content-Type parameter. For example the following console command
 can be used for doing so:
 
@@ -985,13 +985,13 @@ the source code will be visible with the corresponding JSON document.
 \subsection{TTCN-3}
 TTCN-3 programming language is specifically designed for describing conformance tests. Its syntax resembles C++, there
 are many similarities between them however it contains some language constructs that can be used to express higher
-level concepts that can be used for efficient description of conformance testing specific behavior. TTCN-3 is an
+level concepts that can be used for efficient description of conformance testing specific behavior. TTCN-3 
 abbreviates Testing and Test Control Notation version 3. The full specification can be found in the ETSI TTCN-3
 standard \cite{ttcn3}
 \footnote{\url{http://www.ttcn-3.org/index.php/downloads/standards}}.
 
 The top level construct of a TTCN-3 code is called module. Source code is composed from modules. A module has two main
-parts: the definition and the control parts. In the definition part are the type declaration of the messages exchanged
+parts: the definition and the control parts. In the definition part there are the type declaration of the messages exchanged
 with SUT, the definitions of concrete messages to be send, the definition of templates used for verifying received
 messages furthermore the declarations of the test ports and test components used. Also here can be found the
 definitions of the test cases and functions describing the dynamic behavior of the tests. The control part of the
@@ -1174,7 +1174,7 @@ The syntax of TTCN-3 control structures:
 }
 
 \subsubsection{Templates}
-Templates has dual purpose. We can use them to define a sent message that matches an already defined type or to
+Templates have dual purpose. We can use them to define a sent message that matches an already defined type or to
 describe patterns that can be used for verifying messages arriving from the SUT.
 Here's an example for defining a template based on the above declared \verb/MyRecordType/
 {\footnotesize
@@ -1258,7 +1258,7 @@ different templates. The value of district can be set based on the value of a lo
 The test components can communicate with each other and the SUT using ports. A port's responsibility is to send and
 receive messages. To send a message execute \verb/portName.send/ \verb/(value)/ and to receive
 call execute \verb/portName.receive/ \verb/(templateName)/. Send operation is considered completed right
-after execution \verb/send/ while verb/receive/ operation a blocking operation.
+after execution of \verb/send/ while verb/receive/ operation is a blocking operation.
 
 A port type can be define in the following way:
 {\footnotesize
@@ -1279,8 +1279,8 @@ A test component implements a specific behavior towards the SUT. For example whe
 can emulate individual user software components connecting to the server.
 Components can communicate with each other and the SUT through their ports. The collection of test components create
 the test configuration. Based on their role we distinguish two types of test components: MTC -- Main Test Component --
-and PTC -- Parallel Test Component. There can only be one MTC in a test environment. During this lab we won't use PTC
-as a consequence thew won't be detailed any further.
+and PTC -- Parallel Test Component. There can only be one MTC in a test environment. During this lab we won't use PTCs
+as a consequence they won't be detailed any further.
 
 \begin{figure}[H]
     \centering
@@ -1372,7 +1372,7 @@ All \verb/alt/ branch starts with a \emph{guard condition} that if is false the 
 be omitted from execution completely. An empty guard condition is always true.
 
 An event follows the guard condition and if that event occurs the instructions inside the following braces will be
-executed and the control flow will leave the \verb/alt/ structure and the execution continues wit
+executed and the control flow will leave the \verb/alt/ structure and the execution continues with the
 instruction after it.
 
 If the intention is that the control does not leave the \verb/alt/ structure a
