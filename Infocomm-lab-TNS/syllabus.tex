@@ -1301,76 +1301,44 @@ To block on a timer one can use the \verb!timerName.timeout! function.
 
 \subsubsection{Alternative behavior}
 
-A TTCN-3 nyelv egyik legfontosabb, a tesztkomponensek, a SUT válaszától függõ, alternatív
-viselkedésének leírását lehetõvé tévõ vezérlési szerkezete az \verb.alt. utasítás. Akkor használjuk,
-ha a teszt végrehajtása egy olyan pontra ér, ahonnan több módon is továbbhaladhat, attól
-függõen, hogy a tesztelt rendszer milyen választ küld, ha egyáltalán küld választ. Például
-képzeljük el azt az egyszerû esetet, mikor a tesztelt rendszer sikeres konformancia-tesztje
-azon áll, vagy bukik, hogy a legutóbb kiküldött \textit{keres} üzenetre mint gerjesztésre a
-\textit{jovalasz} vagy a \textit{rosszvalasz} üzenetet küldi-e vissza. Amennyiben nem érkezik
-válasz \verb/1/ másodpercen belül, a teszt kimenetele inkonkluzív lesz. A következõ kódrészlet
-szemlélteti a fent leírt mûködést:
+One of the most important control structure of TTCN-3 language is the \verb.alt. instruction that makes it possible to describe conditional behavior of the test component based on the SUT's answer.
+It can be used at places where the execution reaches a branching point where the branch to be taken depends on the SUT response -- if it send a response at all.
+For example if a hypothetical SUT conformance test result depends on whether the SUT sends a \textit{good} or \textit{bad} response for a recently sent \textit{request}. If there is no response after 1 second the test result is inconclusive. The sample code below corresponds for the test described before:
 
 {\footnotesize
 \begin{lstlisting}
 timer T0;
-P0.send("keres");
+P0.send("request");
 T0.start(1.0);
 alt {
-  [] P0.receive("jovalasz") {setverdict(pass);}
-  [] P0.receive("rosszvalasz") {setverdict(fail);}
+  [] P0.receive("good") {setverdict(pass);}
+  [] P0.receive("bad") {setverdict(fail);}
   [] T0.timeout {setverdict(inconc);}
 }
 \end{lstlisting}
 }
 
-Valamennyi \verb/alt/-ág egy szögletes zárójelekbe zárt õrfeltétellel (guard) kezdõdik, amely ha
-nem teljesül, a mögötte levõ ágat egyszerûen nem vesszük figyelembe. Ha az õrfeltétel üres,
-mindig teljesül. 
+All \verb/alt/ branch starts with a \emph{guard condition} that if is false the branch after it will be omitted from execution completely. An empty guard condition is always true.
 
-Az õrfeltétel után áll az
-az esemény (event), amely bekövetkezte esetén az esemény után kapcsos zárójelben lévõ
-utasítássorozatot végrehajtva, majd az \verb/alt/-szerkezetet elhagyva folytatódik a végrehajtás.
-Amennyiben az adott ág végrehajtása után nem kívánjuk elhagyni az \verb/alt/-szerkezetet, hanem
-az elejére kívánunk ugrani, úgy az adott ágon szereplõ utasítások után egy \verb/repeat/ utasítást
-kell elhelyeznünk.
+An event follows the guard condition and if that event occurs the instructions inside the following braces will be executed and the control flow will leave the \verb/alt/ structure and the execution continues wit instruction after it.
 
-Ezek után vizsgáljuk meg kicsit közelebbrõl az \verb/alt/ utasítás mûködését! Nagyon fontos
-megjegyezni, hogy egy \verb/alt/ utasítás nem olyan, mint az \verb/if..then..else/ szerkezet, abban
-az értelemben, hogy az utasítást elérve még nem tudjuk, merre fogunk továbbhaladni. Amikor
-a tesztvégrehajtás egy ilyen pontra ér, egy pillanatkép (snapshot) készül a rendszer állapotáról,
-amely tartalmazza portok bemeneti sorait, valamint a változók és az idõzítõk értékeit. Ezek után kiszûrjük
-azon ágakat, amelyek õrfeltétele a pillanatkép szerint igaz, azaz az aktív ágakat, amelyek közül
-az elsõ olyat választjuk ki és hajtjuk végre, amelyhez tartozó esemény a pillanatkép alapján bekövetkezett.
-
-Ha egyik esemény sem
-következett be, egy újabb pillanatkép készül a rendszerrõl. A végrehajtás tehát addig
-blokkolódik, amíg valamely esemény be nem következik. Ha az \verb!alt!
-utasításban az összes lehetséges eseményt figyelembe vesszük, akkor
-nem lesz blokkolás.
+If the intention is that the control does not leave the \verb/alt/ structure a \verb/repeat/ instruction must be placed inside the block.
 
 
-\subsubsection{Az ítéletek kezelése}
-A teszt futása során az \verb!mtc! kialakít egy ítéletet a tesztelt rendszerrõl. A
-korábban említettek szerint egy ítélet értéke lehet \verb/none/, \verb/pass/, \verb/inconc/, \verb/fail/ valamint
-\verb/error/. Ez a sorrend szigorúsági sorrendet és egyúttal egy hierarchiát is jelent az ítéletértékek
-között (a \verb/none/ a legenyhébb, míg az \verb/error/ a legszigorúbb
-ítélet). 
+It's important to note that \verb/alt/ instruction is not like the traditional \verb/if..then..else/ control structure in that sense that when the execution reaches the alt instruction the execution path is unknown. When the test execution reaches such point a snapshot is made from the system's state with all the input queues of the ports, values of variables and timers etc. After the snapshot the branches will be filtered based on the guard condition evaluated based on the snapshot. Those branches will be considered active whose guard condition evaluated true. The execution dispatches to that branch whose event occurred first based on the snapshot.
 
-Azaz, ha valamikor hoztunk egy \verb/pass/ ítéletet, %a tesztkomponens
-                                %futása során, 
-azt egy \verb/fail/ ítélettel késõbb felülírhatjuk, viszont egy már meglévõ \verb/fail/ ítéletet egy
-késõbbi \verb/pass/ ítélettel nem írhatunk felül, tehát az 
-ítéletek idõrendiségétõl függetlenül mindig a legszigorúbb ítélet jut érvényre.
+If none of the listed events occurred a subsequent snapshot is made from the system. That means the execution is blocked until one of the events occur. If all potential outcome is covered in the \verb!alt! structure there will be no blocking.
+
+\subsubsection{Handling of verdicts}
+
+During the execution of the test the \verb!mtc! will form a verdict of the SUT. As mentioned previously the verdict can be one of the following: \verb/none/, \verb/pass/, \verb/inconc/, \verb/fail/ and \verb/error/. This order also determines the priority/severity and hierarchy of the verdicts.(\verb/none/ is the least severe while \verb/error/ has the highest severity)
+
+Having said that if the test component sets a \verb/pass/ verdict at some point a \verb/fail/ verdict at some later point will override it. However in the reverse direction, if a \verb/fail/ verdict is set at some point a subsequent \verb/pass/ is not going to override it, i.e. always the most severe verdict will dominate.
 
 
-\subsubsection{Függvények}
-A függvények szerepe kettõs a TTCN-3-ban is, akárcsak a többi programozási nyelvben.
-Egyrészt kiszámolhatunk velük valamit, másrészt egy viselkedést írhatunk le velük.
+\subsubsection{Functions}
 
-
-Egy függvény definiálásának szintaktikáját a következõ példa
-szemlélteti:
+Sample syntax of defining a function is illustrated by the following example:
 {\footnotesize
 \begin{lstlisting}
 function MyFunction (in integer myPar) runs on MyComponentType return charstring
@@ -1379,26 +1347,13 @@ function MyFunction (in integer myPar) runs on MyComponentType return charstring
 }
 \end{lstlisting}
 }
-A fenti példát egy ponton illeti magyarázat, méghozzá a függvény paramétereinek
-megadásánál. Itt az \verb/in/ kulcsszót akkor használjuk, ha a
-paraméter bemenõ paraméter (C++ \verb/const/ vagy Java \verb/final/), az \verb/out/
-kulcsszót akkor, ha kimenõ, míg az \verb/inout/ kulcsszót akkor, ha
-kétirányú paraméter. Az \verb/in/ kulcsszó elhagyható. 
-Amennyiben a függvényt egy komponens viselkedésének leírására használjuk, és a függvény a
-komponensben definiált változókat, konstansokat, idõzítõket vagy portokat használja, úgy a
-\verb/runs on/ kulcsszavak után meg kell adnunk annak a komponensnek a
-típusát, amelyen futni fog. Végül a \verb/return/ kulcsszóval adhatjuk meg a
-függvény visszatérési értékét, ha van.
+The \verb/in/ keyword is used when the parameter is an input value (i.e. immutable, equivalent to C++ \verb/const/ or Java \verb/final/). Keyword \verb/out/ is used when the parameter is an output parameter while \verb/inout/ is used when it's a bidirectional parameter. Keyword \verb/in/ can be omitted.
+If a function is used for defining a component behavior and it uses the variables,constants, timers or ports defined in the component then the component's name must be specified after the \verb/runs on/ keyword. Finally the \verb/return/ can be used for specifying the return value type if there is one.
+A function execution can be stopped using the \verb/stop/ instruction.
+Functions can be defined in the definition section.
 
-
-A függvény futását
-leállítani a \verb/stop/ utasítással lehet.
-Függvényeket a definíciós részben definiálhatunk.
-
-\subsubsection{Tesztesetek}
-A tesztesetek olyan speciális függvények, amelyek az MTC-n futnak. A teszt\-e\-se\-tek\-ben nem
-használhatjuk a \verb/return/ utasítást, visszatérési értékük egy ítélet a tesztelt rendszer
-megfelelõségérõl. Teszteseteket a következõképpen definiálhatunk:
+\subsubsection{Test cases}
+Test cases are special purpose functions that run on the MTC. In a test case the return statement can not be used but a verdict on the SUT's conformance must be set instead. Test cases are defined in the following way:
 {\footnotesize
 \begin{lstlisting}
 testcase MyTestCase() runs on MyComponentType
@@ -1408,23 +1363,17 @@ system MySystemType
 }
 \end{lstlisting}
 }
-A teszteset definiálása tehát nagyban hasonlít a függvényéhez, azzal a különbséggel, hogy a
-\verb.testcase. kulcsszó vezeti be, illetve megadhatjuk a tesztelt rendszer típusát is a \verb.system.
-kulcsszó után.
+The type of the SUT can be given after the \verb.system. keyword.
 
-A teszteseteket az
-\verb/execute(/ \verb/tesztesetnév(/ \verb/paraméterek))/ utasítással indíthatjuk el a modulvezérlõ részben. Ekkor automatikusan létrejön a
-teszt\-e\-set fejlécében megadott típusú MTC példány, majd ezen elindul a teszteset. A
-tesztesetek felelõsek a tesztkonfiguráció felépítéséért is.
+Test cases can be executed using the \verb/execute(/ \verb/testCaseName(/ \verb/parameters))/ instructions in the module control section. When doing so an MTC instance will be instantiated based on the type specified in the test case header and the test case execution begins. Test cases are responsible for setting up the test configuration.
+
+Test cases can be defined in the definition section.
 
 
-Teszteseteket a definíciós részben definiálhatunk.
 
-\subsubsection{A modulvezérlõ rész}
-A modulvezérlõ részt a modulon belül a \verb/control/ kulcsszó vezeti be, ezután következik
-kapcsos zárójelek között a teszteseteket indító szakasz. A teszt\-e\-se\-tek indítása az \verb/execute/
-kulcsszóval történik. Egy teszteset elindításakor automatikusan létrejön az MTC, amelynek
-típusa a teszteset fejlécében megadott komponenstípus.
+\subsubsection{Module control section}
+
+The module control section is introduced by the \verb/control/ keyword inside a module. This is followed by the test case execution section inside braces. The execution of test cases can be done with the \verb/execute/ keyword. When launching a test case an MTC is instantiated automatically based on the type specified in the corresponding test case header.
 
 
 %Változók és konstansok 
