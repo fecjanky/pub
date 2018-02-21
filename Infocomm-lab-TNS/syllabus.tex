@@ -60,8 +60,10 @@
 
 \section{Introduction}
 
-The purpose of this lab is to give an insight on system testing and to serve a teaser to the world of script based automated
-test execution. During this lab we are going to test a LAP-B protocol implementation which is the second layer of the X.25 protocol
+The purpose of this lab is to give an insight on system testing and to serve a teaser to the world of script based
+automated
+test execution. During this lab we are going to test a LAP-B protocol implementation which is the second layer of the
+X.25 protocol
 stack. What makes this lab exotic is that the transmission medium of the protocol is not going to be a physical layer
 but HTTP instead. The protocol entity to be tested is a web application running on a server : JSON text inside HTTP
 POST messages can be used for sending LAP-B frames destined for the device under test that will respond with frames in
@@ -76,7 +78,8 @@ JSON data in HTTP likewise. As a consequence this architecture will give insight
 \section{Lab environment}
 
 The software and hardware components that are used during this lab can be seen on Fig.~\ref{fig:lab-arch}.
-A virtual machine -- with Ubuntu Linux installed -- is utilized that contains an Ericsson TITAN test execution environment,
+A virtual machine -- with Ubuntu Linux installed -- is utilized that contains an Ericsson TITAN test execution
+environment,
 a TITAN Eclipse plug-in that is used for creating test scripts and for controlling the execution. As TITAN is a general
 purpose test execution framework a \emph{test port} has to be used for defining the way of message transmission and
 reception that are used in the test cases. Since a web server is on the receiving end of the communication the TITAN
@@ -111,9 +114,11 @@ functional and non-functional specification. During a system test the test candi
 external interfaces -- the internal state is unknown at any time point, it acts like a black box.
 
 When testing, the test environment (\emph{tester} in the following) sees the System Under Test (\emph{SUT}) as a
-black-box. The tester can only send and receive messages to/from the direction of the SUT through the Point of Control and
+black-box. The tester can only send and receive messages to/from the direction of the SUT through the Point of Control
+and
 Observations (PCO). The conformance is verified only through the observable behavior of the SUT over the PCOs.
-In a system test the operations declared in the public interface of the system can be executed in an arbitrary sequence,
+In a system test the operations declared in the public interface of the system can be executed in an arbitrary
+sequence,
 arbitrarily many times, therefore a possible sequence and length of an event vector is unbounded/infinite. The
 result of such unbounded event vector can not be verified therefore a representative selection of them is made what is
 called a \emph{test suite}. The hypothesis is that a thorough test suite guarantees the system's conformance with the
@@ -156,7 +161,8 @@ The output of the test case execution is the \emph{verdict}. The hypothesis is t
 correct output during the 4 phases described above then our terminal state was correct resulting in a \emph{pass}
 verdict of the test case. If we receive an unexpected message during any message exchange the test case ends in a
 \emph{fail} verdict also blocking further execution of steps. If the system failed to respond to a request -- that
-could have been caused by network congestion -- it can not be decided whether the operation was correct or not. In such case
+could have been caused by network congestion -- it can not be decided whether the operation was correct or not. In such
+case
 the verdict is \emph{inconclusive}. There are two more verdicts: \emph{none} when there is no verdict as a result of a
 test case and \emph{error} where some error occurred during test case execution.
 
@@ -214,7 +220,8 @@ Towards upper layer protocols it provides the following indications:
 \subsection{Message types and frame formats}
 
 The frame data is encapsulated in 01111110 (0x7E) flag. For transparent data transmission inside the frame body the
-sending device inserts a 0 bit after each 5 consecutive 1 bit that are removed at the receiving side (this is called bit
+sending device inserts a 0 bit after each 5 consecutive 1 bit that are removed at the receiving side (this is called
+bit
 stuffing).
 
 LAP-B frames have 4 main parts as seen on Figure~\ref{fig:lapbframe}. The first part is the address field followed by
@@ -985,13 +992,14 @@ the source code will be visible with the corresponding JSON document.
 \subsection{TTCN-3}
 TTCN-3 programming language is specifically designed for describing conformance tests. Its syntax resembles C++, there
 are many similarities between them however it contains some language constructs that can be used to express higher
-level concepts that can be used for efficient description of conformance testing specific behavior. TTCN-3 
+level concepts that can be used for efficient description of conformance testing specific behavior. TTCN-3
 abbreviates Testing and Test Control Notation version 3. The full specification can be found in the ETSI TTCN-3
 standard \cite{ttcn3}
 \footnote{\url{http://www.ttcn-3.org/index.php/downloads/standards}}.
 
 The top level construct of a TTCN-3 code is called module. Source code is composed from modules. A module has two main
-parts: the definition and the control parts. In the definition part there are the type declaration of the messages exchanged
+parts: the definition and the control parts. In the definition part there are the type declaration of the messages
+exchanged
 with SUT, the definitions of concrete messages to be send, the definition of templates used for verifying received
 messages furthermore the declarations of the test ports and test components used. Also here can be found the
 definitions of the test cases and functions describing the dynamic behavior of the tests. The control part of the
@@ -1069,15 +1077,20 @@ TTCN-3 composite types are:
 \begin{center}
     \begin{tabular}{|l|l|}
         \hline
-        \verb!record! & field order is fixed                                                              \\
+        \verb!record! & field order is fixed
+        \\
         \hline
-        \verb!record of! & field order fixed, homogeneous collection (e.g. \verb!record of integer!)     \\
+        \verb!record of! & field order fixed, homogeneous collection (e.g. \verb!record of integer!)
+        \\
         \hline
-        \verb!set! & fields are unordered                                                              \\
+        \verb!set! & fields are unordered
+        \\
         \hline
-        \verb!set of! & fields are unordered, homogeneous collection (e.g. \verb!set of float!)  \\
+        \verb!set of! & fields are unordered, homogeneous collection (e.g. \verb!set of float!)
+        \\
         \hline
-        \verb!union! & only one of its field can have a value                                            \\
+        \verb!union! & only one of its field can have a value
+        \\
         \hline
     \end{tabular}
 \end{center}
@@ -1162,13 +1175,17 @@ The syntax of TTCN-3 control structures:
 \begin{tabular}{{|l|l|l|l|}}
     \hline
     \verb/if/-\verb/then/-\verb/else/-structure &
-    \verb/if (condition) {...} else {...}/                                                                                                     \\
+    \verb/if (condition) {...} else {...}/
+    \\
     \hline
-    \verb.for.-loop                                                                & \verb/for (start;end;increment) {...}/  \\
+    \verb.for.-loop                                                                &
+    \verb/for (start;end;increment) {...}/                                                                        \\
     \hline
-    \verb/while/-loop                                                                & \verb/while (condition) {...}/  \\
+    \verb/while/-loop                                                                &
+    \verb/while (condition) {...}/                                                                        \\
     \hline
-    \verb/do/-\verb/while/-loop                                   & \verb/do {...} while (condition)/  \\
+    \verb/do/-\verb/while/-loop                                   &
+    \verb/do {...} while (condition)/                                                                        \\
     \hline
 \end{tabular}
 }
@@ -1372,7 +1389,8 @@ All \verb/alt/ branch starts with a \emph{guard condition} that if is false the 
 be omitted from execution completely. An empty guard condition is always true.
 
 An event follows the guard condition and if that event occurs the instructions inside the following braces will be
-executed and the control flow will leave the \verb/alt/ structure and the execution continues with the
+executed and the control flow will leave the \verb/alt/ structure and the execution continues with
+the
 instruction after it.
 
 If the intention is that the control does not leave the \verb/alt/ structure a
@@ -1451,20 +1469,21 @@ by the test case execution section inside braces. The execution of test cases ca
 \verb/execute/ keyword. When launching a test case an MTC is instantiated automatically based on the type
 specified in the corresponding test case header.
 
-
 \section{Sample exercise}
 
-The basis for the lab exercise is the sample described in this section. In this sample 5 files are used from the source directory:
+The basis for the lab exercise is the sample described in this section. In this sample 5 files are used from the source
+directory:
 \begin{itemize}
-\item \verb/HTTPmsg_Types.ttcn/:  HTTP request and response format definition in TTCN-3
-\item \verb/HTTPmsg_PortType.ttcn/: The interface between TITAN and HTTP
-\item \verb!LAPB_Types!: LAP-B data types and JSON converter functions
-\item \verb!LAPB_Test.cfg!: Configuration file for the test execution
-\item \verb!LAPB_Test.ttcn!: The file to edit that contains the test cases
+    \item \verb/HTTPmsg_Types.ttcn/:  HTTP request and response format definition in TTCN-3
+    \item \verb/HTTPmsg_PortType.ttcn/: The interface between TITAN and HTTP
+    \item \verb!LAPB_Types!: LAP-B data types and JSON converter functions
+    \item \verb!LAPB_Test.cfg!: Configuration file for the test execution
+    \item \verb!LAPB_Test.ttcn!: The file to edit that contains the test cases
 \end{itemize}
 
 \subsection{Test configuration}
-The test configuration sets up the address and port of the web server and the security settings of HTTP. This is done in both the configuration file and the test case modules.
+The test configuration sets up the address and port of the web server and the security settings of HTTP. This is done
+in both the configuration file and the test case modules.
 
 {\footnotesize
 \begin{lstlisting}
@@ -1479,69 +1498,92 @@ The test configuration sets up the address and port of the web server and the se
 The test environment acts as a client so the last two parameters are not significant.
 
 \subsection{HTTP API}
-The TITAN HTTP test port has its own state. The test port connects to the server using the \verb!Connect! message and HTTP messages can be sent towards the server until a \verb!Close! message. There are some other operations that can modify parameters of the TCP connection that are defined in \verb/HTTPmsg_PortType.ttcn/.
+The TITAN HTTP test port has its own state. The test port connects to the server using the \verb!Connect!
+message and HTTP messages can be sent towards the server until a \verb!Close! message. There are some
+other operations that can modify parameters of the TCP connection that are defined in \verb/HTTPmsg_PortType.ttcn/.
 
-From the HTTP data structure 6 will be used: \verb/Connect/, 
+From the HTTP data structure 6 will be used: \verb/Connect/,
 \verb!Close!,\verb/HeaderLines/,
 \verb/HTTPRequest/, \verb!HTTPResponse! and \verb!HTTPMessage!.
 
-\verb/Connect/ initializes the HTTP ports with the configuration settings. \verb!Close! closes the HTTP port.
+\verb/Connect/ initializes the HTTP ports with the configuration settings. \verb!Close!
+closes the HTTP port.
 
 In \verb/HeaderLines/ the HTTP request header fields can be adjusted, two of them is important for us now:
 \begin{itemize}
-\item \verb!Content-Type!:  The MIME type of the body of HTTP request body. This has to be set to \verb!application/json! because JSON text is sent inside the body of the request. This will be the same for all request as a consequence it's enough to set it up once.
-\item \verb!Content-Length!: The length of the body in bytes. This has to be adjusted on a per message basis based on the size of the JSON text.
+    \item \verb!Content-Type!:  The MIME type of the body of HTTP request body. This has to be set to
+          \verb!application/json! because JSON text is sent inside the body of the request. This will be the same for all
+          request as a consequence it's enough to set it up once.
+    \item \verb!Content-Length!: The length of the body in bytes. This has to be adjusted on a per message basis
+          based on the size of the JSON text.
 \end{itemize}
 
 In the \verb/HTTPRequest/ the following parameters have to be adjusted:
 \begin{itemize}
-\item \verb!method!: HTTP method, value is always \verb'POST'
-\item \verb'uri': The URI inside the HTTP request, this has to be modified on a per message basis.
-\item \verb!version_minor! and \verb!version_major!: HTTP version, both fields are set to \verb!1! if we'd like to use HTTP 1.1
-\item \verb!hd!: The \verb/HeaderLines/ type field of the HTTP header
-\item \verb!body!: The body of the HTTP request as a string that is assigned to the JSON text.
+    \item \verb!method!: HTTP method, value is always \verb'POST'
+    \item \verb'uri': The URI inside the HTTP request, this has to be modified on a per message basis.
+    \item \verb!version_minor! and \verb!version_major!: HTTP version, both fields are set to
+          \verb!1! if we'd like to use HTTP 1.1
+    \item \verb!hd!: The \verb/HeaderLines/ type field of the HTTP header
+    \item \verb!body!: The body of the HTTP request as a string that is assigned to the JSON text.
 \end{itemize}
 
-From the \verb!HTTPResponse! structure only the  \verb!body! field is used that carries the body of the HTTP response supposedly carrying a JSON text.
+From the \verb!HTTPResponse! structure only the  \verb!body! field is used that carries the
+body of the HTTP response supposedly carrying a JSON text.
 
-\verb!HTTPMessage! is a \verb!union! : either its \verb!request! field is set to a value of type \verb/HTTPRequest/ or its \verb!response! field is set to a value of type \verb!HTTPResponse!.
+\verb!HTTPMessage! is a \verb!union! : either its \verb!request! field is set
+to a value of type \verb/HTTPRequest/ or its \verb!response! field is set to a value of type
+\verb!HTTPResponse!.
 
 \subsection{LAP-B API}
 
-LAP-B API defines four types.\verb/LAPB_Poll/ is an enumeration that represents the LAP-B frame's P/F bit and it has two values: \verb/Polloff/ and \verb/Pollon/. 
-\verb/LAPB_Type/ enumeration represents the type of the LAP-B frame with values: \verb/I/, \verb/RR/, \verb/RNR/, \verb/REJ/,
-\verb/SABM/, \verb/SAMBE/, \verb/DISC/, \verb/DM/, \verb/UA/ and
-\verb/FRMR/. 
-\verb/LAPB_CR/ enumeration represents the LAP-B frame's C/R bit with two values: \verb/Command/ and \verb/Response/.
+LAP-B API defines four types.\verb/LAPB_Poll/ is an enumeration that represents the LAP-B frame's P/F bit
+and it has two values: \verb/Polloff/ and \verb/Pollon/.
+\verb/LAPB_Type/ enumeration represents the type of the LAP-B frame with values:
+\verb/I/, \verb/RR/, \verb/RNR/, \verb/REJ/,
+\verb/SABM/, \verb/SAMBE/, \verb/DISC/, \verb/DM/,
+\verb/UA/ and
+\verb/FRMR/.
+\verb/LAPB_CR/ enumeration represents the LAP-B frame's C/R bit with two values:
+\verb/Command/ and \verb/Response/.
 
 \verb!LAPB_Frame! is the simplified data structure of a LAP-B frame on TTCN-3 language:
 \begin{itemize}
-\item \verb/addr/: Terminal identifier, for separating student session (this is not standard)
-\item \verb!poll!:  P/F bit of type \verb/LAPB_Poll/ 
-\item  \verb!t!: The type of the LAP-B frame with type \verb/LAPB_Type/
-\item \verb!cr!: C/R bit of type \verb/LAPB_CR/ 
-\item \verb!ns!: The sent sequence number if applicable
-\item \verb!nr!: The received sequence number if applicable
-\item \verb!data!: Payload data
+    \item \verb/addr/: Terminal identifier, for separating student session (this is not standard)
+    \item \verb!poll!:  P/F bit of type \verb/LAPB_Poll/
+    \item  \verb!t!: The type of the LAP-B frame with type \verb/LAPB_Type/
+    \item \verb!cr!: C/R bit of type \verb/LAPB_CR/
+    \item \verb!ns!: The sent sequence number if applicable
+    \item \verb!nr!: The received sequence number if applicable
+    \item \verb!data!: Payload data
 \end{itemize}
 
 \verb!LAPB_Frames! type is an array of type \verb!LAPB_Frame!.
 
-\verb!LAPB_Types.ttcn! defines many other useful coding/decoding functions beside these that can be used in test case definitions:
+\verb!LAPB_Types.ttcn! defines many other useful coding/decoding functions beside these that can be used in test
+case definitions:
 \begin{itemize}
-\item \verb!string2poll!: converts a \verb!HTTPResponse! \verb!body! field string to a value of type \verb!LAPB_Poll!.
-\item \verb!string2cr!: converts a \verb!HTTPResponse! \verb!body! field string to a
-  value of type \verb!LAPB_CR!.
-\item \verb!string2type!: converts a \verb!HTTPResponse! \verb!body! field string to a
-  value of type \verb!LAPB_Type!.
-\item \verb!type2string!: converts an object of type \verb!LAPB_Type! to string
-\item \verb!json2frames!: converts a JSON object's \verb!pdu! field  of array of strings extracted from a \verb!HTTPResponse! \verb!body! field to a value of \verb!LAPB_Frames!(an array with records of type \verb!LAPB_Frame!)
-\item \verb!json2frame!: converts an element of a JSON object's \verb!pdu! field of array of string extracted from a \verb!HTTPResponse! \verb!body! field to a record of \verb!LAPB_Frame!
-\item \verb!json2state!: decodes a JSON object's \verb!state! field of string extracted from a \verb!HTTPResponse! \verb!body!
-\item \verb!json2user!: decodes a JSON object's \verb!sdu! field of string extracted from a \verb!HTTPResponse! \verb!body!
-\item \verb!frame2json!: creates the JSON representation of a record of type \verb!LAPB_Type!
+    \item \verb!string2poll!: converts a \verb!HTTPResponse! \verb!body! field string
+          to a value of type \verb!LAPB_Poll!.
+    \item \verb!string2cr!: converts a \verb!HTTPResponse! \verb!body! field string
+          to a
+          value of type \verb!LAPB_CR!.
+    \item \verb!string2type!: converts a \verb!HTTPResponse! \verb!body! field string
+          to a
+          value of type \verb!LAPB_Type!.
+    \item \verb!type2string!: converts an object of type \verb!LAPB_Type! to string
+    \item \verb!json2frames!: converts a JSON object's \verb!pdu! field  of array of strings
+          extracted from a \verb!HTTPResponse! \verb!body! field to a value of
+          \verb!LAPB_Frames!(an array with records of type \verb!LAPB_Frame!)
+    \item \verb!json2frame!: converts an element of a JSON object's \verb!pdu! field of array
+          of string extracted from a \verb!HTTPResponse! \verb!body! field to a record of
+          \verb!LAPB_Frame!
+    \item \verb!json2state!: decodes a JSON object's \verb!state! field of string extracted from
+          a \verb!HTTPResponse! \verb!body!
+    \item \verb!json2user!: decodes a JSON object's \verb!sdu! field of string extracted from
+          a \verb!HTTPResponse! \verb!body!
+    \item \verb!frame2json!: creates the JSON representation of a record of type \verb!LAPB_Type!
 \end{itemize}
-
 
 \subsection{Communication using LAP-B over HTTP -- sample}
 
@@ -1565,7 +1607,8 @@ testcase tc_basic() runs on HTTP_client
 \end{lstlisting}
 }
 
-A connection is created between the test port and the web server. The \verb!mtc! is the test port and the \verb!system! is the web server.
+A connection is created between the test port and the web server. The \verb!mtc! is the test port and
+the \verb!system! is the web server.
 
 {\footnotesize
 \begin{lstlisting}
@@ -1573,7 +1616,8 @@ map(mtc:HTTP_client_port, system:HTTP_client_port);
 \end{lstlisting}
 }
 
-A variable is defined for the HTTP headers and 2 of the fields are initialized for the predefined values. The header can be reused multiple times only the \verb!Content-Length! value has to be adjusted:
+A variable is defined for the HTTP headers and 2 of the fields are initialized for the predefined values. The header
+can be reused multiple times only the \verb!Content-Length! value has to be adjusted:
 
 {\footnotesize
 \begin{lstlisting}
@@ -1585,7 +1629,8 @@ var HeaderLines hd := {
 \end{lstlisting}
 }
 
-A variable is defined for the HTTP request that can be reused also. Only the \verb!uri! has to be adjusted to the values found in Section~\ref{sec:json_req}.
+A variable is defined for the HTTP request that can be reused also. Only the \verb!uri! has to be
+adjusted to the values found in Section~\ref{sec:json_req}.
 
 {\footnotesize
 \begin{lstlisting}
@@ -1601,7 +1646,8 @@ var HTTPRequest http_req := {
 \end{lstlisting}
 }
 
-The \verb!Connect! and \verb!Close! messages that are used for HTTP port initialization has to be defined only once:
+The \verb!Connect! and \verb!Close! messages that are used for HTTP port initialization
+has to be defined only once:
 
 {\footnotesize
 \begin{lstlisting}
@@ -1632,7 +1678,8 @@ hd[2].header_value := int2str(lengthof(frame_str))
 \end{lstlisting}
 }
 
-The URI parameter of the HTTP request is set based on the current state and the recently initialized header is assigned to the request:
+The URI parameter of the HTTP request is set based on the current state and the recently initialized header is assigned
+to the request:
 
 {\footnotesize
 \begin{lstlisting}
@@ -1643,7 +1690,8 @@ http_req.header := hd;
 \end{lstlisting}
 }
 
-Two HTTP messages are required: one for the request and another for the response furthermore 2 additional string variables are used for storing the error message and the message towards the upper layer:
+Two HTTP messages are required: one for the request and another for the response furthermore 2 additional string
+variables are used for storing the error message and the message towards the upper layer:
 
 {\footnotesize
 \begin{lstlisting}
@@ -1671,7 +1719,11 @@ T_guard.start;
 \end{lstlisting}
 }
 
-Then the code waits for a response from the server that can be a HTTP response, a \verb!Half_close! message from the test port due to the disconnection of the TCP connection, any other message or timer expiry. All of these events have to be handled. In case of a HTTP response the results are logged and the connection is closed using the \verb!Close! message and set a \verb!pass! verdict. A longer test case would continue with sending new message instead of sending a \verb!Close! message.
+Then the code waits for a response from the server that can be a HTTP response, a \verb!Half_close! message
+from the test port due to the disconnection of the TCP connection, any other message or timer expiry. All of these
+events have to be handled. In case of a HTTP response the results are logged and the connection is closed using the
+\verb!Close! message and set a \verb!pass! verdict. A longer test case would continue
+with sending new message instead of sending a \verb!Close! message.
 
 {\footnotesize
 \begin{lstlisting}
@@ -1720,52 +1772,61 @@ alt {
 
 \begin{enumerate}
 
-  \item  Why is a telecommunication system non-deterministic?
-  \item  What is the verdict when a SUT does not respond to a request?
-  \item  In which cases the verdict is going to be inconc?
-  \item  What is the analogy of the message format in case of a web portal?
-  \item  What is the analogy of the message type in case of a web portal?
-  \item  What is the analogy of a state transition in case of a web portal?
-  \item  Why do we need the preamble event sequence in a test case?
-  \item  What kinds of responses should we anticipate in a test case after sending a message?
-  \item  How can a system get into a stale sate?
-  \item  What is the result of test execution if the test case contains a bug?
-  \item  What is the connection between TTCN-3 templates and types?
-  \item  What is the connection between TTCN-3 templates and values?
-  \item Which of the following TTCN-3 port type definition corresponds to the C function signature int f(const char *c)?
-  \begin{itemize}
-    \item in integer, out charstring
-    \item out integer, in charstring
-    \item in integer, inout charstring
-    \item out integer, inout charstring 
-  \end{itemize}
-  \item  Define a TTCN-3 record type that is capable of holding a response message (exact syntax is not required).
+    \item  Why is a telecommunication system non-deterministic?
+    \item  What is the verdict when a SUT does not respond to a request?
+    \item  In which cases the verdict is going to be inconc?
+    \item  What is the analogy of the message format in case of a web portal?
+    \item  What is the analogy of the message type in case of a web portal?
+    \item  What is the analogy of a state transition in case of a web portal?
+    \item  Why do we need the preamble event sequence in a test case?
+    \item  What kinds of responses should we anticipate in a test case after sending a message?
+    \item  How can a system get into a stale sate?
+    \item  What is the result of test execution if the test case contains a bug?
+    \item  What is the connection between TTCN-3 templates and types?
+    \item  What is the connection between TTCN-3 templates and values?
+    \item Which of the following TTCN-3 port type definition corresponds to the C function signature int f(const char
+          *c)?
+          \begin{itemize}
+              \item in integer, out charstring
+              \item out integer, in charstring
+              \item in integer, inout charstring
+              \item out integer, inout charstring
+          \end{itemize}
+    \item  Define a TTCN-3 record type that is capable of holding a response message (exact syntax is not required).
 \end{enumerate}
 
 \section{Lab exercises}
 
-The lab exercises are split into two groups. Exercises 1-4. are mandatory to complete. From exercises out of 5-8. two arbitrarily exercises must be completed.
+The lab exercises are split into two groups. Exercises 1-4. are mandatory to complete. From exercises out of 5-8. two
+arbitrarily exercises must be completed.
 
 \subsection{Mandatory exercises}
 \begin{enumerate}
-    \item Try out the \href{http://152.66.246.231:3000/}{LAP-B over HTTP} web UI by triggering events and observe the protocol's state!
-    \item By using curl command from the console try out the LAP-B JSON API based on the examples from the syllabus and examine the state of the protocol
-    \item Execute the sample test cases from the syllabus and examine the log results. Document the results in the lab report!
-    \item Find out whether the protocol operates in basic or extended mode. Create a test case that documents the result! 
+    \item Try out the \href{http://152.66.246.231:3000/}{LAP-B over HTTP} web UI by triggering events and observe the
+          protocol's state!
+    \item By using curl command from the console try out the LAP-B JSON API based on the examples from the syllabus and
+          examine the state of the protocol
+    \item Execute the sample test cases from the syllabus and examine the log results. Document the results in the lab
+          report!
+    \item Find out whether the protocol operates in basic or extended mode. Create a test case that documents the
+          result!
 \end{enumerate}
 
 \subsection{Optional exercises(2 must be completed!)}
 \begin{enumerate}[resume]
     \item Modify the test case source so it can test the transmission of a client data unit!
-    \item Modify the test case source in a way that it forces the SUT into the frame reject state then into connected state and then disconnect the connection. While doing the transition log the expected state of the protocol!
-    \item Determine the window size from the web UI then create a test case that checks what happens when more than the window size unacknowledged frames are sent. 
-    \item Determine the maximal retry count (n2) from the web UI and create a test case that check what happens if this threshold is passed!
+    \item Modify the test case source in a way that it forces the SUT into the frame reject state then into connected
+          state and then disconnect the connection. While doing the transition log the expected state of the protocol!
+    \item Determine the window size from the web UI then create a test case that checks what happens when more than the
+          window size unacknowledged frames are sent.
+    \item Determine the maximal retry count (n2) from the web UI and create a test case that check what happens if this
+          threshold is passed!
     \item Determine the packet loss probability using statistical methods!
 \end{enumerate}
 
 \subsection{Bonus exercise for a better grade}
 \begin{enumerate}[resume]
-  \item If you find a bug in the LAB-P over HTTP implementation, write a test case that reproduces it!
+    \item If you find a bug in the LAB-P over HTTP implementation, write a test case that reproduces it!
 \end{enumerate}
 
 \begin{thebibliography}{9}
