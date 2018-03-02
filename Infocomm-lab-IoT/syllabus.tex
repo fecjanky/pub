@@ -127,7 +127,7 @@ The empty application project needs at least the mbed runtime library that can b
     \includegraphics[width=0.9\textwidth]{figures/mbed-import.png}
 \end{figure}
 
-\subsection{Ways of importing}
+\subsection{Different ways of importing}
 
 There are some other ways for importing programs and libraries. A program can be imported based on the above describe method but selecting the ``Programs" tab (1.).
 A program or library can be either uploaded from our local machine from a file (2.) or we can download it given that the url of it is know and we have sufficient privileges.
@@ -148,6 +148,65 @@ In case if we are a part of a development team there is an option for importing 
     \includegraphics[width=0.9\textwidth]{figures/mbed-online-import2.png}
 \end{figure}
 
+
+\section{Attaching sensors and actuators}
+
+Sensors are available as standalone modules (or simple components). After they are attached to the controller the sensed data is sent to the micro-controller. The transmission of the data can vary. Simple sensors provide analogue signals that is digitalized by the micro-controller's A/D converter. More complex sensors digitalize analogue signals and transmit digital data towards the micro-controller. These devices provide configuration capabilities on top of reading out data. The communication with these sensors are mainly consists of transmitting command words that is executed by the sensor and returns the results of the operation for the micro-controller. Complex sensors are capable of managing other sensors and return aggregated data for the micro-controller (sensor fusion). The physical communication standard between a sensor and the micro-controller is usually one of SPI, I2C, USART, OneWire, CAN, etc.
+
+The sensors used in this lab can be retrieved from the lab demonstrator. A wide variety of sensors are available ranging from very simple to more complex ones. A complex sensor does not necessary implies complex attachment procedure. If one can't find a readily available code for connecting a given sensor it can be written during the class.
+
+\section{Connecting a communication module}
+
+\subsection{Nucleo board pinout}
+
+The Nucleo F446RE board's pinout is shown of Figure~\ref{fig:nucleo-pinout}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/nucleo-pinout.png}
+    \caption{Nucleo F446RE pinout}
+    \label{fig:nucleo-pinout}
+\end{figure}
+
+The pins labeled are the female connectors that can be easily addressed from the mbed development environment.
+Furthermore all of the 64 male connectors of the Nucleo board is accessible. The male connector header is found right beside the female connector header the only twist is that in the right side female header there is a half pin pause due to providing Arduino compatibility. The neighboring male header does not have this pause that means for a given female connector it's corresponding male connector is located in the bottom right position.
+Figure~\ref{fig:nucleo-pinout-morpho} illustrates the male connector pinout.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/nucleo-morpho-pinout.png}
+    \caption{Nucleo F446RE morpho pinout}
+    \label{fig:nucleo-pinout-morpho}
+\end{figure}
+
+When supplying power for external devices extreme caution must be taken about the components that require 3.3V power supply \textbf{MUST NOT} be connected to a 5V supply. (e.g. the radio module requires 3.3V supply).
+3.3V power supply is available in three locations: on the Arduino headers there is one male and one female connector and also on the outer header the 3rd pin from the top on the left side (according to the image).
+
+\subsection{NRF24L01+ module pinout}
+
+The NRF24L01+ radio module is a device communicating on SPI bus. It's important that the power supply must not exceed 3.3V!
+In case of improper connection the device will be damaged permanently.
+This module has power supply pins (GND,VCC) and SPI bus pins (MISO,MOSI,SCK) and 2 SPI bus control pins (CE,CSN). Furthermore there is an interrupt pin (IRQ) that is not used in these exercises so that it can be left not connected.
+The pinout of the NRF24L01+ module's pinout is show of Figure~\ref{fig:radio-pinout}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/radio-pinout.png}
+    \caption{NRF24L01+ pinout}
+    \label{fig:radio-pinout}
+\end{figure}
+
+\subsection{Connecting Nucleo and NRF24L01+ modules}
+
+Based on the pinout diagrams connecting the two devices is trivial. There is only one complication about CE and CSN pins because they can be placed freely. It is advised that D9 and D10 pins are used for this purpose because in that case they will be collocated with the SPI pins. It must not be forgotten that the radio software has to be adjusted according to the actual pinout used (NodeConfig class). An example of the interconnection is shown of Figure~\ref{fig:radio-nucleo-connection}
+A sample program for the radio module connection can be downloaded from \url{https://www.tmit.bme.hu/sites/default/files/attachments/nRF24Test_TMRh20_zip_nucleo_f446re.zip}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/board-radio-example.png}
+    \caption{An example of interconnecting Nucleo F446RE and NRF24L01+}
+    \label{fig:radio-nucleo-connection}
+\end{figure}
 
 \section{Further Reading}
 
@@ -192,6 +251,31 @@ OpenFlow specifications:
 \end{enumerate}
 
 \section{Lab exercises}
+
+1.0 Hello World
+Mérési feladat
+
+    Jelentkezzen be az mbed oldalára. Válassza ki a platformok közül a NUCLEO-F446RE-t.
+    Készítsen programot, amely a fejlesztői lapon található ledet villogtatja.
+    Használja az mbed által nyújtott példaprogramokat!
+    Készítsen programot, amely a lapon található gomb segítségével vezérli a ledet.
+    Készítsen programot, amely képes a méréshez kapcsolt PC-vel kommunikálni. A kommunikációhoz soros terminált használjon. (A "minicom" ajánlott)
+
+2.1 Szenzor és beavatkozó illesztése
+Mérési feladat
+
+    Válasszon egyet a rendelkezésre álló szenzorok és beavatkozók közül és készítsen/keressen hozzá kódot, amellyel a szenzor értékeit megjelenítheti a PC-n.
+    Keresse meg a szenzorhoz tartozó adatlapot és tanulmányozza! Az illesztés során ügyeljen az adatlapon leírtak betartására!
+    Illessze a szenzort a laphoz közvetlenül vagy breadboard segítségével. Amennyiben szükséges használjon egyéb alkatrészeket.
+    Készítsen programot, amely a szenzor adatait szabályos időközönként megjeleníti tömör formátumban.
+
+2.2 Kommunikáció illesztése
+Mérési feladat
+
+    Illessze a rádiós egységet a laphoz. Az rádió SPI felületen csatlakozik. Azonosítsa a megfelelő lábakat és kösse össze azokat. Ügyeljen, hogy a szenzor és a rádió ne zavarja egymás kommunikációját.
+    A rádió illesztéséhez szükséges programkönyvtárakat töltse le az mbed gyűjteményéből, illetve kérje el a mérésvezetőtől.
+    Ismerje meg a kommunikációs modul használatát a mérésvezetőtől kapott példaprogramon keresztül.
+    Ellenőrizze a kommunikációt az átjárónál. Próbálja ki, hogy oda-vissza működik a kommunikáció.
 
 \subsection{Lab environment}
 
