@@ -208,19 +208,47 @@ A sample program for the radio module connection can be downloaded from \url{htt
     \label{fig:radio-nucleo-connection}
 \end{figure}
 
-\section{ Virtuális eszköz készítése}
+\section{Creating a \emph{virtual device} and communicating with it through DeviceHub.net}
 
-Több szolgáltató is ajánl tárhelyet IoT alkalmazásokhoz. A szolgáltatóknál tárolni és akár elemezni is lehet az adatokat. Az adatok feltöltése az Interneten keresztül történik. Ehhez a szolgáltatók API-t kínálnak. A legnépszerűbb feltöltési és hozzáférési forma a HTTP protokollt használja, de találunk olyan helyet is, ahol az MQTT protokollt használhatjuk. A méréshez egy ilyen helyet használunk az MQTT protokollal együtt. Az MQTT protokoll egy publish/subscribe protokoll, az adatokat el kell küldeni a megfelelő csatornán (topic), illetve ahhoz, hogy adathoz jussunk fel kell iratkozni a megfelelő csatornára.
+There are multiple service providers offering storage space for IoT applications. It is not only possible to store the data but also to analyze it. The data upload is realized using the Internet services for which the providers offer an API. The most popular upload and access mechanism is based on the HTTP protocol but \emph{MQTT} protocol is also utilized. For this measurement an MQTT based one is going to be used. MQTT is a publish/subscribe based protocol where the data is sent over appropriate channels (topic) and symmetrically if we want to access some data we need to subscribe on the desired channel.
 
-IDE kell :IoT1 - DeviceHub.pdf
+\subsection{Creating a project}
+
+As an initial step register on \url{https://dashboard.devicehub.net/register} site then after verifying our e-mail address log in to the site.
+After that in the ``Projects" menu(1.) add a new project (2.):
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/devicehub-addproject.png}
+\end{figure}
+
+In the pop-up window provide an arbitrarily chosen name and click on new project. Optionally an image and description can be provided for the project.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/devicehub-newproject.png}
+\end{figure}
+
+On the next page we can add our device and get the unique IDs for the project that are going to be needed later on.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/devicehub-adddevice.png}
+\end{figure}
+
+In the pop-up window provide a name for our device. On this same page we can add additional attributes like image and description but these are not mandatory.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/devicehub-newdevice.png}
+\end{figure}
+
 
 \section{Átjáró beállítása es MQTT kommunikáció}
  
 A szenzor és a beavatkozó a saját hálózatában szállítja az adatokat, az Internet továbbításhoz szükséges az átjáró is. Az átjáró lesz, ami a szenzorhálózatos adatokat a megfelelő MQTT csatornára helyezi. Sokszor nem csak a megfelelő csatornába helyezés a feladat, hanem az adatok formátumát is igazítani kell a tároló/feldolgozó bemenetéhez. A mostani mérésnél a szenzorhálózat adatai nyers formátumban vannak, azért, hogy minél tömörebb legyen ábrázolásuk. A felhasznált felhő szolgáltató viszont JSON formátumban várja és küldi az adatot. Az átjárót fel kell konfigurálni, hogy az átalakítást elvégezze.
 
-Példa kód:
-
-%https://developer.mbed.org/teams/BME-SmartLab/code/DeviceHubNet_DEMO/
+Példa kód: \url{https://developer.mbed.org/teams/BME-SmartLab/code/DeviceHubNet_DEMO/}
 
 IDE kell :DeviceHub.net - NRF átjáró konfiguálása.pdf
 
