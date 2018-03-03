@@ -302,18 +302,120 @@ description but these are not mandatory.
     \includegraphics[width=0.9\textwidth]{figures/devicehub-newdevice.png}
 \end{figure}
 
-\section{Átjáró beállítása es MQTT kommunikáció}
+\section{MQTT communication and configuring the Gateway}
 
-A szenzor és a beavatkozó a saját hálózatában szállítja az adatokat, az Internet továbbításhoz szükséges az átjáró is.
-Az átjáró lesz, ami a szenzorhálózatos adatokat a megfelelő MQTT csatornára helyezi. Sokszor nem csak a megfelelő
-csatornába helyezés a feladat, hanem az adatok formátumát is igazítani kell a tároló/feldolgozó bemenetéhez. A mostani
-mérésnél a szenzorhálózat adatai nyers formátumban vannak, azért, hogy minél tömörebb legyen ábrázolásuk. A felhasznált
-felhő szolgáltató viszont JSON formátumban várja és küldi az adatot. Az átjárót fel kell konfigurálni, hogy az
-átalakítást elvégezze.
+The sensor and the actuator communicates within their own networks. 
+If data transmission over the Internet is required then a \emph{gateway} is required.
+The gateway's responsibility is to the place the sensor network data into the appropriate
+MQTT channel. Furthermore it also can translate/transcode the data for matching the
+data processor's expected format. In this class the sensor network's data is in raw binary format
+for providing a compact representation. However the utilized cloud provider expects and sends
+data in JSON format. The gateway has to be configured for translating between the two domains.
 
-Példa kód: \url{https://developer.mbed.org/teams/BME-SmartLab/code/DeviceHubNet_DEMO/}
+Code sample for the gateway configuration: 
+\url{https://developer.mbed.org/teams/BME-SmartLab/code/DeviceHubNet_DEMO/}
 
-IDE kell :DeviceHub.net - NRF átjáró konfiguálása.pdf
+\subsection{Introduction to NRF gateway configuration}
+
+In this class the sensor and the actuator communicates with the external world through
+a NRF24L01+ radio module. This radio module operates in the ISM band but it is not so 
+widespread its signal can not be received with basic devices and settings. Therefore a
+gateway is required that will translate the signals of NRF24L01+ radio module to IP packets
+that can be received by any host/program.
+
+The gateway also serves another purpose. Sensors are heavily resource constrained devices as 
+a consequence the resources used for communication must also be kept at a minimal level.
+Therefore the format of the radio communication usually has a compact binary format.
+The maximum frame size of the NRF24L01+ radio is 32 bytes that also requires compact transmission
+format. In contrast a human readable format is used over the Internet since
+the constraints are different over that communication medium and it is more preferred that way.
+A commonly used format for describing data is JSON. The second task of the gateway will be then
+to translate between the raw binary sensor data and the JSON format used by the IoT cloud.
+
+The third responsibility of the gateway is to perform a mapping between the physical and virtual
+devices. The physical sensors are addressed by their micro-controller's network address and an 
+internal type ID that's valid internally in a micro-controller.
+In the virtual domain the devices are identified using different identifiers. The gateway
+has to perform an address translation so that the physical and virtual sensors can be paired.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/gateway.png}
+    \caption{The end-to-end communication path}
+    \label{fig:gateway}
+\end{figure}
+
+\subsection{Structure of the Gateway}
+
+The gateway is implemented using a Raspberry Pi micro computer that also has an identical NRF24L01+
+radio module just as the sensor. The Internet connection of the gateway is over an Ethernet link.
+The Raspberry Pi device is not always located in the lab and it gets its IP address dynamically
+that will be specified by the lab demonstrator.
+
+The gateway runs a Debian based Linux distribution. The software components necessary for
+implementing the gateway functionality has been pre-installed that will be controlled by the
+lab demonstrator. However in order to execute the lab exercises it will be necessary for the students
+to log in to the Raspberry Pi and configure their devices. The access details will also be provided
+by the lab demonstrator.
+
+\subsection{Radio connection translation}
+
+For radio transmission both the gateway and the sensors use a NRF24L01+ based radio module.
+During the measurements the gateway radio operates on a given channel. The sensor's radio
+channel has to be aligned with the gateway's radio channel. The current radio channel will be
+given by the lab demonstrator.
+
+During the translation the gateway converts the data frames arriving from the NRF24L01+ side 
+to UDP packets and sends them to a predefined host. As a result of this conversion the
+UDP packet will carry the sensor node's network address (2 bytes) and also a microsecond accurate
+timestamp (16 bytes) that indicates the time of the frame reception.
+Upon receiving an UDP packet the gateway uses the first 2 bytes of the UDP payload as the
+network address of the sensor and the remaining part of the payload is sent to the sensor unaltered.
+The sensor node will see this as if the gateway with ID 0 has sent a message to it, the IP level source
+can not be identified from there.
+
+Another task of the gateway on the radio level is to respond to incoming ``PING" messages. 
+The sensors are sending ping like messages for testing the radio channel's availability.
+The gateway responds with a ``PONG" message for these messages.
+
+\subsection{Content translation}
+
+The translation of the content of the messages is done by a proxy code running on the gateway.
+This program is listening on a localhost UDP port and if it receives a packet it runs the
+translation logic and sends the results in MQTT format to \emph{devicehub.net}. This program
+also subscribes to all MQTT channels on which it expects messages from the direction of \emph{devicehub.net}.
+If a message arrives it executes the translation logic then sends the result over the 
+configured UDP port.
+
+The gateway is configured in way that the previously described radio connection translation 
+module and the content translator proxy are communicating each other. This implements a complete
+gateway functionality as shown on Figure~\ref{fig:gateway}
+
+\subsection{Message content translation}
+
+The IoT cloud used on this measurement -- \emph{devicehub.net} -- discriminates two types of 
+data: \emph{ANALOG} and \emph{DIGITAL}. ANALOG type can represents an arbitrary floating point
+value while DIGITAL is an on/off type of data that can only have values 0 and 1.
+During the communication one message can only carry one value as a consequence on the sensor
+network side each data has to be sent in a separate message.
+
+Values of type DIGITAL are translated to 1 byte of payload on the NRF side while the values
+of type ANALOG are translated to a 4 byte \emph{float} type. The sensors have to send data
+corresponding to these formats.
+
+An example of the translation for the sensor to devicehub direction:
+
+
+\begin{tabular}{| l | l | l |}
+\hline
+ & Received data (payload field, without type) & Forwarded data (data field, without channel) \\
+ \hline
+DIGITAL type & 0x01 & {"value" : 1} \\
+\hline
+ANALOG type & 0x42 0x2a 0x00 0x00 & {"value" : 42.5} \\
+\hline
+\end{tabular}
+
 
 \appendix
 
