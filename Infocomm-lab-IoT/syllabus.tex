@@ -22,7 +22,7 @@
 
 \usepackage[margin=1in]{geometry}
 
-\title{IoT Lab}
+\title{IoT Lab syllabus}
 \author{}
 \date{}
 
@@ -35,15 +35,15 @@
 
 \section{IoT lab measurement exercises}
 
-In the first phase of the lab a micro-controller will be transformed into a mote. A sensor mote is capable of detect
+In the first phase of the lab a micro-controller will be transformed into a mote. A sensor mote is capable of detecting
 various parameters of its environment and is capable of communication. For this purpose a sensor and a radio module is
-going to be attached to the micro-controller. For this same device an actuator is going to be connected to it.
-Furthermore a simple display device is also connected to the already built hierarchy.
+going to be attached to the micro-controller. Also an actuator is going to be connected to this very same device.
+Furthermore a simple display device is also connected to these equipments.
 
-In the second phase of the lab a virtual device is created using one of the cloud IoT provider's services that is going
-to accept and process the data arriving from our physical sensor. The service is going to store and display the data.
+In the second phase of the lab a virtual device is created using one of the cloud IoT provider's serviceses that is going
+to accept and process the data arriving from our physical sensors. The service is going to store and display the received data.
 Furthermore a virtual controller is attached to the virtual sensor that is going to send control signals for the
-physical device. A gateway device is used for translating the data into the right format between the physical and
+physical devices. A gateway device is used for translating the data and messages into the right format between the physical and
 virtual devices.
 
 The arrangement of these components can be seen on Figure~\ref{fig:meas-arrangement}. The task of the students
@@ -62,19 +62,19 @@ guideline is to create such a document of which the measurement is easily reprod
 
 \section{Getting started with \emph{\textbf{mbed}} environment}
 
-mbed is an IDE (and also an operating system) tailored for IoT applications based 32 bit ARM micro-controllers. There
-are several commercially available boards available as a result it allows simple and rapid prototyping. One of its main
+mbed is an IDE (and also an operating system) tailored for IoT applications based on 32 bit ARM micro-controllers. There
+are several commercially available boards out there as a result it allows simple and rapid prototyping. One of its main
 advantages compared to other IDEs that it can handle multiple types of micro-controllers so that the code written can
-be reused in multiple environments. Furthermore its UI is intuitive and also supports on-line workflows with team
+be reused in multiple environments. Furthermore it has an intuitive UI and also supports on-line workflows with team
 integration and version control. Naturally there are some cons as well namely that from mbed the low-level hardware
-components are not reachable from it and sometimes the basis of the framework called \emph{mbed OS} might contain bugs.
+components are not reachable and sometimes the basis of the framework called \emph{mbed OS} might contain bugs.
 
 The micro-controller used during this lab is of type NUCLEO-F446RE.
 
 \subsection{First steps}
 
-Before proceeding any further register on site \url{https://developer.mbed.org/}. The registration is simple and easy
-and doesn't require instant verification of our e-mail addresses. After successful registration log-in on the website
+Before proceeding any further do register on site \url{https://developer.mbed.org/}. The registration is simple and easy
+and doesn't require instant verification the e-mail address given. After successful registration log-in on the website
 and then
 \begin{enumerate}
     \item Go to ``Platforms" tab where the development board is selected
@@ -93,29 +93,29 @@ and then
     \includegraphics[width=0.9\textwidth]{figures/mbed-nucleo.png}
 \end{figure}
 \begin{enumerate}[resume]
-    \item Add the selected board to the compiler by clicking on the ``Add to your mbed Compiler" and the open it using the
-          link in the upper right corner (5.)
+    \item Add the selected board to the compiler by clicking on the ``Add to your mbed Compiler" 
+    \item and then open it using the  link in the upper right corner
 \end{enumerate}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/mbed-compiler.png}
 \end{figure}
 
-\subsection{Sample programs and binary upload to the device}
+\subsection{Sample programs and uploading binaries to the device}
 
-Click on ``New" in the top left corner (1.). In the pop-up window (2.) select the appropriate device type, and then we
-can select from one of the existing sample projects (or alternatively create a new one) and give a name for it. With
+Click on ``New" in the top left corner (1.). In the pop-up window (2.) select the appropriate device type, and then 
+select from one of the existing sample projects (or alternatively create a new one) and provide a name for it. With
 the tick-box in the bottom we can select whether to update our code if one of the dependent libraries are updated.
-Click on OK and afterwards the newly created program will be visible under the My Programs section with the chosen
+Click on OK and afterwards the newly created program will be visible under the My Programs section under the  provided
 name.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/mbed-new.png}
 \end{figure}
 
-We can open and edit (1.) the source file by clicking on it in the left pane. As soon as we are done with the
-modifications the compilation can be started by clicking on ``Compile" button (2.). If there were no errors and the
-program compiles successfully the result will be file download pop-up for the resulting binary (3.)
+We can open and edit (1.) the source files by clicking on it in the left pane. As soon as we are done with the
+modifications the compilation can be started by clicking on the ``Compile" button (2.). If there were no errors and the
+program compiles successfully the result will be a file download pop-up with the resulting binary (3.)
 
 \begin{figure}[H]
     \centering
@@ -123,7 +123,7 @@ program compiles successfully the result will be file download pop-up for the re
 \end{figure}
 
 Download/save this binary on the volume created by the dev board (NUCLEO). The green LED will start blinking during
-software upload to the micro-controller. If there are no errors our code will run on the device.
+software upload to the micro-controller. If there are no errors our code will start to run on the device immediately.
 
 \begin{figure}[H]
     \centering
@@ -157,7 +157,7 @@ way:
 
 \subsection{Different ways of importing}
 
-There are some other ways for importing programs and libraries. A program can be imported based on the above describe
+There are some other ways for importing programs and libraries. A program can be imported based on the above described
 method but selecting the ``Programs" tab (1.).
 A program or library can be either uploaded from our local machine from a file (2.) or we can download it given that
 the url of it is know and we have sufficient privileges.
@@ -183,16 +183,16 @@ developers.
 
 Sensors are available as standalone modules (or simple components). After they are attached to the controller the
 sensed data is sent to the micro-controller. The transmission of the data can vary. Simple sensors provide analogue
-signals that is digitalized by the micro-controller's A/D converter. More complex sensors digitalize analogue signals
+signals that are digitalized by the micro-controller's A/D converter. More complex sensors digitalize analogue signals
 and transmit digital data towards the micro-controller. These devices provide configuration capabilities on top of
-reading out data. The communication with these sensors are mainly consists of transmitting command words that is
-executed by the sensor and returns the results of the operation for the micro-controller. Complex sensors are capable
-of managing other sensors and return aggregated data for the micro-controller (sensor fusion). The physical
-communication standard between a sensor and the micro-controller is usually one of SPI, I2C, USART, OneWire, CAN, etc.
+reading out data. The communication with these sensors are mainly consists of transmitting command words that are
+executed by the sensor and returning the results of the operation for the micro-controller. Complex sensors are capable
+of managing other sensors and can return aggregated data for the micro-controller (sensor fusion). The physical
+communication standard between a sensor and the micro-controller is usually one of SPI, I2C, USART, OneWire, CAN, etc. protocols
 
 The sensors used in this lab can be retrieved from the lab demonstrator. A wide variety of sensors are available
-ranging from very simple to more complex ones. A complex sensor does not necessary implies complex attachment
-procedure. If one can't find a readily available code for connecting a given sensor it can be written during the class.
+ranging from very simple to more complex ones. A complex sensor does not necessary implies a complex attachment
+procedure. If one can't find a readily available code for connecting a given sensor it can be written manually during the class.
 
 \section{Connecting a communication module}
 
@@ -203,15 +203,15 @@ The Nucleo F446RE board's pinout is shown of Figure~\ref{fig:nucleo-pinout}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/nucleo-pinout.png}
-    \caption{Nucleo F446RE pinout}
+    \caption{Nucleo F446RE pinout of Arduino headers}
     \label{fig:nucleo-pinout}
 \end{figure}
 
 The pins labeled are the female connectors that can be easily addressed from the mbed development environment.
-Furthermore all of the 64 male connectors of the Nucleo board is accessible. The male connector header is found right
-beside the female connector header the only twist is that in the right side female header there is a half pin pause due
+Furthermore all of the 64 male connectors of the Nucleo board are accessible. The male connector headers are found right
+beside the female connector headers the only twist is that on female headers there is a half pin offset due
 to providing Arduino compatibility. The neighboring male header does not have this pause that means for a given female
-connector it's corresponding male connector is located in the bottom right position.
+connector it's corresponding male connector is located in the bottom right position from the female pins direction.
 Figure~\ref{fig:nucleo-pinout-morpho} illustrates the male connector pinout.
 
 \begin{figure}[H]
@@ -232,8 +232,8 @@ The NRF24L01+ radio module is a device communicating on SPI bus. It's important 
 3.3V!
 In case of improper connection the device will be damaged permanently.
 This module has power supply pins (GND,VCC) and SPI bus pins (MISO,MOSI,SCK) and 2 SPI bus control pins (CE,CSN).
-Furthermore there is an interrupt pin (IRQ) that is not used in these exercises so that it can be left not connected.
-The pinout of the NRF24L01+ module's pinout is show of Figure~\ref{fig:radio-pinout}
+Furthermore there is an interrupt pin (IRQ) that is not used in these exercises so that it can be left unconnected.
+The pinout of the NRF24L01+ module's pinout is show on Figure~\ref{fig:radio-pinout}
 
 \begin{figure}[H]
     \centering
@@ -247,7 +247,7 @@ The pinout of the NRF24L01+ module's pinout is show of Figure~\ref{fig:radio-pin
 Based on the pinout diagrams connecting the two devices is trivial. There is only one complication about CE and CSN
 pins because they can be placed freely. It is advised that D9 and D10 pins are used for this purpose because in that
 case they will be collocated with the SPI pins. It must not be forgotten that the radio software has to be adjusted
-according to the actual pinout used (NodeConfig class). An example of the interconnection is shown of
+according to the actual pinout used (NodeConfig class). An example of the interconnection is shown on
 Figure~\ref{fig:radio-nucleo-connection}
 A sample program for the radio module connection can be downloaded from
 \url{https://www.tmit.bme.hu/sites/default/files/attachments/nRF24Test_TMRh20_zip_nucleo_f446re.zip}.
@@ -307,7 +307,7 @@ description but these are not mandatory.
 The sensor and the actuator communicates within their own networks. 
 If data transmission over the Internet is required then a \emph{gateway} is required.
 The gateway's responsibility is to the place the sensor network data into the appropriate
-MQTT channel. Furthermore it also can translate/transcode the data for matching the
+MQTT channel. Furthermore it also translates/transcodes the data for matching the
 data processor's expected format. In this class the sensor network's data is in raw binary format
 for providing a compact representation. However the utilized cloud provider expects and sends
 data in JSON format. The gateway has to be configured for translating between the two domains.
@@ -319,14 +319,14 @@ Code sample for the gateway configuration:
 
 In this class the sensor and the actuator communicates with the external world through
 a NRF24L01+ radio module. This radio module operates in the ISM band but it is not so 
-widespread its signal can not be received with basic devices and settings. Therefore a
+widespread so that its signal can not be received with basic devices and settings. Therefore a
 gateway is required that will translate the signals of NRF24L01+ radio module to IP packets
 that can be received by any host/program.
 
 The gateway also serves another purpose. Sensors are heavily resource constrained devices as 
-a consequence the resources used for communication must also be kept at a minimal level.
-Therefore the format of the radio communication usually has a compact binary format.
-The maximum frame size of the NRF24L01+ radio is 32 bytes that also requires compact transmission
+a consequence the resources used for communication must also be kept at a minimum level.
+Therefore the format of the radio communication usually has a compact binary representation.
+The maximum frame size of the NRF24L01+ radio is 32 bytes and this also requires a compact transmission
 format. In contrast a human readable format is used over the Internet since
 the constraints are different over that communication medium and it is more preferred that way.
 A commonly used format for describing data is JSON. The second task of the gateway will be then
@@ -334,7 +334,7 @@ to translate between the raw binary sensor data and the JSON format used by the 
 
 The third responsibility of the gateway is to perform a mapping between the physical and virtual
 devices. The physical sensors are addressed by their micro-controller's network address and an 
-internal type ID that's valid internally in a micro-controller.
+internal type ID that's valid internally inside a micro-controller domain.
 In the virtual domain the devices are identified using different identifiers. The gateway
 has to perform an address translation so that the physical and virtual sensors can be paired.
 
@@ -348,12 +348,12 @@ has to perform an address translation so that the physical and virtual sensors c
 \subsection{Structure of the Gateway}
 
 The gateway is implemented using a Raspberry Pi micro computer that also has an identical NRF24L01+
-radio module just as the sensor. The Internet connection of the gateway is over an Ethernet link.
+radio module just as the sensors. The Internet connection of the gateway is over an Ethernet link.
 The Raspberry Pi device is not always located in the lab and it gets its IP address dynamically
 that will be specified by the lab demonstrator.
 
 The gateway runs a Debian based Linux distribution. The software components necessary for
-implementing the gateway functionality has been pre-installed that will be controlled by the
+implementing the gateway functionality has been pre-installed and will be controlled by the
 lab demonstrator. However in order to execute the lab exercises it will be necessary for the students
 to log in to the Raspberry Pi and configure their devices. The access details will also be provided
 by the lab demonstrator.
@@ -371,7 +371,7 @@ UDP packet will carry the sensor node's network address (2 bytes) and also a mic
 timestamp (16 bytes) that indicates the time of the frame reception.
 Upon receiving an UDP packet the gateway uses the first 2 bytes of the UDP payload as the
 network address of the sensor and the remaining part of the payload is sent to the sensor unaltered.
-The sensor node will see this as if the gateway with ID 0 has sent a message to it, the IP level source
+The sensor node will see this as if the gateway with ID 0 has sent a message to it on the radio level, the IP level source
 can not be identified from there.
 
 Another task of the gateway on the radio level is to respond to incoming ``PING" messages. 
@@ -388,16 +388,16 @@ If a message arrives it executes the translation logic then sends the result ove
 configured UDP port.
 
 The gateway is configured in way that the previously described radio connection translation 
-module and the content translator proxy are communicating each other. This implements a complete
+module and the content translator proxy are communicating with each other. This implements a complete
 gateway functionality as shown on Figure~\ref{fig:gateway}
 
 \subsection{Message content translation}
 
 The IoT cloud used on this measurement -- \emph{devicehub.net} -- discriminates two types of 
-data: \emph{ANALOG} and \emph{DIGITAL}. ANALOG type can represents an arbitrary floating point
-value while DIGITAL is an on/off type of data that can only have values 0 and 1.
+data: \emph{ANALOG} and \emph{DIGITAL}. ANALOG type can represent an arbitrary floating point
+value while DIGITAL is an on/off type data that can only have values 0 and 1.
 During the communication one message can only carry one value as a consequence on the sensor
-network side each data has to be sent in a separate message.
+network side each sensed data element has to be sent in a separate message.
 
 Values of type DIGITAL are translated to 1 byte of payload on the NRF side while the values
 of type ANALOG are translated to a 4 byte \emph{float} type. The sensors have to send data
@@ -438,15 +438,15 @@ systems however there are aggregate types or multiple joint data is transferred 
 
 \subsection{Address translation}
 
-On the sensor network side -- the NRF24L01+ radio network -- all devices has a network address.
+On the sensor network side -- the NRF24L01+ radio network -- all devices have a network address.
 In the original protocol this address is 5 bytes long of which 2 bytes are used now. This is
-the unique address of the node. If more than one node has identical unique node address 
-then both will receive the messages however problems can occur in case of acknowledgments.
+the unique address of the node. If more than one node has identical unique node addresses
+then both will receive the messages however collisions will occur in case of acknowledgments.
 The gateway's address is 0.
 
 Inside a node multiple sensors and actuators can be attached to the micro-controller. Typically 
-of one type there is only one so in this demo system the intra node addressing is done using
-the device type. All of the sensors and actuators get a 2 byte type id which is unique only
+of one type there is only one entity so in this demo system the intra node addressing is performed by using
+the device type as address. All of the sensors and actuators get a 2 byte type id which is unique only
 inside a node. These IDs can be reused in other nodes.
 
 The virtual sensors and actuators have a ProjectID and a DeviceID and also they have a 
@@ -583,7 +583,7 @@ In case of correct syntax but incorrect operation the lab demonstrator can help 
             \item Study the MQTT protocol. Examine the components of the protocol.
             \item Create a connection from an MQTT capable device/software with an MQTT broker then
             send and receive data using it. The PCs have MQTTfx installed but other software can
-            be used.
+            be used as well.
             \item Send and receive messages to/from the virtual device. The format and channel of
             the messages are detailed in the syllabus.
         \end{itemize}
