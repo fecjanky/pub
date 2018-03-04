@@ -40,10 +40,13 @@ various parameters of its environment and is capable of communication. For this 
 going to be attached to the micro-controller. Also an actuator is going to be connected to this very same device.
 Furthermore a simple display device is also connected to these equipments.
 
-In the second phase of the lab a virtual device is created using one of the cloud IoT provider's serviceses that is going
-to accept and process the data arriving from our physical sensors. The service is going to store and display the received data.
+In the second phase of the lab a virtual device is created using one of the cloud IoT provider's serviceses that is
+going
+to accept and process the data arriving from our physical sensors. The service is going to store and display the
+received data.
 Furthermore a virtual controller is attached to the virtual sensor that is going to send control signals for the
-physical devices. A gateway device is used for translating the data and messages into the right format between the physical and
+physical devices. A gateway device is used for translating the data and messages into the right format between the
+physical and
 virtual devices.
 
 The arrangement of these components can be seen on Figure~\ref{fig:meas-arrangement}. The task of the students
@@ -62,7 +65,8 @@ guideline is to create such a document of which the measurement is easily reprod
 
 \section{Getting started with \emph{\textbf{mbed}} environment}
 
-mbed is an IDE (and also an operating system) tailored for IoT applications based on 32 bit ARM micro-controllers. There
+mbed is an IDE (and also an operating system) tailored for IoT applications based on 32 bit ARM micro-controllers.
+There
 are several commercially available boards out there as a result it allows simple and rapid prototyping. One of its main
 advantages compared to other IDEs that it can handle multiple types of micro-controllers so that the code written can
 be reused in multiple environments. Furthermore it has an intuitive UI and also supports on-line workflows with team
@@ -73,7 +77,8 @@ The micro-controller used during this lab is of type NUCLEO-F446RE.
 
 \subsection{First steps}
 
-Before proceeding any further do register on site \url{https://developer.mbed.org/}. The registration is simple and easy
+Before proceeding any further do register on site \url{https://developer.mbed.org/}. The registration is simple and
+easy
 and doesn't require instant verification the e-mail address given. After successful registration log-in on the website
 and then
 \begin{enumerate}
@@ -85,7 +90,8 @@ and then
     \includegraphics[width=0.9\textwidth]{figures/mbed-platform.png}
 \end{figure}
 \begin{enumerate}[resume]
-    \item Search for and select ``NUCLEO-F446RE" dev board. Here we can find detailed description on the micro-controller
+    \item Search for and select ``NUCLEO-F446RE" dev board. Here we can find detailed description on the
+          micro-controller
           and also the schematics for the pin to feature connector assignment and functions associated with them
 \end{enumerate}
 \begin{figure}[H]
@@ -93,7 +99,7 @@ and then
     \includegraphics[width=0.9\textwidth]{figures/mbed-nucleo.png}
 \end{figure}
 \begin{enumerate}[resume]
-    \item Add the selected board to the compiler by clicking on the ``Add to your mbed Compiler" 
+    \item Add the selected board to the compiler by clicking on the ``Add to your mbed Compiler"
     \item and then open it using the  link in the upper right corner
 \end{enumerate}
 \begin{figure}[H]
@@ -103,7 +109,7 @@ and then
 
 \subsection{Sample programs and uploading binaries to the device}
 
-Click on ``New" in the top left corner (1.). In the pop-up window (2.) select the appropriate device type, and then 
+Click on ``New" in the top left corner (1.). In the pop-up window (2.) select the appropriate device type, and then
 select from one of the existing sample projects (or alternatively create a new one) and provide a name for it. With
 the tick-box in the bottom we can select whether to update our code if one of the dependent libraries are updated.
 Click on OK and afterwards the newly created program will be visible under the My Programs section under the  provided
@@ -188,11 +194,13 @@ and transmit digital data towards the micro-controller. These devices provide co
 reading out data. The communication with these sensors are mainly consists of transmitting command words that are
 executed by the sensor and returning the results of the operation for the micro-controller. Complex sensors are capable
 of managing other sensors and can return aggregated data for the micro-controller (sensor fusion). The physical
-communication standard between a sensor and the micro-controller is usually one of SPI, I2C, USART, OneWire, CAN, etc. protocols
+communication standard between a sensor and the micro-controller is usually one of SPI, I2C, USART, OneWire, CAN, etc.
+protocols
 
 The sensors used in this lab can be retrieved from the lab demonstrator. A wide variety of sensors are available
 ranging from very simple to more complex ones. A complex sensor does not necessary implies a complex attachment
-procedure. If one can't find a readily available code for connecting a given sensor it can be written manually during the class.
+procedure. If one can't find a readily available code for connecting a given sensor it can be written manually during
+the class.
 
 \section{Connecting a communication module}
 
@@ -208,7 +216,8 @@ The Nucleo F446RE board's pinout is shown of Figure~\ref{fig:nucleo-pinout}.
 \end{figure}
 
 The pins labeled are the female connectors that can be easily addressed from the mbed development environment.
-Furthermore all of the 64 male connectors of the Nucleo board are accessible. The male connector headers are found right
+Furthermore all of the 64 male connectors of the Nucleo board are accessible. The male connector headers are found
+right
 beside the female connector headers the only twist is that on female headers there is a half pin offset due
 to providing Arduino compatibility. The neighboring male header does not have this pause that means for a given female
 connector it's corresponding male connector is located in the bottom right position from the female pins direction.
@@ -304,7 +313,7 @@ description but these are not mandatory.
 
 \section{MQTT communication and configuring the Gateway}
 
-The sensor and the actuator communicates within their own networks. 
+The sensor and the actuator communicates within their own networks.
 If data transmission over the Internet is required then a \emph{gateway} is required.
 The gateway's responsibility is to the place the sensor network data into the appropriate
 MQTT channel. Furthermore it also translates/transcodes the data for matching the
@@ -312,18 +321,18 @@ data processor's expected format. In this class the sensor network's data is in 
 for providing a compact representation. However the utilized cloud provider expects and sends
 data in JSON format. The gateway has to be configured for translating between the two domains.
 
-Code sample for the gateway configuration: 
+Code sample for the gateway configuration:
 \url{https://developer.mbed.org/teams/BME-SmartLab/code/DeviceHubNet_DEMO/}
 
 \subsection{Introduction to NRF gateway configuration}
 
 In this class the sensor and the actuator communicates with the external world through
-a NRF24L01+ radio module. This radio module operates in the ISM band but it is not so 
+a NRF24L01+ radio module. This radio module operates in the ISM band but it is not so
 widespread so that its signal can not be received with basic devices and settings. Therefore a
 gateway is required that will translate the signals of NRF24L01+ radio module to IP packets
 that can be received by any host/program.
 
-The gateway also serves another purpose. Sensors are heavily resource constrained devices as 
+The gateway also serves another purpose. Sensors are heavily resource constrained devices as
 a consequence the resources used for communication must also be kept at a minimum level.
 Therefore the format of the radio communication usually has a compact binary representation.
 The maximum frame size of the NRF24L01+ radio is 32 bytes and this also requires a compact transmission
@@ -333,7 +342,7 @@ A commonly used format for describing data is JSON. The second task of the gatew
 to translate between the raw binary sensor data and the JSON format used by the IoT cloud.
 
 The third responsibility of the gateway is to perform a mapping between the physical and virtual
-devices. The physical sensors are addressed by their micro-controller's network address and an 
+devices. The physical sensors are addressed by their micro-controller's network address and an
 internal type ID that's valid internally inside a micro-controller domain.
 In the virtual domain the devices are identified using different identifiers. The gateway
 has to perform an address translation so that the physical and virtual sensors can be paired.
@@ -365,16 +374,17 @@ During the measurements the gateway radio operates on a given channel. The senso
 channel has to be aligned with the gateway's radio channel. The current radio channel will be
 given by the lab demonstrator.
 
-During the translation the gateway converts the data frames arriving from the NRF24L01+ side 
+During the translation the gateway converts the data frames arriving from the NRF24L01+ side
 to UDP packets and sends them to a predefined host. As a result of this conversion the
 UDP packet will carry the sensor node's network address (2 bytes) and also a microsecond accurate
 timestamp (16 bytes) that indicates the time of the frame reception.
 Upon receiving an UDP packet the gateway uses the first 2 bytes of the UDP payload as the
 network address of the sensor and the remaining part of the payload is sent to the sensor unaltered.
-The sensor node will see this as if the gateway with ID 0 has sent a message to it on the radio level, the IP level source
+The sensor node will see this as if the gateway with ID 0 has sent a message to it on the radio level, the IP level
+source
 can not be identified from there.
 
-Another task of the gateway on the radio level is to respond to incoming ``PING" messages. 
+Another task of the gateway on the radio level is to respond to incoming ``PING" messages.
 The sensors are sending ping like messages for testing the radio channel's availability.
 The gateway responds with a ``PONG" message for these messages.
 
@@ -384,16 +394,16 @@ The translation of the content of the messages is done by a proxy code running o
 This program is listening on a localhost UDP port and if it receives a packet it runs the
 translation logic and sends the results in MQTT format to \emph{devicehub.net}. This program
 also subscribes to all MQTT channels on which it expects messages from the direction of \emph{devicehub.net}.
-If a message arrives it executes the translation logic then sends the result over the 
+If a message arrives it executes the translation logic then sends the result over the
 configured UDP port.
 
-The gateway is configured in way that the previously described radio connection translation 
+The gateway is configured in way that the previously described radio connection translation
 module and the content translator proxy are communicating with each other. This implements a complete
 gateway functionality as shown on Figure~\ref{fig:gateway}
 
 \subsection{Message content translation}
 
-The IoT cloud used on this measurement -- \emph{devicehub.net} -- discriminates two types of 
+The IoT cloud used on this measurement -- \emph{devicehub.net} -- discriminates two types of
 data: \emph{ANALOG} and \emph{DIGITAL}. ANALOG type can represent an arbitrary floating point
 value while DIGITAL is an on/off type data that can only have values 0 and 1.
 During the communication one message can only carry one value as a consequence on the sensor
@@ -405,36 +415,33 @@ corresponding to these formats.
 
 An example of the translation for the sensor to devicehub direction:
 
-
 \begin{tabular}{|l|l|l|}
-\hline
- & Received data  & Forwarded data  \\
- & (payload field, without type) & (data field, without channel) \\
- \hline
-DIGITAL type & 0x01 & {"value" : 1} \\
-\hline
-ANALOG type & 0x42 0x2a 0x00 0x00 & {"value" : 42.5} \\
-\hline
+    \hline
+                 & Received data                 & Forwarded data                 \\
+                 & (payload field, without type) & (data field, without channel)  \\
+    \hline
+    DIGITAL type & 0x01                          & {"value" : 1}                  \\
+    \hline
+    ANALOG type  & 0x42 0x2a 0x00 0x00           & {"value" : 42.5}               \\
+    \hline
 \end{tabular}
-
 
 An example of the translation for the devicehub to actuator direction:
 
 \begin{tabular}{|l|l|l|}
-\hline
- & Received data  & Forwarded data  \\
- & (data field, without channel) & (payload field, without type)  \\
- \hline
-DIGITAL type & {"value" : 0} & 0x00  \\
-\hline
-ANALOG type & {"value" : 33.33} & 0x42 0x05 0x51 0xec \\
-\hline
+    \hline
+                 & Received data                 & Forwarded data                 \\
+                 & (data field, without channel) & (payload field, without type)  \\
+    \hline
+    DIGITAL type & {"value" : 0}                 & 0x00                           \\
+    \hline
+    ANALOG type  & {"value" : 33.33}             & 0x42 0x05 0x51 0xec            \\
+    \hline
 \end{tabular}
 
 For these measurements it is enough to know the translation of these values. In more complex
-systems however there are aggregate types or multiple joint data is transferred in one message 
-(e.g RGB values of a LED) where the translation logic applied is more complex. 
-
+systems however there are aggregate types or multiple joint data is transferred in one message
+(e.g RGB values of a LED) where the translation logic applied is more complex.
 
 \subsection{Address translation}
 
@@ -444,18 +451,18 @@ the unique address of the node. If more than one node has identical unique node 
 then both will receive the messages however collisions will occur in case of acknowledgments.
 The gateway's address is 0.
 
-Inside a node multiple sensors and actuators can be attached to the micro-controller. Typically 
+Inside a node multiple sensors and actuators can be attached to the micro-controller. Typically
 of one type there is only one entity so in this demo system the intra node addressing is performed by using
 the device type as address. All of the sensors and actuators get a 2 byte type id which is unique only
 inside a node. These IDs can be reused in other nodes.
 
-The virtual sensors and actuators have a ProjectID and a DeviceID and also they have a 
+The virtual sensors and actuators have a ProjectID and a DeviceID and also they have a
 unique name.
 
 The gateway's responsibility is to translate between physical and virtual identifiers
 based on a predefined mapping.
 
-Beside the IDs an API key is required for accessing the virtual devices. This does not 
+Beside the IDs an API key is required for accessing the virtual devices. This does not
 participate in identification however it is necessary to have in order to use the devicehub.net
 cloud. This key is also added by the gateway during the translation.
 
@@ -472,7 +479,7 @@ For the radio format translation there is no need for setting any specific confi
 However it is crucial that the radio parameters must match on the node and gateway side.
 The node side settings will be given by the lab demonstrator.
 
-For the message and address translation a configuration has to be prepared for each node 
+For the message and address translation a configuration has to be prepared for each node
 and each sensor and actuator within. The configuration is implemented using a configuration
 file. If that is placed to the appropriate place the configuration will take effect immediately.
 
@@ -500,8 +507,7 @@ A sample config:
         }
     ]
 }
-\end{verbatim} 
-
+\end{verbatim}
 
 The \emph{nodeId} field identifies the physical node. The following lines contain the virtual
 device identifiers: \emph{deviceId} and \emph{projectId} and the \emph{APIKey} required for
@@ -522,7 +528,8 @@ for logging in to the gateway will be provided by the lab demonstrator. It is al
 to create and edit the config file while while logged in to the gateway.
 
 Before placing/uploading the file to the destination directory it is strongly advised to check
-the JSON syntax for validity. An on-line JSON validator is available on \url{https://jsonformatter.curiousconcept.com/}.
+the JSON syntax for validity. An on-line JSON validator is available on
+\url{https://jsonformatter.curiousconcept.com/}.
 In case of correct syntax but incorrect operation the lab demonstrator can help in the troubleshooting.
 
 \appendix
@@ -531,73 +538,73 @@ In case of correct syntax but incorrect operation the lab demonstrator can help 
 
 \begin{enumerate}
     \item \begin{enumerate}
-        \item Hello World
-        \begin{itemize}
-            \item Login to mbed site. Select NUCLEO-F446RE from the available platforms.
-            \item Create a program that blinks the LED on the development board.
-            \item Use the sample codes provided by mbed
-            \item Create a program that controls the LED by the push button found on the board
-            \item Create a program that is able to communicate with the attached PC. Use a serial
-            terminal for the communication.(it's advised to use ``minicom")
-        \end{itemize}
-    \end{enumerate}
+              \item Hello World
+                    \begin{itemize}
+                        \item Login to mbed site. Select NUCLEO-F446RE from the available platforms.
+                        \item Create a program that blinks the LED on the development board.
+                        \item Use the sample codes provided by mbed
+                        \item Create a program that controls the LED by the push button found on the board
+                        \item Create a program that is able to communicate with the attached PC. Use a serial
+                              terminal for the communication.(it's advised to use ``minicom")
+                    \end{itemize}
+          \end{enumerate}
     \item \begin{enumerate}
-        \item Attaching a sensor and an actuator
-        \begin{itemize}
-            \item Pick one-one from the available sensors and actuators and find or create code
-            that will display the sensed data on the PC
-            \item Find the corresponding data sheet of the sensor and study it! While attaching
-            the sensor take care to follow the instructions found in the data sheet.
-            \item Attach the sensor directly to the board or using a breadboard. Use other components
-            if necessary
-            \item Create a program that displays data from the sensor in regular intervals in a compact format.
-        \end{itemize}
-        \item Attaching radio comms
-        \begin{itemize}
-            \item Attach the radio unit to the board. The radio uses SPI bus. Identify and connect the
-            appropriate pins. Take care about interference between sensor and the radio!
-            \item Obtain the libraries required for the radio module by either downloading it from the
-            mbed library or from the lab demonstrator.
-            \item Study the radio comms module operation by inspecting the sample code obtained from the
-            lab demonstrator
-            \item Check the operation of the communication at the gateway. Check that the communication is
-            working bidirectionally.
-        \end{itemize}
-        \item Bootstrapping the sensor and the actuator
-        \begin{itemize}
-            \item Combine the code of the sensor and the radio communication. Send the data retrieved 
-            from the sensor to the gateway.
-            \item Add code created for the actuator to the existing code.
-        \end{itemize}
-    \end{enumerate}
+              \item Attaching a sensor and an actuator
+                    \begin{itemize}
+                        \item Pick one-one from the available sensors and actuators and find or create code
+                              that will display the sensed data on the PC
+                        \item Find the corresponding data sheet of the sensor and study it! While attaching
+                              the sensor take care to follow the instructions found in the data sheet.
+                        \item Attach the sensor directly to the board or using a breadboard. Use other components
+                              if necessary
+                        \item Create a program that displays data from the sensor in regular intervals in a compact format.
+                    \end{itemize}
+              \item Attaching radio comms
+                    \begin{itemize}
+                        \item Attach the radio unit to the board. The radio uses SPI bus. Identify and connect the
+                              appropriate pins. Take care about interference between sensor and the radio!
+                        \item Obtain the libraries required for the radio module by either downloading it from the
+                              mbed library or from the lab demonstrator.
+                        \item Study the radio comms module operation by inspecting the sample code obtained from the
+                              lab demonstrator
+                        \item Check the operation of the communication at the gateway. Check that the communication is
+                              working bidirectionally.
+                    \end{itemize}
+              \item Bootstrapping the sensor and the actuator
+                    \begin{itemize}
+                        \item Combine the code of the sensor and the radio communication. Send the data retrieved
+                              from the sensor to the gateway.
+                        \item Add code created for the actuator to the existing code.
+                    \end{itemize}
+          \end{enumerate}
     \item \begin{enumerate}
-        \item Creating a virtual device
-        \begin{itemize}
-            \item Login to devicehub.net and create a project then create a virtual device. 
-            Add the corresponding sensor and actuator to the virtual device.
-            \item Take note of the IDs and data required for accessing the virtual devices
-            \item Examine how can the virtual sensors and actuators be reached using MQTT protocol.
-        \end{itemize}
-        \item MQTT communication
-        \begin{itemize}
-            \item Study the MQTT protocol. Examine the components of the protocol.
-            \item Create a connection from an MQTT capable device/software with an MQTT broker then
-            send and receive data using it. The PCs have MQTTfx installed but other software can
-            be used as well.
-            \item Send and receive messages to/from the virtual device. The format and channel of
-            the messages are detailed in the syllabus.
-        \end{itemize}
-    \end{enumerate}
+              \item Creating a virtual device
+                    \begin{itemize}
+                        \item Login to devicehub.net and create a project then create a virtual device.
+                              Add the corresponding sensor and actuator to the virtual device.
+                        \item Take note of the IDs and data required for accessing the virtual devices
+                        \item Examine how can the virtual sensors and actuators be reached using MQTT protocol.
+                    \end{itemize}
+              \item MQTT communication
+                    \begin{itemize}
+                        \item Study the MQTT protocol. Examine the components of the protocol.
+                        \item Create a connection from an MQTT capable device/software with an MQTT broker then
+                              send and receive data using it. The PCs have MQTTfx installed but other software can
+                              be used as well.
+                        \item Send and receive messages to/from the virtual device. The format and channel of
+                              the messages are detailed in the syllabus.
+                    \end{itemize}
+          \end{enumerate}
     \item \begin{enumerate}
-        \item Configuring the gateway
-        \begin{itemize}
-            \item Ask for the access parameters of the gateway from the lab demonstrator.
-            \item Configure the gateway based on the samples provided in order to provided 
-            the required translation operation on the appropriate channels.
-            \item Send physical sensor data to the virtual device and also receive virtual data
-            on the actuator.
-        \end{itemize}
-    \end{enumerate}
+              \item Configuring the gateway
+                    \begin{itemize}
+                        \item Ask for the access parameters of the gateway from the lab demonstrator.
+                        \item Configure the gateway based on the samples provided in order to provided
+                              the required translation operation on the appropriate channels.
+                        \item Send physical sensor data to the virtual device and also receive virtual data
+                              on the actuator.
+                    \end{itemize}
+          \end{enumerate}
 \end{enumerate}
 
 \end{document}
