@@ -406,9 +406,10 @@ corresponding to these formats.
 An example of the translation for the sensor to devicehub direction:
 
 
-\begin{tabular}{| l | l | l |}
+\begin{tabular}{|l|l|l|}
 \hline
- & Received data (payload field, without type) & Forwarded data (data field, without channel) \\
+ & Received data  & Forwarded data  \\
+ & (payload field, without type) & (data field, without channel) \\
  \hline
 DIGITAL type & 0x01 & {"value" : 1} \\
 \hline
@@ -417,79 +418,186 @@ ANALOG type & 0x42 0x2a 0x00 0x00 & {"value" : 42.5} \\
 \end{tabular}
 
 
+An example of the translation for the devicehub to actuator direction:
+
+\begin{tabular}{|l|l|l|}
+\hline
+ & Received data  & Forwarded data  \\
+ & (data field, without channel) & (payload field, without type)  \\
+ \hline
+DIGITAL type & {"value" : 0} & 0x00  \\
+\hline
+ANALOG type & {"value" : 33.33} & 0x42 0x05 0x51 0xec \\
+\hline
+\end{tabular}
+
+For these measurements it is enough to know the translation of these values. In more complex
+systems however there are aggregate types or multiple joint data is transferred in one message 
+(e.g RGB values of a LED) where the translation logic applied is more complex. 
+
+
+\subsection{Address translation}
+
+On the sensor network side -- the NRF24L01+ radio network -- all devices has a network address.
+In the original protocol this address is 5 bytes long of which 2 bytes are used now. This is
+the unique address of the node. If more than one node has identical unique node address 
+then both will receive the messages however problems can occur in case of acknowledgments.
+The gateway's address is 0.
+
+Inside a node multiple sensors and actuators can be attached to the micro-controller. Typically 
+of one type there is only one so in this demo system the intra node addressing is done using
+the device type. All of the sensors and actuators get a 2 byte type id which is unique only
+inside a node. These IDs can be reused in other nodes.
+
+The virtual sensors and actuators have a ProjectID and a DeviceID and also they have a 
+unique name.
+
+The gateway's responsibility is to translate between physical and virtual identifiers
+based on a predefined mapping.
+
+Beside the IDs an API key is required for accessing the virtual devices. This does not 
+participate in identification however it is necessary to have in order to use the devicehub.net
+cloud. This key is also added by the gateway during the translation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/gateway-addresstranslation.png}
+    \caption{The address translation path}
+    \label{fig:gateway-addrtransl}
+\end{figure}
+
+\subsection{Configuration}
+
+For the radio format translation there is no need for setting any specific configuration.
+However it is crucial that the radio parameters must match on the node and gateway side.
+The node side settings will be given by the lab demonstrator.
+
+For the message and address translation a configuration has to be prepared for each node 
+and each sensor and actuator within. The configuration is implemented using a configuration
+file. If that is placed to the appropriate place the configuration will take effect immediately.
+
+The name of the configuration file is created from the node's 4 digit id in hexadecimal format.
+The file \textbf{node\_1234.json} corresponds to the configuration of node with ID 0x1234. The
+task of the students is to create this file for their assigned devices.
+
+A sample config:
+\begin{verbatim}
+{
+    "nodeId": "1234",
+    "deviceId": "2533aa65-ff45-aa32-7168-0293e1e5c812",
+    "APIKey": "b7beb838-99ee-1278-9845-348414830de2",
+    "projectId": "901",
+    "things":[
+        {
+            "sensor": "Light",
+            "typeId": 16448,
+            "type": "ANALOG"
+        },
+        {
+            "actuator": "LightSwitch",
+            "typeId": 16449,
+            "type": "DIGITAL"
+        }
+    ]
+}
+\end{verbatim} 
+
+
+The \emph{nodeId} field identifies the physical node. The following lines contain the virtual
+device identifiers: \emph{deviceId} and \emph{projectId} and the \emph{APIKey} required for
+accessing devicehub.net.
+
+The \emph{things} array holds the listing of the mapping of physical and virtual sensors and
+actuators. The \emph{sensor} and \emph{actuator} fields are set to values determined by the
+virtual device names. The \emph{typeId} field is the one that is used for identifying the
+physical sensors and actuators within a node. The \emph{type} field's value is either \emph{DIGITAL}
+or \emph{ANALOG} depending on the type of the data.
+
+The prepared configuration file has to be placed under \emph{/home/pi/devicehubproxy/config}
+directory on the gateway. After copying the file to the destination directory the configuration
+takes place immediately and testing can commence. If there is a need to modify parameters this
+file can be updated and the modifications will be in effect immediately.
+To create and place this file it is required to log in to the gateway host. The parameters necessary
+for logging in to the gateway will be provided by the lab demonstrator. It is also possible
+to create and edit the config file while while logged in to the gateway.
+
+Before placing/uploading the file to the destination directory it is strongly advised to check
+the JSON syntax for validity. An on-line JSON validator is available on \url{https://jsonformatter.curiousconcept.com/}.
+In case of correct syntax but incorrect operation the lab demonstrator can help in the troubleshooting.
+
 \appendix
-
-\section{Entry quiz sample questions}
-
-\begin{enumerate}
-    \item Describe briefly the main concept of the OpenFlow recommendation.
-    \item What are the components of an OpenFlow network?
-\end{enumerate}
 
 \section{Lab exercises}
 
-1.0 Hello World
-Mérési feladat
-
-Jelentkezzen be az mbed oldalára. Válassza ki a platformok közül a NUCLEO-F446RE-t.
-Készítsen programot, amely a fejlesztői lapon található ledet villogtatja.
-Használja az mbed által nyújtott példaprogramokat!
-Készítsen programot, amely a lapon található gomb segítségével vezérli a ledet.
-Készítsen programot, amely képes a méréshez kapcsolt PC-vel kommunikálni. A kommunikációhoz soros terminált
-használjon. (A "minicom" ajánlott)
-
-2.1 Szenzor és beavatkozó illesztése
-Mérési feladat
-
-Válasszon egyet a rendelkezésre álló szenzorok és beavatkozók közül és készítsen/keressen hozzá kódot, amellyel a
-szenzor értékeit megjelenítheti a PC-n.
-Keresse meg a szenzorhoz tartozó adatlapot és tanulmányozza! Az illesztés során ügyeljen az adatlapon leírtak
-betartására!
-Illessze a szenzort a laphoz közvetlenül vagy breadboard segítségével. Amennyiben szükséges használjon egyéb
-alkatrészeket.
-Készítsen programot, amely a szenzor adatait szabályos időközönként megjeleníti tömör formátumban.
-
-2.2 Kommunikáció illesztése
-Mérési feladat
-
-Illessze a rádiós egységet a laphoz. Az rádió SPI felületen csatlakozik. Azonosítsa a megfelelő lábakat és kösse
-össze azokat. Ügyeljen, hogy a szenzor és a rádió ne zavarja egymás kommunikációját.
-A rádió illesztéséhez szükséges programkönyvtárakat töltse le az mbed gyűjteményéből, illetve kérje el a
-mérésvezetőtől.
-Ismerje meg a kommunikációs modul használatát a mérésvezetőtől kapott példaprogramon keresztül.
-Ellenőrizze a kommunikációt az átjárónál. Próbálja ki, hogy oda-vissza működik a kommunikáció.
-
-2.3 Szenzor és beavatkozó életrekeltése
-Mérési feladat
-
-Egyesítse a szenzor és a kommunikáció kódját. A szenzor által mért jeleket küldje el az átjárónak.
-A meglévő kódhoz adja hozzá a beavatkozó kódját.
-
-3.1 Virtuális eszköz készítése
-Mérési feladat
-
-Jelentkezzen be a devicehub.net oldalára és végignavigálva ez egyes menüpontokon készítse el első projektjét, a
-projekthez tartozó első virtuális eszközét, majd az ahhoz tartozó szenzort és beavatkozót.
-Jegyezze fel a szenzor és a beavatkozó eléréséhez szükséges paramétereket.
-Vizsgálja meg miként érhetőek el a szenzor és beavatkozó adatok az MQTT protokollon keresztül.
-
-3.2 MQTT kommunikáció
-Mérési feladat
-
-Tanulmányozza át az MQTT protokollt. Vizsgálja meg a megoldás egyes elemeit.
-Egy MQTT kapcsolódásra képes eszközzel létesítsen kapcsolatot egy MQTT brokerrel, majd küldjön és fogadjon
-üzeneteket a program segítségével. A mérőgépen az MQTTfx nevű alkalmazás van telepítve. Használhat más alkalmazást is.
-Küldjön üzeneteket a virtuális eszközének és fogadjon onnan üzeneteket. Az üzenetek formátumát és a csatornákat az
-előző pontban megvizsgált leírásban találja.
-
-4.1 Átjáró beállítása
-Mérési feladat
-
-Kérje el a mérésvezetőtől az átjáró eléréséhez szükséges paramétereket (Az átjáró elérése mérésenként változhat)
-A megtalálható példák segítségével konfigurálja az átjárót, hogy a megfelelő formátumra alakítást végezze, illetve
-a megfelelő csatornát válassza.
-Küldjön valós szenzoradatokat a virtuális eszköznek és a valós aktuátor fogadjon virtuális adatokat.
-
-\subsection{Lab environment}
+\begin{enumerate}
+    \item \begin{enumerate}
+        \item Hello World
+        \begin{itemize}
+            \item Login to mbed site. Select NUCLEO-F446RE from the available platforms.
+            \item Create a program that blinks the LED on the development board.
+            \item Use the sample codes provided by mbed
+            \item Create a program that controls the LED by the push button found on the board
+            \item Create a program that is able to communicate with the attached PC. Use a serial
+            terminal for the communication.(it's advised to use ``minicom")
+        \end{itemize}
+    \end{enumerate}
+    \item \begin{enumerate}
+        \item Attaching a sensor and an actuator
+        \begin{itemize}
+            \item Pick one-one from the available sensors and actuators and find or create code
+            that will display the sensed data on the PC
+            \item Find the corresponding data sheet of the sensor and study it! While attaching
+            the sensor take care to follow the instructions found in the data sheet.
+            \item Attach the sensor directly to the board or using a breadboard. Use other components
+            if necessary
+            \item Create a program that displays data from the sensor in regular intervals in a compact format.
+        \end{itemize}
+        \item Attaching radio comms
+        \begin{itemize}
+            \item Attach the radio unit to the board. The radio uses SPI bus. Identify and connect the
+            appropriate pins. Take care about interference between sensor and the radio!
+            \item Obtain the libraries required for the radio module by either downloading it from the
+            mbed library or from the lab demonstrator.
+            \item Study the radio comms module operation by inspecting the sample code obtained from the
+            lab demonstrator
+            \item Check the operation of the communication at the gateway. Check that the communication is
+            working bidirectionally.
+        \end{itemize}
+        \item Bootstrapping the sensor and the actuator
+        \begin{itemize}
+            \item Combine the code of the sensor and the radio communication. Send the data retrieved 
+            from the sensor to the gateway.
+            \item Add code created for the actuator to the existing code.
+        \end{itemize}
+    \end{enumerate}
+    \item \begin{enumerate}
+        \item Creating a virtual device
+        \begin{itemize}
+            \item Login to devicehub.net and create a project then create a virtual device. 
+            Add the corresponding sensor and actuator to the virtual device.
+            \item Take note of the IDs and data required for accessing the virtual devices
+            \item Examine how can the virtual sensors and actuators be reached using MQTT protocol.
+        \end{itemize}
+        \item MQTT communication
+        \begin{itemize}
+            \item Study the MQTT protocol. Examine the components of the protocol.
+            \item Create a connection from an MQTT capable device/software with an MQTT broker then
+            send and receive data using it. The PCs have MQTTfx installed but other software can
+            be used.
+            \item Send and receive messages to/from the virtual device. The format and channel of
+            the messages are detailed in the syllabus.
+        \end{itemize}
+    \end{enumerate}
+    \item \begin{enumerate}
+        \item Configuring the gateway
+        \begin{itemize}
+            \item Ask for the access parameters of the gateway from the lab demonstrator.
+            \item Configure the gateway based on the samples provided in order to provided 
+            the required translation operation on the appropriate channels.
+            \item Send physical sensor data to the virtual device and also receive virtual data
+            on the actuator.
+        \end{itemize}
+    \end{enumerate}
+\end{enumerate}
 
 \end{document}
