@@ -636,6 +636,49 @@ showstringspaces=false]
   55:  $ns run
 \end{lstlisting}
 
+
+\subsection{Processing results}
+
+Beside NAM visualization of the simulation results the system provides facilities for creating a log file of all events of all packet. The \verb!Simulator trace-all! -- in the example the \verb!namtrace-all! was used that produces different outputs -- method creates an output file whom lines correspond to packet events and is made of 12 space separated field: 
+\begin{enumerate}
+
+\item The type of the event:
+\begin{itemize}
+    \item ``r" (receive): the destination node received the packet    
+    \item ``d" (drop): the packet has been discarded by a queue
+    \item ``+" (enqueue): the packet has been enqueued
+    \item ``-" (dequeue): the packet has been dequeued
+\end{itemize}
+
+\item the timestamp of the event (in seconds)
+
+\item the identifier of the originator node
+
+\item the identifier of the destination node. This and the originator node determines on which link the event happened (don't mix-up with the field in 9. and 10.)
+
+\item The type of the packet
+
+\item Signaling bits (currently just the ECN bit is used)
+
+\item Flow id in case of IPv6 that can be set from tcl (see line 30. and 39 in listing~\ref{lst:simexample}); even if the simulator is not using this id it can be used for evaluating the simulation results or tracing. (e.g. NAM uses flow-id for coloring purposes)
+
+\item Source address in \emph{node.port} format
+
+\item Destination address in \emph{node.port} format
+
+\item The sequence number of the network protocol; Even if UDP does not use sequence number, ns track these packets as well for easier tracing
+
+\item unique ID of the packet
+
+\end{enumerate}
+
+In case of lengthier simulation run when only some aggregated metrics are in the focus of interest it is resource consuming to log all packet events. NS provides facilities for monitoring a single queue. Details can be found under the section ``Trace and Monitoring Support" in the ns documentation.
+
+In ns terminology the per packet inspection is referred as ``trace" while the aggregated state inspection is referred as ``monitoring". The latter is a better candidate to be used in a long term simulation since tracing millions of millions of packets slows down the simulation while producing enormous -- potentially unmanageable -- output trace file. As an example one can experiment with a simulation with and without NAM tracing.
+
+Due to 
+
+
 \appendix
 
 \section{Entry quiz sample questions}
