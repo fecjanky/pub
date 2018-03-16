@@ -298,38 +298,71 @@ over the globe. Even comparison of the recommendations is non-trivial since ther
 network environments and measurements methods that can provide adequate answers on which protocol is the best or
 optimal under given conditions.
 
-\section{Further Reading}
+\section{Introduction to Network Simulator}
 
+\subsection{Introduction}
+
+\emph{Network Simulator} is a discrete, event-driven, packet based network simulator that is supported by many universities and research institutes and also it is open-source (\url{http://www.isi.edu/nsnam}). Using this program beside many things it is possible to inspect routing protocols, multicast and TCP protocols even using wireless networks.
+
+\textbf{ns} was developed in C++ and otcl languages. The core of the simulator, the protocol implementations and the computation intensive code was written in C++. In contrast octl script language was used for providing the simulation configuration and for solutions of one-time tasks that do not require performance.
+
+The class hierarchy of the system is well designed. New functionality can be easily added in C++ to the existing system, but that is out of scope on this lab. The aim of this class to get a grip on the basics of the otcl interface and to discover some simple network simulation based measurement methods.
+
+The ns program can be viewed as a tcl interpreter with object-oriented extensions from where the class hierarchy that supports network simulation is reachable.
+
+As a first step of the simulation an (o)tcl script has to be created that defines the network components, the interconnection between those components furthermore the timing of the scripted events (e.g. the transmission start time of a data source). The ns program has to be launched with the script as argument (e.g. \textbf{ns program.tcl}) that produces the log entries and simulation results in output files. During post-processing the simulation result can be processed using \textbf{awk,perl,gnuplot,excel,etc.} programs. For visual inspection of the results \textbf{nam} program can be used (NAM - Network Animator) can be used with a log file in special format. This program graphically visualizes the route of certain packets in the network.
+
+\subsection{Further Reading}\label{sec:tcl}
 \begin{itemize}
-    \item \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/a19-lantz.pdf}{A Network in a
-              Laptop: Rapid Prototyping for Software-Defined Networks}
-    \item
-
-          \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/mininet-hotnets2010-final.pdf}{Presentation
-              of conference proceedings on Mininet}
-    \item	Mininet page: \url{http://mininet.org/}
-    \item	Mininet wiki: \url{https://github.com/mininet/mininet/wiki}
-    \item	Mininet introduction: \url{https://github.com/mininet/mininet/wiki/  Introduction-to-Mininet}
-    \item	Mininet Python API: \url{http://mininet.org/api/hierarchy.html}
+  \item \href{https://www.tcl.tk/man/tcl8.5/tutorial/tcltutorial.html}{TCL Tutorial}
+  \item \href{https://www.isi.edu/nsnam/otcl/doc/tutorial.html}{OTcl tutorial}
+  \item \href{http://www.isi.edu/nsnam/ns/ns-documentation.html}{ns manual}
+  \item \href{http://alpha.tmit.bme.hu/meresek/tcl2.pdf}{TCL command reference}
 \end{itemize}
 
-OpenFlow specifications:
-\begin{itemize}
-    \item
-          \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-spec-v1.0.0.pdf}{v1.0}
-    \item
-          \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-spec-v1.1.0.pdf}{v1.1}
-    \item
+\subsection{Tcl basics}
 
-          \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-switch-v1.3.4.pdf}{v1.3.4}
-    \item
+Tcl provides rapid prototyping in ns system. In this section a brief overview of the language is given that provides adequate level of knowledge for completing these measurements.
 
-          \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-switch-v1.4.1.pdf}{v1.4.1}
-    \item
+Commands of a Tcl scipt are separated either by a semi-colon or by a new line. Commands are made of one or more words where the firs word is the name of the command and optionally the following words are arguments to the command. Words are separated by space or tab characters.
 
-          \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScMeresiSegedlet/openflow-switch-v1.5.1.pdf}{v1.5.1}
+When evaluating a command the interpreter breaks the commands into words and performs potential replacements then executes the command with the given arguments. \verb!$variable! is replaced by the value of the variable while \verb!command! is replaced by the return value of the command. Variables don't have type all value is stored as string.
 
-\end{itemize}
+Please read the Tcl related materials under Section~\ref{sec:tcl} that are required for successful completion of the measurements. The program fragment in listing~\ref{lst:10faktorial} calculating the factorial value of 10 contains some basic language constructs of Tcl.
+
+\begin{lstlisting}[
+language=tcl,
+captionpos=b,
+caption={Tcl program calculating the value of 10!},
+label={lst:10faktorial}]
+  1:  set fact 1
+  2:  for {set i 1} {$i <= 10} {incr i} {
+  3:      set fact [expr $fact*$i]
+  4:  }
+  5:  puts $fact
+\end{lstlisting}
+
+In the first line variable \verb!fact! is given the value 1 using the \verb!set!. In the second line a for loop is started similarly to the C programming language where the braces prevent substitution while decomposing the command into words. The use of square brackets are illustrated on line 3 where the \verb!expr! calculates a numeric value and the result of the expression will be stored in the new value of \verb!fact! -- after executing the \verb!set! command. Finally the result is written to the output using the \verb!puts! command on the last line.
+
+A recursive way of calculating factorial is show in program listing~\ref{lst:factorial}.
+
+\begin{lstlisting}[
+language=tcl,
+captionpos=b,
+caption={Tcl program for calculating the factorial value of a number},
+label={lst:factorial}]
+  0:  proc factorial num {
+  1:      if {$num > 0} {
+  2:          return [expr $num*[factorial [expr $num-1]]]
+  3:      } else {
+  4:          return 1
+  5:      }
+  6:  }
+  7:  puts [factorial 10]
+\end{lstlisting}
+
+\subsection{Otcl basics}
+
 
 \appendix
 
