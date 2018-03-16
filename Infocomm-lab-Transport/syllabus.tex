@@ -146,7 +146,8 @@ optional block (SACK option header). Nowadays most TCP implementations provide t
 
 It has been shown that for TCP Reno the indicator for congestion is a packet loss event that occurs when the queues
 overflow on a link with the smallest bandwidth (i.e. the bottleneck link). This method -- called \textbf{packet loss
-    based} congestion control -- is present in several new, high-speed TCP version however it has some drawbacks as well.
+    based} congestion control -- is present in several new, high-speed TCP version however it has some drawbacks as
+well.
 The actual congestion control is can be carried in 1 bit of information (packet loss/no packet loss) as a consequence
 it does not allow fine-grained or sophisticated control algorithms to be used. Furthermore packet-loss based control
 involves filling up queues since the control action is only carried out in case of a packet loss. That infers the
@@ -168,22 +169,37 @@ These \textbf{explicit congestion signaling} methods requires modification of ex
 \section{High-Speed TCP versions}
 \begin{table}
     \begin{tabular}{|p{0.25\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|}\hline
-        \cellcolor{blue!25}protocol                                                   & \cellcolor{blue!25}type                & \cellcolor{blue!25}suggested by,when                                   &
-        \cellcolor{blue!25}properties                                                                                                                                                                                         \\\hline
-        \cellcolor{blue!25}HighSpeed TCP                                              & packet loss based                      & S. Floyd, International Computer Science Institute (ICSI),
-        Berkeley University of California, 2003.                                      & AIMD                                                                                                                                  \\\hline
-        \cellcolor{blue!25}Scalable TCP                                               & packet loss based                      & T. Kelly, CERN \& University of Cambridge, 2003.                       & MIMD                \\\hline
-        \cellcolor{blue!25}BIC TCP/CUBIC                                              & packet loss based                      & I. Rhee et al., Networking Research Lab, North Carolina State
-        University, 2004-2005.                                                        & Good utilization,fairness \& stability                                                                                                \\\hline
-        \cellcolor{blue!25}FAST TCP                                                   & delay-based                            & S. Low et al., Netlab, California Institute of Technology, 2004. (now:
-        FastSoft Inc.)                                                                & promising fairness properties                                                                                                         \\\hline
-        \cellcolor{blue!25}TCP Westwood                                               & measurement based                      & M.Y. Sanadidi, M. Gerla et al., High Performance Internet Lab,
+        \cellcolor{blue!25}protocol                                                   & \cellcolor{blue!25}type
+                                                                                      & \cellcolor{blue!25}suggested by,when                                   &
+        \cellcolor{blue!25}properties
+        \\\hline
+        \cellcolor{blue!25}HighSpeed TCP                                              & packet loss based
+                                                                                      & S. Floyd, International Computer Science Institute (ICSI),
+        Berkeley University of California, 2003.                                      & AIMD
+        \\\hline
+        \cellcolor{blue!25}Scalable TCP                                               & packet loss based
+                                                                                      & T. Kelly, CERN \& University of Cambridge, 2003.                       & MIMD                \\\hline
+        \cellcolor{blue!25}BIC TCP/CUBIC                                              & packet loss based
+                                                                                      & I. Rhee et al., Networking Research Lab, North Carolina State
+        University, 2004-2005.                                                        & Good utilization,fairness \&
+        stability                                                                                                                                                                    \\\hline
+        \cellcolor{blue!25}FAST TCP                                                   & delay-based
+                                                                                      & S. Low et al., Netlab, California Institute of Technology, 2004. (now:
+        FastSoft Inc.)                                                                & promising fairness properties
+        \\\hline
+        \cellcolor{blue!25}TCP Westwood                                               & measurement based
+                                                                                      & M.Y. Sanadidi, M. Gerla et al., High Performance Internet Lab,
         Network Research Lab, University of California, Los Angeles (UCLA), 2001-2005 & multiple variants, different
-        approximation methods                                                                                                                                                                                                 \\\hline
-        \cellcolor{blue!25}Compound TCP                                               & hybrid                                 & K. Tan et al., Microsoft Research, 2005.                               & AIMD + delay-based
-        component                                                                                                                                                                                                             \\\hline
-        \cellcolor{blue!25}XCP                                                        & explicit congestion signaling          & D. Katabi et al., Massachusetts Institute of Technology (MIT),
-        2002.                                                                         & change in network routers required                                                                                                    \\\hline
+        approximation methods
+        \\\hline
+        \cellcolor{blue!25}Compound TCP                                               & hybrid
+                                                                                      & K. Tan et al., Microsoft Research, 2005.                               & AIMD + delay-based
+        component
+        \\\hline
+        \cellcolor{blue!25}XCP                                                        & explicit congestion signaling
+                                                                                      & D. Katabi et al., Massachusetts Institute of Technology (MIT),
+        2002.                                                                         & change in network routers
+        required                                                                                                                                                                     \\\hline
     \end{tabular}
     \caption{Overview High-Speed TCP versions}
     \label{table:tcpver}
@@ -303,33 +319,55 @@ optimal under given conditions.
 
 \subsection{Introduction}
 
-\emph{Network Simulator} is a discrete, event-driven, packet based network simulator that is supported by many universities and research institutes and also it is open-source (\url{http://www.isi.edu/nsnam}). Using this program beside many things it is possible to inspect routing protocols, multicast and TCP protocols even using wireless networks.
+\emph{Network Simulator} is a discrete, event-driven, packet based network simulator that is supported by many
+universities and research institutes and also it is open-source (\url{http://www.isi.edu/nsnam}). Using this program
+beside many things it is possible to inspect routing protocols, multicast and TCP protocols even using wireless
+networks.
 
-\textbf{ns} was developed in C++ and otcl languages. The core of the simulator, the protocol implementations and the computation intensive code was written in C++. In contrast octl script language was used for providing the simulation configuration and for solutions of one-time tasks that do not require performance.
+\textbf{ns} was developed in C++ and otcl languages. The core of the simulator, the protocol implementations and the
+computation intensive code was written in C++. In contrast octl script language was used for providing the simulation
+configuration and for solutions of one-time tasks that do not require performance.
 
-The class hierarchy of the system is well designed. New functionality can be easily added in C++ to the existing system, but that is out of scope on this lab. The aim of this class to get a grip on the basics of the otcl interface and to discover some simple network simulation based measurement methods.
+The class hierarchy of the system is well designed. New functionality can be easily added in C++ to the existing
+system, but that is out of scope on this lab. The aim of this class to get a grip on the basics of the otcl interface
+and to discover some simple network simulation based measurement methods.
 
-The ns program can be viewed as a tcl interpreter with object-oriented extensions from where the class hierarchy that supports network simulation is reachable.
+The ns program can be viewed as a tcl interpreter with object-oriented extensions from where the class hierarchy that
+supports network simulation is reachable.
 
-As a first step of the simulation an (o)tcl script has to be created that defines the network components, the interconnection between those components furthermore the timing of the scripted events (e.g. the transmission start time of a data source). The ns program has to be launched with the script as argument (e.g. \textbf{ns program.tcl}) that produces the log entries and simulation results in output files. During post-processing the simulation result can be processed using \textbf{awk,perl,gnuplot,excel,etc.} programs. For visual inspection of the results \textbf{nam} program can be used (NAM - Network Animator) can be used with a log file in special format. This program graphically visualizes the route of certain packets in the network.
+As a first step of the simulation an (o)tcl script has to be created that defines the network components, the
+interconnection between those components furthermore the timing of the scripted events (e.g. the transmission start
+time of a data source). The ns program has to be launched with the script as argument (e.g. \textbf{ns program.tcl})
+that produces the log entries and simulation results in output files. During post-processing the simulation result can
+be processed using \textbf{awk,perl,gnuplot,excel,etc.} programs. For visual inspection of the results \textbf{nam}
+program can be used (NAM - Network Animator) can be used with a log file in special format. This program graphically
+visualizes the route of certain packets in the network.
 
 \subsection{Further Reading}\label{sec:tcl}
 \begin{itemize}
-  \item \href{https://www.tcl.tk/man/tcl8.5/tutorial/tcltutorial.html}{TCL Tutorial}
-  \item \href{https://www.isi.edu/nsnam/otcl/doc/tutorial.html}{OTcl tutorial}
-  \item \href{http://www.isi.edu/nsnam/ns/ns-documentation.html}{ns manual}
-  \item \href{http://alpha.tmit.bme.hu/meresek/tcl2.pdf}{TCL command reference}
+    \item \href{https://www.tcl.tk/man/tcl8.5/tutorial/tcltutorial.html}{TCL Tutorial}
+    \item \href{https://www.isi.edu/nsnam/otcl/doc/tutorial.html}{OTcl tutorial}
+    \item \href{http://www.isi.edu/nsnam/ns/ns-documentation.html}{ns manual}
+    \item \href{http://alpha.tmit.bme.hu/meresek/tcl2.pdf}{TCL command reference}
 \end{itemize}
 
 \subsection{Tcl basics}
 
-Tcl provides rapid prototyping in ns system. In this section a brief overview of the language is given that provides adequate level of knowledge for completing these measurements.
+Tcl provides rapid prototyping in ns system. In this section a brief overview of the language is given that provides
+adequate level of knowledge for completing these measurements.
 
-Commands of a Tcl scipt are separated either by a semi-colon or by a new line. Commands are made of one or more words where the firs word is the name of the command and optionally the following words are arguments to the command. Words are separated by space or tab characters.
+Commands of a Tcl scipt are separated either by a semi-colon or by a new line. Commands are made of one or more words
+where the firs word is the name of the command and optionally the following words are arguments to the command. Words
+are separated by space or tab characters.
 
-When evaluating a command the interpreter breaks the commands into words and performs potential replacements then executes the command with the given arguments. \verb!$variable! is replaced by the value of the variable while \verb!command! is replaced by the return value of the command. Variables don't have type all value is stored as string.
+When evaluating a command the interpreter breaks the commands into words and performs potential replacements then
+executes the command with the given arguments. \verb!$variable! is replaced by the value of the variable while
+\verb!command! is replaced by the return value of the command. Variables don't have type all value is stored as
+string.
 
-Please read the Tcl related materials under Section~\ref{sec:tcl} that are required for successful completion of the measurements. The program fragment in listing~\ref{lst:10faktorial} calculating the factorial value of 10 contains some basic language constructs of Tcl.
+Please read the Tcl related materials under Section~\ref{sec:tcl} that are required for successful completion of the
+measurements. The program fragment in listing~\ref{lst:10faktorial} calculating the factorial value of 10 contains some
+basic language constructs of Tcl.
 
 \begin{lstlisting}[
 language=tcl,
@@ -343,7 +381,12 @@ label={lst:10faktorial}]
   5:  puts $fact
 \end{lstlisting}
 
-In the first line variable \verb!fact! is given the value 1 using the \verb!set!. In the second line a for loop is started similarly to the C programming language where the braces prevent substitution while decomposing the command into words. The use of square brackets are illustrated on line 3 where the \verb!expr! calculates a numeric value and the result of the expression will be stored in the new value of \verb!fact! -- after executing the \verb!set! command. Finally the result is written to the output using the \verb!puts! command on the last line.
+In the first line variable \verb!fact! is given the value 1 using the \verb!set!. In the second
+line a for loop is started similarly to the C programming language where the braces prevent substitution while
+decomposing the command into words. The use of square brackets are illustrated on line 3 where the
+\verb!expr! calculates a numeric value and the result of the expression will be stored in the new value of
+\verb!fact! -- after executing the \verb!set! command. Finally the result is written to the
+output using the \verb!puts! command on the last line.
 
 A recursive way of calculating factorial is show in program listing~\ref{lst:factorial}.
 
@@ -365,9 +408,9 @@ showstringspaces=false]
 
 \subsection{Otcl basics}
 
-This section introduces the usage of otcl that is an object oriented extension of Tcl language. While an average \emph{ns} user doesn't have to write new classes it is still beneficial to understand the language constructs of octl.
+This section introduces the usage of otcl that is an object oriented extension of Tcl language. While an average
+\emph{ns} user doesn't have to write new classes it is still beneficial to understand the language constructs of octl.
 A classical example found on ns homepage is shown in listing~\ref{lst:nsexample}
-
 
 \begin{lstlisting}[
 language=tcl,
@@ -396,23 +439,41 @@ showstringspaces=false]
   15:  $b greet
 \end{lstlisting}
 
-The example in listing~\ref{lst:nsexample} defines class \verb!mom! using the \verb!Class! in the line 0 that will be the superclass of the class \verb!kid! defined on line 5 using the \verb!-superclass! keyword. The class definitions are followed by method definitions using the \verb!instproc! keyword. In lines 2 and 7 the role of \verb!$self! is equivalent with the role of \verb!this! keyword in C++ language. The \verb!instvar! keyword declares a member variable -- if that has not been declared before -- furthermore it brings the variable into the scope so it can be referred as a variable. Finally the \verb!new! command can be used for creating an instance of a class (lines 10 and 12). On line 14 and 15 the methods are invoked producing the following output:
+The example in listing~\ref{lst:nsexample} defines class \verb!mom! using the \verb!Class! in
+the line 0 that will be the superclass of the class \verb!kid! defined on line 5 using the
+\verb!-superclass! keyword. The class definitions are followed by method definitions using the
+\verb!instproc! keyword. In lines 2 and 7 the role of \verb!$self! is equivalent with the role of
+\verb!this! keyword in C++ language. The \verb!instvar! keyword declares a member variable -- if
+that has not been declared before -- furthermore it brings the variable into the scope so it can be referred as a
+variable. Finally the \verb!new! command can be used for creating an instance of a class (lines 10 and
+12). On line 14 and 15 the methods are invoked producing the following output:
 \begin{lstlisting}[language=bash]
 45 year old mom say: How are you doing?
 15 year old kid say: What's up, dude?
 \end{lstlisting}
 
-
 \section{Simulation program example}
 
-This section demonstrates a simple simulation script described line-by-line showing the basic steps for preparing a simulation.
+This section demonstrates a simple simulation script described line-by-line showing the basic steps for preparing a
+simulation.
 
-The simulated network -- as shown on Figure~\ref{fig:simplesim} -- consists 4 nodes (\verb!n0,n1,n2,n3!). The duplex link capacity between nodes \verb!n0! \verb!n2! and \verb!n1! and \verb!n2! is 2Mbps and its delay is 10 milliseconds. The third link between \verb!n2! and \verb!n3! has a capacity of 1.7 Mbps with a delay of 20 milliseconds. Each node utilizes a 10 packets capacity \verb!DropTail! mode queue that serves the queued packets in a FIFO manner and drops all incoming packets if its buffer that is able to hold 10 packets is full.
+The simulated network -- as shown on Figure~\ref{fig:simplesim} -- consists 4 nodes (\verb!n0,n1,n2,n3!). The
+duplex link capacity between nodes \verb!n0! \verb!n2! and \verb!n1! and
+\verb!n2! is 2Mbps and its delay is 10 milliseconds. The third link between \verb!n2! and
+\verb!n3! has a capacity of 1.7 Mbps with a delay of 20 milliseconds. Each node utilizes a 10 packets
+capacity \verb!DropTail! mode queue that serves the queued packets in a FIFO manner and drops all incoming
+packets if its buffer that is able to hold 10 packets is full.
 
-The TCP agent attached to \verb!n0! node establishes a connection with a TCP \verb!sink! attached to \verb!n3!. A TCP agent -- by default -- is only capable of generating packets with size of 1 kbyte. The responsibility of the sink is to send back ACKs.
+The TCP agent attached to \verb!n0! node establishes a connection with a TCP \verb!sink!
+attached to \verb!n3!. A TCP agent -- by default -- is only capable of generating packets with size of 1
+kbyte. The responsibility of the sink is to send back ACKs.
 
-The UDP agent attached to node \verb!n1! is communicating with the \verb!null! agent attached to node \verb!n3!. The \verb!null! agent is just only frees up the packet associated memory since UDP does not require sending ACKs back. The \verb!tcp! agent has an attached \verb!ftp! traffic generator while the \verb!udp! has a \verb!cbr!. The latter is a Constant Bit Rate data stream generator: it is sending 1 kbyte packtes with 1 Mbps speed. The \verb!cbr! generator operates between 0.1s and 4.5s while the \verb!ftp! generator operates between 1.0s and 4.0s.
-
+The UDP agent attached to node \verb!n1! is communicating with the \verb!null! agent attached
+to node \verb!n3!. The \verb!null! agent is just only frees up the packet associated memory
+since UDP does not require sending ACKs back. The \verb!tcp! agent has an attached \verb!ftp!
+traffic generator while the \verb!udp! has a \verb!cbr!. The latter is a Constant Bit Rate
+data stream generator: it is sending 1 kbyte packtes with 1 Mbps speed. The \verb!cbr! generator operates
+between 0.1s and 4.5s while the \verb!ftp! generator operates between 1.0s and 4.0s.
 
 \begin{figure}[H]
     \centering
@@ -421,57 +482,80 @@ The UDP agent attached to node \verb!n1! is communicating with the \verb!null! a
     \label{fig:simplesim}
 \end{figure}
 
-The simulation topology shown of Figure~\ref{fig:simplesim} is realized by the program in listing~\ref{lst:simexample}. The explanation of the program follows:
+The simulation topology shown of Figure~\ref{fig:simplesim} is realized by the program in listing~\ref{lst:simexample}.
+The explanation of the program follows:
 
 \begin{itemize}
 
-\item \verb!0: set ns [new Simulator]!: instantiates the ns simulator object and stores it in variable named \verb!ns!. This is the opening line of all ns scripts that among other things initializes the discrete time scheduler. The class \verb!Simulator! has methods for doing the following things:
+    \item \verb!0: set ns [new Simulator]!: instantiates the ns simulator object and stores it in variable named
+          \verb!ns!. This is the opening line of all ns scripts that among other things initializes the discrete
+          time scheduler. The class \verb!Simulator! has methods for doing the following things:
 
-\begin{itemize}
-    \item create network objects (nodes,links,etc.)
-    \item interconnect network objects (e.g. \verb!attach-agent!)
-    \item set parameters of network objects
-    \item define data link between agents (e.g. between \verb!tcp! and \verb!sink!)
-    \item control the presentation parameters of NAM
-\end{itemize}   
+          \begin{itemize}
+              \item create network objects (nodes,links,etc.)
+              \item interconnect network objects (e.g. \verb!attach-agent!)
+              \item set parameters of network objects
+              \item define data link between agents (e.g. between \verb!tcp! and \verb!sink!)
+              \item control the presentation parameters of NAM
+          \end{itemize}
 
+    \item \verb!1-2: $ns color fid color!: sets the color of the flow identified by flow id \emph{fid}. This setting of the
+          \verb!Simulator! object only affects the NAM presentation and does not affect the simulation.
 
-\item \verb!1-2: $ns color fid color!: sets the color of the flow identified by flow id \emph{fid}. This setting of the \verb!Simulator! object only affects the NAM presentation and does not affect the simulation.
+    \item \verb!4: $ns namtrace-all file-descriptor!: enables simulation trace to be saved in NAM format. Similar to \verb!trace-all!
+          method which dumps data in more general format.
 
-\item \verb!4: $ns namtrace-all file-descriptor!: enables simulation trace to be saved in NAM format. Similar to \verb!trace-all! method which dumps data in more general format.
+    \item \verb!5: proc finish {}!: this command is executed at the end of the simulation as a result of registering it at
+          line 52: \verb!$ns at 5.0 "finish"!. After closing the log NAM program is executed as an epilogue of the simulation
+          script.
 
-\item \verb!5: proc finish {}!: this command is executed at the end of the simulation as a result of registering it at line 52: \verb!$ns at 5.0 "finish"!. After closing the log NAM program is executed as an epilogue of the simulation script.
+    \item \verb!12-15: set n0 [$ns node]!: this method can be used for creating a network node
 
-\item \verb!12-15: set n0 [$ns node]!: this method can be used for creating a network node
+    \item \verb!16-18: $ns duplex-link <node1> <node2> <capacity> <delay> <queue type>!: creates two simplex links with the given bandwidth and delay and connects the two nodes
+          with those. Ns specialty is that the output queue is implemented as a part of the link so the queue type has to be
+          specified when creating a link. If we'd like to use the active queue management \verb!RED! instead of
+          \verb!DropTail! simply specify that as last argument of the command. Important to note that it's possible to
+          simulate erroneous links. (please consult the ns documentation for more information)
 
-\item \verb!16-18: $ns duplex-link <node1> <node2> <capacity> <delay> <queue type>!: creates two simplex links with the given bandwidth and delay and connects the two nodes with those. Ns specialty is that the output queue is implemented as a part of the link so the queue type has to be specified when creating a link. If we'd like to use the active queue management \verb!RED! instead of \verb!DropTail! simply specify that as last argument of the command. Important to note that it's possible to simulate erroneous links. (please consult the ns documentation for more information)
-
-\item \verb!20-23!: these commands are relevant for NAM presentation. It's worth examining the output after commenting out these lines.
+    \item \verb!20-23!: these commands are relevant for NAM presentation. It's worth examining the output after
+          commenting out these lines.
 
 \end{itemize}
 
-
-The part above defines the network topology. The next steps are to attach the traffic agents (TCP,UDP) and configure the data sources (FTP,CBR) and interconnect every desired component.
+The part above defines the network topology. The next steps are to attach the traffic agents (TCP,UDP) and configure
+the data sources (FTP,CBR) and interconnect every desired component.
 
 \begin{itemize}%[resume]
 
-\item \verb!24,27,34,36: set tcp [new Agent/TCP]!: This is how a TCP agent can be instantiated. Similarly to this any kind of agent or traffic generator can be instantiated if the class name is known. The supported class names are listed in the ns documentation or alternatively it can be read out from the \verb!ns-2/tcl/libs/ns-default.tcl! file. This file contains the default parameters of the ns supported network objects. After reading this file one will know what are the supported classes and which are the configurable parameters of those.
+    \item \verb!24,27,34,36: set tcp [new Agent/TCP]!: This is how a TCP agent can be instantiated. Similarly to this any kind of agent or
+          traffic generator can be instantiated if the class name is known. The supported class names are listed in the ns
+          documentation or alternatively it can be read out from the \verb!ns-2/tcl/libs/ns-default.tcl! file. This file contains the default
+          parameters of the ns supported network objects. After reading this file one will know what are the supported classes
+          and which are the configurable parameters of those.
 
-\item \verb!26,28,35,37: $ns attach-agent <node> <agent>!: This method of the \verb!Simulator! class attaches an agent to a node. The \verb!attach-agent! just calls the given node's \verb!attach! method that binds the given agent to itself. This can be equivalently written as \verb!<node> attach <agent>!.
+    \item \verb!26,28,35,37: $ns attach-agent <node> <agent>!: This method of the \verb!Simulator! class attaches an agent to a node. The
+          \verb!attach-agent! just calls the given node's \verb!attach! method that binds the given agent to
+          itself. This can be equivalently written as \verb!<node> attach <agent>!.
 
-\item \verb!29,38: $ns connect <agent1> <agent2>!: after creating agents the logical connection has to be created between them. This command can be used for that purpose that sets the corresponding neighboring node's network and port address.
+    \item \verb!29,38: $ns connect <agent1> <agent2>!: after creating agents the logical connection has to be created between them. This
+          command can be used for that purpose that sets the corresponding neighboring node's network and port address.
 
 \end{itemize}
 
-After specifying the network configuration the simulation script has to be given i.e. the timing of predefined events must be specified. The \verb!Simulator! class has several methods related to timing. The most commonly used one is:
+After specifying the network configuration the simulation script has to be given i.e. the timing of predefined events
+must be specified. The \verb!Simulator! class has several methods related to timing. The most commonly used one
+is:
 
 \begin{itemize}
 
-\item \verb!46-52: $ns at <time> <command>!: The \verb!Simulator! object executes the given command at the given simulation time-point  using its scheduler. For example line 46. schedules the \verb!start! method of the \verb!$cbr! object to be executed at 0.1s that will start traffic generation as a result of that.
+    \item \verb!46-52: $ns at <time> <command>!: The \verb!Simulator! object executes the given command at the given simulation
+          time-point  using its scheduler. For example line 46. schedules the \verb!start! method of the
+          \verb!$cbr! object to be executed at 0.1s that will start traffic generation as a result of that.
 
 \end{itemize}
 
-After settling the topology and timings and registering the end of simulation procedure the last step is to start the simulation using the command \verb!$ns run!. on line 55.
+After settling the topology and timings and registering the end of simulation procedure the last step is to start the
+simulation using the command \verb!$ns run!. on line 55.
 
 \begin{lstlisting}[
 language=tcl,
