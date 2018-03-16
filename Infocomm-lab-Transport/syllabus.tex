@@ -350,7 +350,8 @@ A recursive way of calculating factorial is show in program listing~\ref{lst:fac
 language=tcl,
 captionpos=b,
 caption={Tcl program for calculating the factorial value of a number},
-label={lst:factorial}]
+label={lst:factorial},
+showstringspaces=false]
   0:  proc factorial num {
   1:      if {$num > 0} {
   2:          return [expr $num*[factorial [expr $num-1]]]
@@ -362,6 +363,43 @@ label={lst:factorial}]
 \end{lstlisting}
 
 \subsection{Otcl basics}
+
+This section introduces the usage of otcl that is an object oriented extension of Tcl language. While an average \emph{ns} user doesn't have to write new classes it is still beneficial to understand the language constructs of octl.
+A classical example found on ns homepage is shown in listing~\ref{lst:nsexample}
+
+
+\begin{lstlisting}[
+language=tcl,
+captionpos=b,
+caption={Otcl example},
+label={lst:nsexample},
+showstringspaces=false]
+  0:  Class mom
+  1:  mom instproc greet {} {
+  2:      $self instvar age_
+  3:      puts "$age_ year old mom say: How are you doing?"
+  4:  }
+
+  5:  Class kid -superclass mom
+  6:  kid instproc greet {} {
+  7:      $self instvar age_
+  8:      puts "$age_ year old kid say: What's up, dude?"
+  9:  }
+
+  10:  set a [new mom]
+  11:  $a set age_ 45
+  12:  set b [new kid]
+  13:  $b set age_ 15
+
+  14:  $a greet
+  15:  $b greet
+\end{lstlisting}
+
+The example in listing~\ref{lst:nsexample} defines class \verb!mom! using the \verb!Class! in the line 0 that will be the superclass of the class \verb!kid! defined on line 5 using the \verb!-superclass! keyword. The class definitions are followed by method definitions using the \verb!instproc! keyword. In lines 2 and 7 the role of \verb!$self! is equivalent with the role of \verb!this! keyword in C++ language. The \verb!instvar! keyword declares a member variable -- if that has not been declared before -- furthermore it brings the variable into the scope so it can be referred as a variable. Finally the \verb!new! command can be used for creating an instance of a class (lines 10 and 12). On line 14 and 15 the methods are invoked producing the following output:
+\begin{lstlisting}[language=bash]
+45 year old mom say: How are you doing?
+15 year old kid say: What's up, dude?
+\end{lstlisting}
 
 
 \appendix
