@@ -18,6 +18,8 @@
 % to place figures on a fixed position
 \usepackage{float}
 
+\usepackage{amsmath}
+
 \usepackage[margin=1in]{geometry}
 
 \title{Inspecting High-speed transport protocol simulations}
@@ -52,6 +54,41 @@ There are two more mechanisms worth noting here that performs correction of lost
     \caption{The operation and phases of TCP Reno}
     \label{fig:TCP-Reno-operation}
 \end{figure}
+
+The properties of AIMD algorithm ensures that the TCP Reno flows transmission speed converges to the fair state in case of the flows have identical round trip time (RTT). This operation is illustrated by Figure~\ref{fig:AIMD}. Out of the linear control methods AIMD is capable to provide the convergence to the optimal state from any point in this state space for providing maximum utilization and fairness. Think about why not MIMD, AIAD and MIAD mechanism are not convergent!
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/AIMD-trajectory.png}
+    \caption{AIMD trajectory in case of two flows with equivalent RTT }
+    \label{fig:AIMD}
+\end{figure}
+
+The sawtooth pattern originated from the AIMD can be examined on Figure~\ref{fig:sawtooth}. It's clearly visible that in case of no packet-loss the cwnd grows linearly (additive increase) and when a packet loss occurs the cwnd halves (multiplicative decrease). This operation is implemented by increasing cwnd by \textbf{cwnd} for each received ACK that roughly translates to increase by 1 under one RTT. In case of detecting a packet loss the cwnd is halved. The essence of the method in mathematical format is the following:
+
+\begin{tabular}{ll} 
+per-ACK: & $\texttt{cwnd} \leftarrow \texttt{cwnd} + \dfrac{1}{\texttt{cwnd}}$  \\
+per-RTT: & $\texttt{cwnd} \leftarrow \texttt{cwnd} + 1$ \\
+loss: & $\texttt{cwnd} \leftarrow \texttt{cwnd} - \dfrac{\texttt{cwnd}}{2}$ \\
+\end{tabular}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/sawtooth.png}
+    \caption{Sawtooth plot}
+    \label{fig:sawtooth}
+\end{figure}
+
+The basic TCP reno mechanism is not efficient if multiple packets are lost under one round trip (packet loss burst) because this can not be corrected efficiently by the Fast Retransmit/Fast Recovery mechanism. For fixing this issue Selective Acknowledgment had been added (SACK) that can be used by the receiver to inform the transmitter in detail on which blocks of the packet sequence has been received and which are missing. This naturally involves modifying the implementation of both the sender and receiver TCP entity. Furthermore the TCP header is extended with a corresponding optional block (SACK option header). Nowadays most TCP implementations provide the SACK extension.
+
+
+\section{Congestion control principles}
+
+It has been shown that for TCP Reno the indicator for congestion is a packet loss event that occurs when the queues overflow on a link with the smallest bandwidth (i.e. the bottleneck link). This method -- called \textbf{packet loss based} congestion control -- is present in several new, high-speed TCP version however it has some drawbacks as well. The actual congestion control is can be carried in 1 bit of information (packet loss/no packet loss) as a consequence it does not allow fine-grained or sophisticated control algorithms to be used. Furthermore packet-loss based control involves filling up queues since the control action is only carried out in case of a packet loss. That infers the presence of oscillation that incurs  system wide stability issues. Another control approach is to measure the RTT of individual packets and control the transmission speed based on this input. These \textbf{delay-based} methods aims for a single TCP flow keeping a given amount of packets in the network queues along the network path. These protocols estimate the components of RTT using a certain method. The components are the physical propagation time and the queuing time. In these type of algorithms the latter one is subject to be controlled by different methods.
+The newest methods combine the packet loss and delay-based methods into a \textbf{hybrid} algorithm for congestion control where the transmitter reacts to both packet loss and change in delay events. Even more sophisticated methods are applied by some protocols that utilize \textbf{passive or active measurement methods} for estimating the available network bandwidth and performing control. 
+
+In the previously described methods the transmitter has the necessary logic  and the concrete algorithms can be improved flexibly or even replaced completely without changing other parts of the network. However there is a concept that the current state of the network congestion is reported by the network routers explicitly to the transmitter. These \textbf{explicit congestion signaling} methods requires modification of existing network routers.
+
 
 \section{Further Reading}
 
