@@ -10,6 +10,7 @@
 \usepackage{listings}
 
 \usepackage{color}
+\usepackage[table]{xcolor}
 
 % *** GRAPHICS RELATED PACKAGES ***
 %\usepackage[pdftex]{graphicx}
@@ -88,6 +89,87 @@ It has been shown that for TCP Reno the indicator for congestion is a packet los
 The newest methods combine the packet loss and delay-based methods into a \textbf{hybrid} algorithm for congestion control where the transmitter reacts to both packet loss and change in delay events. Even more sophisticated methods are applied by some protocols that utilize \textbf{passive or active measurement methods} for estimating the available network bandwidth and performing control. 
 
 In the previously described methods the transmitter has the necessary logic  and the concrete algorithms can be improved flexibly or even replaced completely without changing other parts of the network. However there is a concept that the current state of the network congestion is reported by the network routers explicitly to the transmitter. These \textbf{explicit congestion signaling} methods requires modification of existing network routers.
+
+\section{High-Speed TCP versions}
+\begin{table}
+\begin{tabular}{|p{0.25\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|}\hline 
+\cellcolor{blue!25}protocol & \cellcolor{blue!25}type & \cellcolor{blue!25}suggested by,when & \cellcolor{blue!25}properties \\\hline 
+\cellcolor{blue!25}HighSpeed TCP & packet loss based & S. Floyd, International Computer Science Institute (ICSI), Berkeley University of California, 2003.  & AIMD \\\hline 
+\cellcolor{blue!25}Scalable TCP & packet loss based & T. Kelly, CERN \& University of Cambridge, 2003. & MIMD \\\hline
+\cellcolor{blue!25}BIC TCP/CUBIC & packet loss based & I. Rhee et al., Networking Research Lab, North Carolina State University, 2004-2005. & Good utilization,fairness \& stability \\\hline
+\cellcolor{blue!25}FAST TCP & delay-based & S. Low et al., Netlab, California Institute of Technology, 2004. (now: FastSoft Inc.)  & promising fairness properties \\\hline
+\cellcolor{blue!25}TCP Westwood & measurement based & M.Y. Sanadidi, M. Gerla et al., High Performance Internet Lab, Network Research Lab, University of California, Los Angeles (UCLA), 2001-2005  & multiple variants, different approximation methods \\\hline
+\cellcolor{blue!25}Compound TCP & hybrid & K. Tan et al., Microsoft Research, 2005. & AIMD + delay-based component\\\hline
+\cellcolor{blue!25}XCP & explicit congestion signaling & D. Katabi et al., Massachusetts Institute of Technology (MIT), 2002.  & change in network routers required \\\hline
+\end{tabular}
+\caption{Overview High-Speed TCP versions}
+\label{table:tcpver}
+\end{table}
+
+In the following there will be brief overview of the more important protocols and their potential future role. Table~\ref{table:tcpver} has a compact summary on this topic while a more detailed version can be found in~\cite{TCPFairnessAnalysis}. Firstly the more significant packet loss based variants are introduced. One of the first high-speed TCP version was \textbf{HighSpeed TCP}~\cite{HighSpeedTCP} that uses AIMD with a simple modification. This protocol becomes more adaptive because it changes the conventionally static parameters of AIMD dynamically based on the size of the congestion window. This results in more aggressive increase of cwnd in large-scale high-speed networks while also resulting in milder throttling. The concrete operation can be formalized as:
+
+\begin{tabular}{ll} 
+per-ACK: & $\texttt{cwnd} \leftarrow \texttt{cwnd} + \dfrac{a(\texttt{cwnd})}{\texttt{cwnd}}$ \\
+loss: & $\texttt{cwnd} \leftarrow \texttt{cwnd} - b(\texttt{cwnd})\texttt{cwnd}$ \\
+\end{tabular} 
+
+It can be shown that this is a generalization of TCP Reno with $\texttt{a(cwnd)}=1$ and $\texttt{b(cwnd)}=0.5$ constants. Figure~\ref{fig:HSvsReno} compares the dynamics of the congestion window between TCP Reno and HighSpeedTCP.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/HSTCP.png}
+    \caption{Dynamics of HighSpeedTCP (HSTCP) vs. TCP Reno (REGTCP)}
+    \label{fig:HSvsReno}
+\end{figure}
+
+
+Another early implementation is \textbf{Scalable TCP}~\cite{ScalableTCP} where scalability is provided through \textbf{MIMD} mechanism. In this variant the Congestion Avoidance phase  -- that determines the long term behavior -- utilizes a multiplicative increase similarly to Slow Start algorithm (with less aggressive parameters) instead of the conventional additive increase. The future application of Scalable TCP is questionable due to severe problems with fairness properties~\cite{TCPFairnessAnalysis}. The congestion window control can be formulated as:
+
+\begin{tabular}{ll}
+per-ACK: & $\texttt{cwnd} \leftarrow \texttt{cwnd} + a$ \\
+loss: & $\texttt{w} \leftarrow \texttt{w} - b \texttt{w}$ \\
+\end{tabular} 
+
+The creators of the protocol suggest the values $\texttt{a}=0.001$ and $\texttt{b}=0.125$~\cite{ScalableTCP}. The main differences between TCP Reno and Scalable TCP are shown on Figure~\ref{fig:ScalableVSReno}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/ScalableTCP.png}
+    \caption{Comparison of Scalable TCP and TCP Reno}
+    \label{fig:ScalableVSReno}
+\end{figure}
+
+The conventional AIMD can not provide fair operation in case when flows have significantly different round trip time. This so-called RTT unfairness problem is addressed by \textbf{BIC TCP}~\cite{BICTCP} and its successor \textbf{CUBIC}~\cite{CUBIC}. The BIC TCP utilizes a combination of an additive increase and a binary search based method with other procedures increasing fairness. CUBIC aims for providing same operating characteristics using way simple control mechanism where the congestion window is controlled using a cubic function in contrast with the previously utilized linear, logarithmic and exponential sections. It is worth to note the starting from version 2.6.8 Linux kernel uses BIC TCP as default while starting from 2.6.19 CUBIC is the default TCP implementation. Currently CUBIC is the default TCP implementation of Linux based systems therefore it has a significant role in today's network traffic.
+
+Figure~\ref{fig:bictcp} illustrates a period of BIC TCP congestion window adjustment phases. The curve seen on this figure is hard to express in analytical form and CUBIC approximate this using cubic polynomial functions that results in similarly good operation characteristics.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/BICTCP.png}
+    \caption{A period of BIC TCP congestion windows adjustment}
+    \label{fig:bictcp}
+\end{figure}
+
+There has been significant proceedings in delay-based congestion control with several protocol recommendations. Delay-based control first appeared in TCP Vegas protocol. This has been superseded by \textbf{FAST TCP}~\cite{FastTCP} that is a modified version of TCP Vegas adapted to high speed environments. THe control happens based on the previously described principles. The protocol tries to keep the number of queued packets between two configured boundary values. Selecting and tuning these boundary values are not an easy task. FAST TCP protocol with appropriate settings shows promising results in terms of both network utilization and fairness~\cite{TCPFairnessAnalysis}. The operation characteristics --that are fundamentally different compared to the previously introduced ones-- are shown on Figure~\ref{fig:FastTCP}. This has been created using a network setting where one FAST TCP flow is forwarded on the bottleneck link and the dynamics of the queue and the FAST TCP congestion window size have been captured. It's clearly visible that after a transient phase the congestion windows size stabilizes on a constant value that is able to keep the queue utilization approximately constant. This eliminates the unwanted oscillation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/FAST.png}
+    \caption{FAST TCP dynamics}
+    \label{fig:FastTCP}
+\end{figure}
+
+The current TCP recommendations combine the packet loss and delay-based principles based on various algorithms. Several methods have been published and implemented out of which the most notable is \textbf{Compound TCP}~\cite{CompundTCP}. This version has been developed by Microsoft Research employees and is used as a default implementation in Windows Vista and Windows Server 2008 OSs. Furthermore it is available as a hotfix for other Windows version and also a Linux based implementation has been created as well. The essence of the protocol that it keeps two congestion window state variables: a conventional AIMD controlled one and another delay-based controlled. The current size of the congestion window is the sum of these two components. Based on different network conditions the protocol controls the two variables using different methods in a way that the resulting behavior provides efficient network utilization and fair inter-operation with conventional TCP protocol implementations.
+
+\textbf{TCP Westwood}~\cite{TCPWestwood} is one of the TCP implementations with bandwidth approximation based congestion control that has several variants available. Several approximation procedures have been developed, implemented and tested over the years that were incorporated in different variants of the protocol.
+
+Finally it has to be noted that there is \textbf{XCP}~\cite{XCP} that is based on explicit signaling of congestion and therefore requires modified network architecture. In this variant the routers notify the transmitter explicitly about the level of congestion and can also signal the available bandwidth. In this method the control of utilization and fairness can be separated clearly. A significant drawback of the protocol is that it requires modification of the network routers.
+
+
+One can not foretell that which will be the dominant high speed TCP variant out of the few existing implementations presented here. Currently this is an active field of research and development in many dominant research facilities all over the globe. Even comparison of the recommendations is non-trivial since there are no standardized aspects, metrics, network environments and measurements methods that can provide adequate answers on which protocol is the best or optimal under given conditions.
+
+
 
 
 \section{Further Reading}
