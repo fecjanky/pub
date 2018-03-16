@@ -23,6 +23,7 @@
 
 \usepackage[margin=1in]{geometry}
 
+
 \title{Inspecting High-speed transport protocol simulations}
 \author{Sonkoly, Balázs (transzport protocols); Németh,Felicián (Network Simulator);Császár András (Network Simulator)
 }
@@ -401,6 +402,155 @@ The example in listing~\ref{lst:nsexample} defines class \verb!mom! using the \v
 15 year old kid say: What's up, dude?
 \end{lstlisting}
 
+
+\section{Simulation program example}
+
+This section demonstrates a simple simulation script described line-by-line showing the basic steps for preparing a simulation.
+
+The simulated network -- as shown on Figure~\ref{fig:simplesim} -- consists 4 nodes (\verb!n0,n1,n2,n3!). The duplex link capacity between nodes \verb!n0! \verb!n2! and \verb!n1! and \verb!n2! is 2Mbps and its delay is 10 milliseconds. The third link between \verb!n2! and \verb!n3! has a capacity of 1.7 Mbps with a delay of 20 milliseconds. Each node utilizes a 10 packets capacity \verb!DropTail! mode queue that serves the queued packets in a FIFO manner and drops all incoming packets if its buffer that is able to hold 10 packets is full.
+
+The TCP agent attached to \verb!n0! node establishes a connection with a TCP \verb!sink! attached to \verb!n3!. A TCP agent -- by default -- is only capable of generating packets with size of 1 kbyte. The responsibility of the sink is to send back ACKs.
+
+The UDP agent attached to node \verb!n1! is communicating with the \verb!null! agent attached to node \verb!n3!. The \verb!null! agent is just only frees up the packet associated memory since UDP does not require sending ACKs back. The \verb!tcp! agent has an attached \verb!ftp! traffic generator while the \verb!udp! has a \verb!cbr!. The latter is a Constant Bit Rate data stream generator: it is sending 1 kbyte packtes with 1 Mbps speed. The \verb!cbr! generator operates between 0.1s and 4.5s while the \verb!ftp! generator operates between 1.0s and 4.0s.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/topology-new.png}
+    \caption{Simple topology used for simulation}
+    \label{fig:simplesim}
+\end{figure}
+
+The simulation topology shown of Figure~\ref{fig:simplesim} is realized by the program in listing~\ref{lst:simexample}. The explanation of the program follows:
+
+\begin{itemize}
+
+\item \verb!0: set ns [new Simulator]!: instantiates the ns simulator object and stores it in variable named \verb!ns!. This is the opening line of all ns scripts that among other things initializes the discrete time scheduler. The class \verb!Simulator! has methods for doing the following things:
+
+\begin{itemize}
+    \item create network objects (nodes,links,etc.)
+    \item interconnect network objects (e.g. \verb!attach-agent!)
+    \item set parameters of network objects
+    \item define data link between agents (e.g. between \verb!tcp! and \verb!sink!)
+    \item control the presentation parameters of NAM
+\end{itemize}   
+
+
+\item \verb!1-2: $ns color fid color!: sets the color of the flow identified by flow id \emph{fid}. This setting of the \verb!Simulator! object only affects the NAM presentation and does not affect the simulation.
+
+\item \verb!4: $ns namtrace-all file-descriptor!: enables simulation trace to be saved in NAM format. Similar to \verb!trace-all! method which dumps data in more general format.
+
+\item \verb!5: proc finish {}!: this command is executed at the end of the simulation as a result of registering it at line 52: \verb!$ns at 5.0 "finish"!. After closing the log NAM program is executed as an epilogue of the simulation script.
+
+\item \verb!12-15: set n0 [$ns node]!: this method can be used for creating a network node
+
+\item \verb!16-18: $ns duplex-link <node1> <node2> <capacity> <delay> <queue type>!: creates two simplex links with the given bandwidth and delay and connects the two nodes with those. Ns specialty is that the output queue is implemented as a part of the link so the queue type has to be specified when creating a link. If we'd like to use the active queue management \verb!RED! instead of \verb!DropTail! simply specify that as last argument of the command. Important to note that it's possible to simulate erroneous links. (please consult the ns documentation for more information)
+
+\item \verb!20-23!: these commands are relevant for NAM presentation. It's worth examining the output after commenting out these lines.
+
+\end{itemize}
+
+
+The part above defines the network topology. The next steps are to attach the traffic agents (TCP,UDP) and configure the data sources (FTP,CBR) and interconnect every desired component.
+
+\begin{itemize}%[resume]
+
+\item \verb!24,27,34,36: set tcp [new Agent/TCP]!: This is how a TCP agent can be instantiated. Similarly to this any kind of agent or traffic generator can be instantiated if the class name is known. The supported class names are listed in the ns documentation or alternatively it can be read out from the \verb!ns-2/tcl/libs/ns-default.tcl! file. This file contains the default parameters of the ns supported network objects. After reading this file one will know what are the supported classes and which are the configurable parameters of those.
+
+\item \verb!26,28,35,37: $ns attach-agent <node> <agent>!: This method of the \verb!Simulator! class attaches an agent to a node. The \verb!attach-agent! just calls the given node's \verb!attach! method that binds the given agent to itself. This can be equivalently written as \verb!<node> attach <agent>!.
+
+\item \verb!29,38: $ns connect <agent1> <agent2>!: after creating agents the logical connection has to be created between them. This command can be used for that purpose that sets the corresponding neighboring node's network and port address.
+
+\end{itemize}
+
+After specifying the network configuration the simulation script has to be given i.e. the timing of predefined events must be specified. The \verb!Simulator! class has several methods related to timing. The most commonly used one is:
+
+\begin{itemize}
+
+\item \verb!46-52: $ns at <time> <command>!: The \verb!Simulator! object executes the given command at the given simulation time-point  using its scheduler. For example line 46. schedules the \verb!start! method of the \verb!$cbr! object to be executed at 0.1s that will start traffic generation as a result of that.
+
+\end{itemize}
+
+After settling the topology and timings and registering the end of simulation procedure the last step is to start the simulation using the command \verb!$ns run!. on line 55.
+
+\begin{lstlisting}[
+language=tcl,
+captionpos=b,
+caption={Simple simulation script},
+label={lst:simexample},
+showstringspaces=false]
+  0:  set ns [new Simulator]  
+
+   1:  $ns color 1 Blue  
+   2:  $ns color 2 Red
+
+   3:  set nf [open out.nam w]
+   4:  $ns namtrace-all $nf
+
+   5:  proc finish {} {
+   6:      global ns nf
+   7:      $ns flush-trace
+   8:      close $nf  
+   9:      exec nam out.nam &
+  10:      exit 0
+  11:  }
+
+  12:  set n0 [$ns node]
+  13:  set n1 [$ns node]
+  14:  set n2 [$ns node]
+  15:  set n3 [$ns node]
+
+  16:  $ns duplex-link $n0 $n2 2Mb 10ms DropTail
+  17:  $ns duplex-link $n1 $n2 2Mb 10ms DropTail
+  18:  $ns duplex-link $n2 $n3 1.7Mb 20ms DropTail
+  19:  $ns queue-limit $n2 $n3 10
+
+  20:  $ns duplex-link-op $n0 $n2 orient right-down
+  21:  $ns duplex-link-op $n1 $n2 orient right-up
+  22:  $ns duplex-link-op $n2 $n3 orient right
+  23:  $ns duplex-link-op $n2 $n3 queuePos 0.5
+
+  24:  set tcp [new Agent/TCP]
+  25:  $tcp set class_ 2
+  26:  $ns attach-agent $n0 $tcp
+  27:  set sink [new Agent/TCPSink]
+  28:  $ns attach-agent $n3 $sink
+  29:  $ns connect $tcp $sink
+  30:  $tcp set fid_ 1
+
+  31:  set ftp [new Application/FTP]
+  32:  $ftp attach-agent $tcp
+  33:  $ftp set type_ FTP
+
+  34:  set udp [new Agent/UDP]
+  35:  $ns attach-agent $n1 $udp
+  36:  set null [new Agent/Null]
+  37:  $ns attach-agent $n3 $null
+  38:  $ns connect $udp $null
+  39:  $udp set fid_ 2
+
+  40:  set cbr [new Application/Traffic/CBR]
+  41:  $cbr attach-agent $udp
+  42:  $cbr set type_ CBR
+  43:  $cbr set packet_size_ 1000
+  44:  $cbr set rate_ 1mb
+  45:  $cbr set random_ false
+
+  46:  $ns at 0.1 "$cbr start"
+  47:  $ns at 1.0 "$ftp start"
+  48:  $ns at 4.0 "$ftp stop"
+  49:  $ns at 4.5 "$cbr stop"
+
+  50:  $ns at 4.5 "$ns detach-agent $n0 $tcp ;
+  51:              $ns detach-agent $n3 $sink"
+
+  52:  $ns at 5.0 "finish"
+
+  53:  puts "CBR packet size = [$cbr set packet_size_]"
+  54:  puts "CBR interval = [$cbr set interval_]"
+
+  55:  $ns run
+\end{lstlisting}
 
 \appendix
 
