@@ -24,8 +24,8 @@
 \usepackage[margin=1in]{geometry}
 
 
-\title{Inspecting High-speed transport protocol simulations}
-\author{Sonkoly, Balázs (transzport protocols); Németh,Felicián (Network Simulator);Császár András (Network Simulator)
+\title{Evaluation of High-speed transport protocol simulations}
+\author{Sonkoly, Balázs (transport protocols) \\ Németh,Felicián (Network Simulator) \\Császár András (Network Simulator) \\ Janky, Ferenc (English translation)
 }
 \date{}
 
@@ -676,7 +676,83 @@ In case of lengthier simulation run when only some aggregated metrics are in the
 
 In ns terminology the per packet inspection is referred as ``trace" while the aggregated state inspection is referred as ``monitoring". The latter is a better candidate to be used in a long term simulation since tracing millions of millions of packets slows down the simulation while producing enormous -- potentially unmanageable -- output trace file. As an example one can experiment with a simulation with and without NAM tracing.
 
-Due to 
+Due to performance considerations it is advised to use monitoring. The monitoring related classes are documented in the above mentioned section in the ns documentation. A simple example is presented in listing~\ref{lst:monitoring} that extends the previously demonstrated script on how to extend int with by getting a bandwidth utilization graph for link 2-3 with 2 seconds measurement interval. The output file ``2-3.bw" can be plotted by either \verb!xgraph! or \verb!gnuplot!.
+
+\begin{lstlisting}[
+language=tcl,
+captionpos=b,
+caption={Monitoring extension},
+label={lst:monitoring},
+showstringspaces=false]
+    ...
+    set bwSampleInterval 2.0\\
+    ...
+    [[$ns link $n2 $n3] attach-monitors [new SnoopQueue/In]
+        [new SnoopQueue/Out] [new SnoopQueue/Drop] [new QueueMonitor]
+    ...
+    proc SampleBW {link} {
+        global ns bwSampleInterval
+        set qm [$link set qMonitor_]
+        puts "[$ns now] [expr [$qm set bdepartures_] / $bwSampleInterval]"
+        $qm set bdepartures_ 0
+        $ns after $bwSampleInterval "SampleBW $link"
+    }
+    ...
+    $ns at 0.0 "SampleBW [$ns link $n2 $n3]"
+\end{lstlisting}
+
+\section{Simulation of High-Speed TCP implementations}
+
+Some of the TCP implementation is in file \verb!tcp/tcp.cc! where the \verb!opencwnd! and the \verb!slowdown! functions should be studied for setting the right value for the desired version (see wnd\_option\_ in the C++ source and windowOption\_ in tcl).
+Some other portion of the TCP implementations are in separate files and classes (see FAST TCP in \verb!tcp-fast.cc!).
+
+When simulating newer TCP versions it's better to not use the basic TCP agent but the SACK option instead. The sending and receiving agents can be instantiated with these commands:
+
+\begin{lstlisting}[
+language=tcl,
+captionpos=b,
+caption={Using SACK instead of basic agent},
+label={lst:sackagent},
+showstringspaces=false]
+    set tcp [new Agent/TCP/Sack1]
+    set sink [new Agent/TCPSink/Sack1]
+\end{lstlisting}
+
+
+Selecting the appropriate TCP agent happens by setting the TCP agent's \verb!windowOption_! member variable:
+
+\begin{lstlisting}[
+language=tcl,
+captionpos=b,
+caption={Setting the TCP agent's windows option},
+label={lst:windowoption},
+showstringspaces=false]
+    $tcp set windowOption_ 8
+\end{lstlisting}
+
+The ns-2 version used during this lab has the following TCP versions:
+
+\begin{tabular}{|l|l|}
+\hline
+\cellcolor{blue!25} \textbf{protocol} & \cellcolor{blue!25} \textbf{windowOption\_} \\\hline
+HighSpeed TCP &  8 \\\hline
+Scalable TCP  &  9 \\\hline
+BIC TCP     & 12 \\\hline
+CUBIC  & 13  \\\hline
+\end{tabular}
+
+\hfill \break
+FAST TCP objects has to be instantiated from the appropriate classes (the receiver stays the same):
+
+\begin{lstlisting}[
+language=tcl,
+captionpos=b,
+caption={Fast TCP instantiation},
+label={lst:fasttcp},
+showstringspaces=false]
+    set fasttcp [new Agent/TCP/Fast]
+    set sink [new Agent/TCPSink/Sack1]
+\end{lstlisting}
 
 
 \appendix
