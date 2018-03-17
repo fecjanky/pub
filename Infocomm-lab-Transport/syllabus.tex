@@ -903,8 +903,16 @@ the transmission progress status of each flow.
 
 \subsection{Evaluating TCP flow contention on a simple topology}
 
-\subsubsection{Packet loss based variants}
+\subsubsection{Packet loss based variants}\label{sec:plossexercise}
+
+Using the previously created topology examine the behavior of operating two different packet loss based
+TCP implementation side-by-side. Examine the effects of starting the different flows at different time points.
+What happens in that case? What is the level of fairness between the two choses TCP implementation?
 
 \subsubsection{Packet loss and delay-based variants}
+
+Carry out similar measurement as before in~\ref{sec:plossexercise} but now using an arbitrarily chosen
+packet loss based protocol and FAST TCP side-by-side. Evaluate the effects of FAST TCP's alpha and beta parameters on fairness.
+
 
 \end{document}
