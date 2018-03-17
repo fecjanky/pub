@@ -50,7 +50,8 @@ had emerged the TCP/IP network's two foundational protocols: IP operating at the
 TCP~\cite{CongestionAvoidance} operating at the transport level. TCP has many features that are required for providing
 reliable transport services. Congestion control is one of its main features that protects the network from
 over-utilization. The connection-oriented TCP protocol does closed-loop control during which the transmitter adjusts
-its transmission speed based on the incoming acknowledgments -- affected by the network conditions -- while aiming for having
+its transmission speed based on the incoming acknowledgments -- affected by the network conditions -- while aiming for
+having
 optimal network utilization and to avoid network breakdown by over-utilization. The initial version was finalized in
 \href{http://www.faqs.org/rfcs/rfc793.html}{RFC 793} in 1981. The base mechanism had been extended gradually with new
 methods like \textbf{Slow Start}, \textbf{Congestion Avoidance}, RTO calculation, delayed acknowledgment in
@@ -119,7 +120,8 @@ convergent!
 
 The sawtooth pattern originated from the AIMD can be examined on Figure~\ref{fig:sawtooth}. It's clearly visible that
 in case of no packet-loss the cwnd grows linearly (additive increase) and when a packet loss occurs the cwnd halves
-(multiplicative decrease). This operation is implemented by increasing the congestion window size by \textbf{1/cwnd} for each received ACK that
+(multiplicative decrease). This operation is implemented by increasing the congestion window size by \textbf{1/cwnd}
+for each received ACK that
 roughly translates to increase by 1 under one RTT. In case of detecting a packet loss the cwnd is halved. The essence
 of the method in mathematical format is the following:
 
@@ -264,7 +266,8 @@ differences between TCP Reno and Scalable TCP are shown on Figure~\ref{fig:Scala
 The conventional AIMD can not provide fair operation in case when flows have significantly different round trip time.
 This so-called RTT unfairness problem is addressed by \textbf{BIC TCP}~\cite{BICTCP} and its successor
 \textbf{CUBIC}~\cite{CUBIC}. The BIC TCP utilizes a combination of an additive increase and a binary search based
-method with other procedures increasing fairness. CUBIC aims for providing same operating characteristics using way more
+method with other procedures increasing fairness. CUBIC aims for providing same operating characteristics using way
+more
 simple control mechanism where the congestion window is controlled using a cubic function in contrast with the
 previously utilized linear, logarithmic and exponential sections. It is worth to note that starting from version 2.6.8
 Linux kernel uses BIC TCP as default while starting from 2.6.19 CUBIC is the default TCP implementation. Currently
@@ -341,7 +344,8 @@ computation intensive code was written in C++. In contrast octl script language 
 configuration and for solutions for one-time tasks that do not require high performance.
 
 The class hierarchy of the system is well designed. New functionality can be easily added in C++ to the existing
-system, but that is out of scope in this lab. The aim of this class is to get a grip on the basics of the otcl interface
+system, but that is out of scope in this lab. The aim of this class is to get a grip on the basics of the otcl
+interface
 and to discover some simple network simulation based measurement methods.
 
 The ns program can be viewed as a tcl interpreter with object-oriented extensions from where the class hierarchy that
@@ -378,7 +382,8 @@ executes the command with the given arguments. \verb!$variable! is replaced by t
 string.
 
 Please read the Tcl related materials under Section~\ref{sec:tcl} that are required for successful completion of the
-measurements. The program fragment in listing~\ref{lst:10faktorial} calculates the factorial value of 10 and contains some
+measurements. The program fragment in listing~\ref{lst:10faktorial} calculates the factorial value of 10 and contains
+some
 basic language constructs of Tcl.
 
 \begin{lstlisting}[
@@ -393,8 +398,10 @@ label={lst:10faktorial}]
   5:  puts $fact
 \end{lstlisting}
 
-In the first line variable \verb!fact! is given the value 1 using the \verb!set! command. In the second
-line a for loop is started similarly to the C programming language where the braces prevent substitution during the interpreter
+In the first line variable \verb!fact! is given the value 1 using the \verb!set! command. In the
+second
+line a for loop is started similarly to the C programming language where the braces prevent substitution during the
+interpreter
 decomposition of the command into words. The use of square brackets are illustrated on line 3 where the
 \verb!expr! calculates a numeric value and the result of the expression will be stored in the new value of
 \verb!fact! -- after executing the \verb!set! command. Finally the result is written to the
@@ -451,13 +458,16 @@ showstringspaces=false]
   15:  $b greet
 \end{lstlisting}
 
-The example in listing~\ref{lst:nsexample} defines class \verb!mom! using the \verb!Class! keyword on 
+The example in listing~\ref{lst:nsexample} defines class \verb!mom! using the \verb!Class!
+keyword on
 line 0 that will be the superclass of the class \verb!kid! defined on line 5 using the
 \verb!-superclass! keyword. The class definitions are followed by method definitions using the
 \verb!instproc! keyword. In lines 2 and 7 the role of \verb!$self! is equivalent to the role of
 \verb!this! keyword in C++ language. The \verb!instvar! keyword declares a member variable -- if
-that has not been declared before -- furthermore it brings the variable into the curretn scope so it can be referred as a
-simple variable. Finally the \verb!new! command can be used for creating an instance of a class (lines 10 and
+that has not been declared before -- furthermore it brings the variable into the curretn scope so it can be referred as
+a
+simple variable. Finally the \verb!new! command can be used for creating an instance of a class (lines 10
+and
 12). On line 14 and 15 the methods are invoked producing the following output:
 \begin{lstlisting}[language=bash]
 45 year old mom say: How are you doing?
@@ -472,7 +482,8 @@ simulation.
 The simulated network -- as shown on Figure~\ref{fig:simplesim} -- consists of 4 nodes (\verb!n0,n1,n2,n3!). The
 duplex link capacity between nodes \verb!n0! \verb!n2! and \verb!n1! and
 \verb!n2! is 2Mbps and its delay is 10 milliseconds. The third link between \verb!n2! and
-\verb!n3! has a capacity of 1.7 Mbps with a delay of 20 milliseconds. Each node utilizes a  capacity of 10 packets
+\verb!n3! has a capacity of 1.7 Mbps with a delay of 20 milliseconds. Each node utilizes a  capacity of
+10 packets
 with \verb!DropTail! mode queue that serves the queued packets in a FIFO manner and drops all incoming
 packets if its buffer -- that is able to hold 10 packets -- is full.
 
@@ -688,13 +699,14 @@ separated fields:
 
     \item The type of the packet
 
-   \item The size of the packet in bytes
+    \item The size of the packet in bytes
 
     \item Signaling bits (currently just the ECN bit is used)
 
     \item Flow id in case of IPv6 that can be set from tcl (see lines 30. and 39 in listing~\ref{lst:simexample}); even
           if
-          the simulator is not using this id it can be used for evaluating the simulation results or for tracing purposes. (e.g. NAM
+          the simulator is not using this id it can be used for evaluating the simulation results or for tracing
+          purposes. (e.g. NAM
           uses
           flow-id for coloring purposes)
 
@@ -721,7 +733,8 @@ file. As an example one can experiment performing a simulation with and without 
 
 Due to performance considerations it is advised to use monitoring. The monitoring related classes are documented in the
 above mentioned section in the ns documentation. A simple example is presented in listing~\ref{lst:monitoring} that
-builds on the previously demonstrated script and shows how to extend it with getting a bandwidth utilization graph for link
+builds on the previously demonstrated script and shows how to extend it with getting a bandwidth utilization graph for
+link
 2-3 using 2 seconds measurement interval. The output file ``2-3.bw" can be plotted by either \verb!xgraph! or
 \verb!gnuplot!.
 
@@ -842,7 +855,8 @@ window expressed in number of packet size. These output files have to be evaluat
 \href{http://www.xgraph.org/}{xgraph}
 or \href{http://www.gnuplot.info/}{gnuplot} can be used.
 
-A lab report has to be created and handed in that documents the source codes created during this lab and also contains the
+A lab report has to be created and handed in that documents the source codes created during this lab and also contains
+the
 figures and evaluation results.
 
 \subsection{Standalone TCP flows on a simple topology}
@@ -889,7 +903,8 @@ In order to record TCP flows congestion window and throughput the \verb!print-cw
 procedures can be used(see \verb!utils.tcl!).
 Notice that in case of	\verb!print-cwnd! the source TCP agent has to be specified while in case of
 \verb!print-thput! the flow ID has to be given!
-For measuring the throughput of a flow the counters have to be reset beforehand by using the \verb!lastKBytes($flow_id)! command.
+For measuring the throughput of a flow the counters have to be reset beforehand by using the \verb!lastKBytes($flow_id)!
+command.
 
 A useful helper procedure is \verb!timeackReport! that can be used for periodic feedback on
 the transmission progress status of each flow.
