@@ -25,7 +25,8 @@
 
 
 \title{Evaluation of High-speed transport protocol simulations}
-\author{Sonkoly, Balázs (transport protocols) \\ Németh,Felicián (Network Simulator) \\Császár András (Network Simulator) \\ Janky, Ferenc (English translation)
+\author{Sonkoly, Balázs (transport protocols) \\ Németh,Felicián (Network Simulator) \\Császár András (Network
+Simulator) \\ Janky, Ferenc (English translation)
 }
 \date{}
 
@@ -170,36 +171,46 @@ These \textbf{explicit congestion signaling} methods requires modification of ex
 \begin{table}
     \begin{tabular}{|p{0.25\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|}\hline
         \cellcolor{blue!25}protocol                                                   & \cellcolor{blue!25}type
-                                                                                      & \cellcolor{blue!25}suggested by,when                                   &
+                                                                                      & \cellcolor{blue!25}suggested
+        by,when                                                                       &
         \cellcolor{blue!25}properties
         \\\hline
         \cellcolor{blue!25}HighSpeed TCP                                              & packet loss based
-                                                                                      & S. Floyd, International Computer Science Institute (ICSI),
+                                                                                      & S. Floyd, International
+        Computer Science Institute (ICSI),
         Berkeley University of California, 2003.                                      & AIMD
         \\\hline
         \cellcolor{blue!25}Scalable TCP                                               & packet loss based
-                                                                                      & T. Kelly, CERN \& University of Cambridge, 2003.                       & MIMD                \\\hline
+                                                                                      & T. Kelly, CERN \& University of
+        Cambridge, 2003.                                                              & MIMD                             \\\hline
         \cellcolor{blue!25}BIC TCP/CUBIC                                              & packet loss based
-                                                                                      & I. Rhee et al., Networking Research Lab, North Carolina State
+                                                                                      & I. Rhee et al., Networking
+        Research Lab, North Carolina State
         University, 2004-2005.                                                        & Good utilization,fairness \&
-        stability                                                                                                                                                                    \\\hline
+        stability
+        \\\hline
         \cellcolor{blue!25}FAST TCP                                                   & delay-based
-                                                                                      & S. Low et al., Netlab, California Institute of Technology, 2004. (now:
+                                                                                      & S. Low et al., Netlab,
+        California Institute of Technology, 2004. (now:
         FastSoft Inc.)                                                                & promising fairness properties
         \\\hline
         \cellcolor{blue!25}TCP Westwood                                               & measurement based
-                                                                                      & M.Y. Sanadidi, M. Gerla et al., High Performance Internet Lab,
+                                                                                      & M.Y. Sanadidi, M. Gerla et al.,
+        High Performance Internet Lab,
         Network Research Lab, University of California, Los Angeles (UCLA), 2001-2005 & multiple variants, different
         approximation methods
         \\\hline
         \cellcolor{blue!25}Compound TCP                                               & hybrid
-                                                                                      & K. Tan et al., Microsoft Research, 2005.                               & AIMD + delay-based
+                                                                                      & K. Tan et al., Microsoft
+        Research, 2005.                                                               & AIMD + delay-based
         component
         \\\hline
         \cellcolor{blue!25}XCP                                                        & explicit congestion signaling
-                                                                                      & D. Katabi et al., Massachusetts Institute of Technology (MIT),
+                                                                                      & D. Katabi et al., Massachusetts
+        Institute of Technology (MIT),
         2002.                                                                         & change in network routers
-        required                                                                                                                                                                     \\\hline
+        required
+        \\\hline
     \end{tabular}
     \caption{Overview High-Speed TCP versions}
     \label{table:tcpver}
@@ -488,7 +499,8 @@ The explanation of the program follows:
 \begin{itemize}
 
     \item \verb!0: set ns [new Simulator]!: instantiates the ns simulator object and stores it in variable named
-          \verb!ns!. This is the opening line of all ns scripts that among other things initializes the discrete
+          \verb!ns!. This is the opening line of all ns scripts that among other things initializes the
+          discrete
           time scheduler. The class \verb!Simulator! has methods for doing the following things:
 
           \begin{itemize}
@@ -502,22 +514,30 @@ The explanation of the program follows:
     \item \verb!1-2: $ns color fid color!: sets the color of the flow identified by flow id \emph{fid}. This setting of the
           \verb!Simulator! object only affects the NAM presentation and does not affect the simulation.
 
-    \item \verb!4: $ns namtrace-all file-descriptor!: enables simulation trace to be saved in NAM format. Similar to \verb!trace-all!
+    \item \verb!4: $ns namtrace-all file-descriptor!: enables simulation trace to be saved in NAM format. Similar to
+          \verb!trace-all!
           method which dumps data in more general format.
 
-    \item \verb!5: proc finish {}!: this command is executed at the end of the simulation as a result of registering it at
-          line 52: \verb!$ns at 5.0 "finish"!. After closing the log NAM program is executed as an epilogue of the simulation
+    \item \verb!5: proc finish {}!: this command is executed at the end of the simulation as a result of registering it
+          at
+          line 52: \verb!$ns at 5.0 "finish"!. After closing the log NAM program is executed as an epilogue of the
+          simulation
           script.
 
     \item \verb!12-15: set n0 [$ns node]!: this method can be used for creating a network node
 
-    \item \verb!16-18: $ns duplex-link <node1> <node2> <capacity> <delay> <queue type>!: creates two simplex links with the given bandwidth and delay and connects the two nodes
-          with those. Ns specialty is that the output queue is implemented as a part of the link so the queue type has to be
-          specified when creating a link. If we'd like to use the active queue management \verb!RED! instead of
-          \verb!DropTail! simply specify that as last argument of the command. Important to note that it's possible to
+    \item \verb!16-18: $ns duplex-link <node1> <node2> <capacity> <delay> <queue type>!: creates two simplex links with the given bandwidth and delay and connects the two
+          nodes
+          with those. Ns specialty is that the output queue is implemented as a part of the link so the queue type has
+          to be
+          specified when creating a link. If we'd like to use the active queue management \verb!RED!
+          instead of
+          \verb!DropTail! simply specify that as last argument of the command. Important to note that it's
+          possible to
           simulate erroneous links. (please consult the ns documentation for more information)
 
-    \item \verb!20-23!: these commands are relevant for NAM presentation. It's worth examining the output after
+    \item \verb!20-23!: these commands are relevant for NAM presentation. It's worth examining the output
+          after
           commenting out these lines.
 
 \end{itemize}
@@ -528,13 +548,17 @@ the data sources (FTP,CBR) and interconnect every desired component.
 \begin{itemize}%[resume]
 
     \item \verb!24,27,34,36: set tcp [new Agent/TCP]!: This is how a TCP agent can be instantiated. Similarly to this any kind of agent or
-          traffic generator can be instantiated if the class name is known. The supported class names are listed in the ns
-          documentation or alternatively it can be read out from the \verb!ns-2/tcl/libs/ns-default.tcl! file. This file contains the default
-          parameters of the ns supported network objects. After reading this file one will know what are the supported classes
+          traffic generator can be instantiated if the class name is known. The supported class names are listed in the
+          ns
+          documentation or alternatively it can be read out from the \verb!ns-2/tcl/libs/ns-default.tcl! file. This file contains
+          the default
+          parameters of the ns supported network objects. After reading this file one will know what are the supported
+          classes
           and which are the configurable parameters of those.
 
     \item \verb!26,28,35,37: $ns attach-agent <node> <agent>!: This method of the \verb!Simulator! class attaches an agent to a node. The
-          \verb!attach-agent! just calls the given node's \verb!attach! method that binds the given agent to
+          \verb!attach-agent! just calls the given node's \verb!attach! method that binds the given agent
+          to
           itself. This can be equivalently written as \verb!<node> attach <agent>!.
 
     \item \verb!29,38: $ns connect <agent1> <agent2>!: after creating agents the logical connection has to be created between them. This
@@ -548,7 +572,8 @@ is:
 
 \begin{itemize}
 
-    \item \verb!46-52: $ns at <time> <command>!: The \verb!Simulator! object executes the given command at the given simulation
+    \item \verb!46-52: $ns at <time> <command>!: The \verb!Simulator! object executes the given command at the given
+          simulation
           time-point  using its scheduler. For example line 46. schedules the \verb!start! method of the
           \verb!$cbr! object to be executed at 0.1s that will start traffic generation as a result of that.
 
@@ -636,47 +661,62 @@ showstringspaces=false]
   55:  $ns run
 \end{lstlisting}
 
-
 \subsection{Processing results}
 
-Beside NAM visualization of the simulation results the system provides facilities for creating a log file of all events of all packet. The \verb!Simulator trace-all! -- in the example the \verb!namtrace-all! was used that produces different outputs -- method creates an output file whom lines correspond to packet events and is made of 12 space separated field: 
+Beside NAM visualization of the simulation results the system provides facilities for creating a log file of all events
+of all packet. The \verb!Simulator trace-all! -- in the example the \verb!namtrace-all! was used that produces
+different outputs -- method creates an output file whom lines correspond to packet events and is made of 12 space
+separated field:
 \begin{enumerate}
 
-\item The type of the event:
-\begin{itemize}
-    \item ``r" (receive): the destination node received the packet    
-    \item ``d" (drop): the packet has been discarded by a queue
-    \item ``+" (enqueue): the packet has been enqueued
-    \item ``-" (dequeue): the packet has been dequeued
-\end{itemize}
+    \item The type of the event:
+          \begin{itemize}
+              \item ``r" (receive): the destination node received the packet
+              \item ``d" (drop): the packet has been discarded by a queue
+              \item ``+" (enqueue): the packet has been enqueued
+              \item ``-" (dequeue): the packet has been dequeued
+          \end{itemize}
 
-\item the timestamp of the event (in seconds)
+    \item the timestamp of the event (in seconds)
 
-\item the identifier of the originator node
+    \item the identifier of the originator node
 
-\item the identifier of the destination node. This and the originator node determines on which link the event happened (don't mix-up with the field in 9. and 10.)
+    \item the identifier of the destination node. This and the originator node determines on which link the event happened
+          (don't mix-up with the field in 9. and 10.)
 
-\item The type of the packet
+    \item The type of the packet
 
-\item Signaling bits (currently just the ECN bit is used)
+    \item Signaling bits (currently just the ECN bit is used)
 
-\item Flow id in case of IPv6 that can be set from tcl (see line 30. and 39 in listing~\ref{lst:simexample}); even if the simulator is not using this id it can be used for evaluating the simulation results or tracing. (e.g. NAM uses flow-id for coloring purposes)
+    \item Flow id in case of IPv6 that can be set from tcl (see line 30. and 39 in listing~\ref{lst:simexample}); even if
+          the simulator is not using this id it can be used for evaluating the simulation results or tracing. (e.g. NAM uses
+          flow-id for coloring purposes)
 
-\item Source address in \emph{node.port} format
+    \item Source address in \emph{node.port} format
 
-\item Destination address in \emph{node.port} format
+    \item Destination address in \emph{node.port} format
 
-\item The sequence number of the network protocol; Even if UDP does not use sequence number, ns track these packets as well for easier tracing
+    \item The sequence number of the network protocol; Even if UDP does not use sequence number, ns track these packets as
+          well for easier tracing
 
-\item unique ID of the packet
+    \item unique ID of the packet
 
 \end{enumerate}
 
-In case of lengthier simulation run when only some aggregated metrics are in the focus of interest it is resource consuming to log all packet events. NS provides facilities for monitoring a single queue. Details can be found under the section ``Trace and Monitoring Support" in the ns documentation.
+In case of lengthier simulation run when only some aggregated metrics are in the focus of interest it is resource
+consuming to log all packet events. NS provides facilities for monitoring a single queue. Details can be found under
+the section ``Trace and Monitoring Support" in the ns documentation.
 
-In ns terminology the per packet inspection is referred as ``trace" while the aggregated state inspection is referred as ``monitoring". The latter is a better candidate to be used in a long term simulation since tracing millions of millions of packets slows down the simulation while producing enormous -- potentially unmanageable -- output trace file. As an example one can experiment with a simulation with and without NAM tracing.
+In ns terminology the per packet inspection is referred as ``trace" while the aggregated state inspection is referred
+as ``monitoring". The latter is a better candidate to be used in a long term simulation since tracing millions of
+millions of packets slows down the simulation while producing enormous -- potentially unmanageable -- output trace
+file. As an example one can experiment with a simulation with and without NAM tracing.
 
-Due to performance considerations it is advised to use monitoring. The monitoring related classes are documented in the above mentioned section in the ns documentation. A simple example is presented in listing~\ref{lst:monitoring} that extends the previously demonstrated script on how to extend int with by getting a bandwidth utilization graph for link 2-3 with 2 seconds measurement interval. The output file ``2-3.bw" can be plotted by either \verb!xgraph! or \verb!gnuplot!.
+Due to performance considerations it is advised to use monitoring. The monitoring related classes are documented in the
+above mentioned section in the ns documentation. A simple example is presented in listing~\ref{lst:monitoring} that
+extends the previously demonstrated script on how to extend int with by getting a bandwidth utilization graph for link
+2-3 with 2 seconds measurement interval. The output file ``2-3.bw" can be plotted by either \verb!xgraph! or
+\verb!gnuplot!.
 
 \begin{lstlisting}[
 language=tcl,
@@ -703,10 +743,14 @@ showstringspaces=false]
 
 \section{Simulation of High-Speed TCP implementations}
 
-Some of the TCP implementation is in file \verb!tcp/tcp.cc! where the \verb!opencwnd! and the \verb!slowdown! functions should be studied for setting the right value for the desired version (see wnd\_option\_ in the C++ source and windowOption\_ in tcl).
-Some other portion of the TCP implementations are in separate files and classes (see FAST TCP in \verb!tcp-fast.cc!).
+Some of the TCP implementation is in file \verb!tcp/tcp.cc! where the \verb!opencwnd! and the
+\verb!slowdown! functions should be studied for setting the right value for the desired version (see
+wnd\_option\_ in the C++ source and windowOption\_ in tcl).
+Some other portion of the TCP implementations are in separate files and classes (see FAST TCP in
+\verb!tcp-fast.cc!).
 
-When simulating newer TCP versions it's better to not use the basic TCP agent but the SACK option instead. The sending and receiving agents can be instantiated with these commands:
+When simulating newer TCP versions it's better to not use the basic TCP agent but the SACK option instead. The sending
+and receiving agents can be instantiated with these commands:
 
 \begin{lstlisting}[
 language=tcl,
@@ -717,7 +761,6 @@ showstringspaces=false]
     set tcp [new Agent/TCP/Sack1]
     set sink [new Agent/TCPSink/Sack1]
 \end{lstlisting}
-
 
 Selecting the appropriate TCP agent happens by setting the TCP agent's \verb!windowOption_! member variable:
 
@@ -733,12 +776,12 @@ showstringspaces=false]
 The ns-2 version used during this lab has the following TCP versions:
 
 \begin{tabular}{|l|l|}
-\hline
-\cellcolor{blue!25} \textbf{protocol} & \cellcolor{blue!25} \textbf{windowOption\_} \\\hline
-HighSpeed TCP &  8 \\\hline
-Scalable TCP  &  9 \\\hline
-BIC TCP     & 12 \\\hline
-CUBIC  & 13  \\\hline
+    \hline
+    \cellcolor{blue!25} \textbf{protocol} & \cellcolor{blue!25} \textbf{windowOption\_}  \\\hline
+    HighSpeed TCP                         & 8                                            \\\hline
+    Scalable TCP                          & 9                                            \\\hline
+    BIC TCP                               & 12                                           \\\hline
+    CUBIC                                 & 13                                           \\\hline
 \end{tabular}
 
 \hfill \break
@@ -753,7 +796,6 @@ showstringspaces=false]
     set fasttcp [new Agent/TCP/Fast]
     set sink [new Agent/TCPSink/Sack1]
 \end{lstlisting}
-
 
 \appendix
 
