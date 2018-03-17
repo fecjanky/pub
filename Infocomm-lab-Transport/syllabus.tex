@@ -182,7 +182,8 @@ These \textbf{explicit congestion signaling} methods requires modification of ex
         \\\hline
         \cellcolor{blue!25}Scalable TCP                                               & packet loss based
                                                                                       & T. Kelly, CERN \& University of
-        Cambridge, 2003.                                                              & MIMD                             \\\hline
+        Cambridge, 2003.                                                              & MIMD
+        \\\hline
         \cellcolor{blue!25}BIC TCP/CUBIC                                              & packet loss based
                                                                                       & I. Rhee et al., Networking
         Research Lab, North Carolina State
@@ -681,22 +682,26 @@ separated field:
 
     \item the identifier of the originator node
 
-    \item the identifier of the destination node. This and the originator node determines on which link the event happened
+    \item the identifier of the destination node. This and the originator node determines on which link the event
+          happened
           (don't mix-up with the field in 9. and 10.)
 
     \item The type of the packet
 
     \item Signaling bits (currently just the ECN bit is used)
 
-    \item Flow id in case of IPv6 that can be set from tcl (see line 30. and 39 in listing~\ref{lst:simexample}); even if
-          the simulator is not using this id it can be used for evaluating the simulation results or tracing. (e.g. NAM uses
+    \item Flow id in case of IPv6 that can be set from tcl (see line 30. and 39 in listing~\ref{lst:simexample}); even
+          if
+          the simulator is not using this id it can be used for evaluating the simulation results or tracing. (e.g. NAM
+          uses
           flow-id for coloring purposes)
 
     \item Source address in \emph{node.port} format
 
     \item Destination address in \emph{node.port} format
 
-    \item The sequence number of the network protocol; Even if UDP does not use sequence number, ns track these packets as
+    \item The sequence number of the network protocol; Even if UDP does not use sequence number, ns track these packets
+          as
           well for easier tracing
 
     \item unique ID of the packet
@@ -820,7 +825,7 @@ showstringspaces=false]
 
 The lab PCs have Network Simulator 2.33 installed. The source code can be found
 under /home/user/ns-allinone-2.33/ns-2.33 directory and the executable location is also
-appended to \verb!$PATH! variable. 
+appended to \verb!$PATH! variable.
 A simulation can be started e.g. from a directory named \verb!tcp-measurement! under home directory
 by simply executing:
 
@@ -830,17 +835,18 @@ ns sim.tcl [param1 param2 ...]
 
 \subsection{Preparation}
 
-Study the handed out scripts : 
-\href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/NagysebesseguTCPSzimulaciokFeladatok/sim.tcl}{sim.tcl} 
+Study the handed out scripts :
+\href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/NagysebesseguTCPSzimulaciokFeladatok/sim.tcl}{sim.tcl}
 and \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/NagysebesseguTCPSzimulaciokFeladatok/utils.tcl}{utils.tcl}.
 \verb!utils.tcl! contains utility functions that can be used during this lab after customizing them.
 \verb!sim.tcl! is the skeleton of the main simulation script. During the measurements this script
 has to be extended according to the concrete tasks.
 
 The outputs of the simulations are text files that for example can contain the dynamics of
-the congestion window. E.g. every 0.01 seconds a line is appended to the output file containing 
+the congestion window. E.g. every 0.01 seconds a line is appended to the output file containing
 two fields where the first field is the timestamp and the second field is the size of the congestion
-window expressed in number of packet size. These output files have to be evaluated. For visualization either \href{http://www.xgraph.org/}{xgraph}
+window expressed in number of packet size. These output files have to be evaluated. For visualization either
+\href{http://www.xgraph.org/}{xgraph}
 or \href{http://www.gnuplot.info/}{gnuplot} can be used.
 
 A lab report has to be created that documents the source codes created during this lab and also contains the
@@ -848,14 +854,17 @@ figures and evaluation results.
 
 \subsection{Standalone TCP flows on a simple topology}
 
-Create a simple topology that contains 2 network nodes and 1 link (``dumb-bell topology"). 
-Set the link speed to 1 GBps with one way delay of 50 ms. Set the queue size of the link to 8300 packets with packet size of 1460 bytes (1500 bytes including headers).
+Create a simple topology that contains 2 network nodes and 1 link (``dumb-bell topology").
+Set the link speed to 1 GBps with one way delay of 50 ms. Set the queue size of the link to 8300 packets with packet
+size of 1460 bytes (1500 bytes including headers).
 (Use 100Mbps link with 5 ms delay and  83 packets queue for testing the basic operation.)
-Evaluate the operation of standalone TCP flow operation with different TCP implementations -- standalone here means that there is only one flow in the network
+Evaluate the operation of standalone TCP flow operation with different TCP implementations -- standalone here means
+that there is only one flow in the network
 doing unlimited FTP download. T
-The available TCP implementations are: HighSpeed TCP, Scalable TCP, BIC TCP, CUBIC, FAST TCP. Out of these carry-out 
+The available TCP implementations are: HighSpeed TCP, Scalable TCP, BIC TCP, CUBIC, FAST TCP. Out of these carry-out
 evaluation of at least \textbf{one} packet loss based and \textbf{one} delay-based protocol.
-During the measurement record the dynamics of the TCP flow congestion window size (cwnd) and the bandwidth(throughput) and 
+During the measurement record the dynamics of the TCP flow congestion window size (cwnd) and the bandwidth(throughput)
+and
 the queue depth of the link.
 
 \textbf{Hint:} \hfill \break
@@ -869,9 +878,11 @@ showstringspaces=false]
     print-queue $queue_measurement_interval $qfp
 \end{lstlisting}
 
-This will result in monitoring the queue depth in every queue measurement interval. (Check the procedure's code in \verb!utils.tcl! file!)
+This will result in monitoring the queue depth in every queue measurement interval. (Check the procedure's code in
+\verb!utils.tcl! file!)
 
-For monitoring different flows a flow monitor object has to be used that can monitor the behavior of individual flows based on the appropriate IDs.
+For monitoring different flows a flow monitor object has to be used that can monitor the behavior of individual flows
+based on the appropriate IDs.
 A flow monitor can be created like:
 
 \begin{lstlisting}[
@@ -881,15 +892,14 @@ showstringspaces=false]
     $ns attach-fmon [$ns link $n1 $n2] $fmon
 \end{lstlisting}
 
-
-In order to record TCP flows congestion windows and throughput the \verb!print-cwnd! and \verb!print-thput! procedures can be used(see \verb!utils.tcl!).
-Notice that in case of  \verb!print-cwnd! the source TCP agent has to be specified while in case of \verb!print-thput! the flow ID has to be given!.
+In order to record TCP flows congestion windows and throughput the \verb!print-cwnd! and \verb!print-thput!
+procedures can be used(see \verb!utils.tcl!).
+Notice that in case of	\verb!print-cwnd! the source TCP agent has to be specified while in case of
+\verb!print-thput! the flow ID has to be given!.
 For measuring the throughput of a flow the counters have to be reset by using the \verb!lastKBytes($flow_id)! command.
 
 A useful helper procedure is \verb!timeackReport! that can be used for periodic feedback on
- the transmission progress status of each flow.
-
-
+the transmission progress status of each flow.
 
 \subsection{Evaluating TCP flow contention on a simple topology}
 
