@@ -277,7 +277,7 @@ in similarly good operation characteristics.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/BICTCP.png}
-    \caption{A period of BIC TCP congestion windows adjustment}
+    \caption{A period of BIC TCP congestion window adjustment}
     \label{fig:bictcp}
 \end{figure}
 
@@ -290,7 +290,7 @@ promising results in terms of both network utilization and fairness~\cite{TCPFai
 characteristics --that are fundamentally different compared to the previously introduced ones-- are shown on
 Figure~\ref{fig:FastTCP}. This has been created using a network setting where one FAST TCP flow is forwarded on the
 bottleneck link and the dynamics of the queue and the FAST TCP congestion window size have been captured. It's clearly
-visible that after a transient phase the congestion windows size stabilizes on a constant value that is able to keep
+visible that after a transient phase the congestion window size stabilizes on a constant value that is able to keep
 the queue utilization approximately constant. This eliminates the unwanted oscillation.
 
 \begin{figure}[H]
@@ -767,7 +767,7 @@ Selecting the appropriate TCP agent happens by setting the TCP agent's \verb!win
 \begin{lstlisting}[
 language=tcl,
 captionpos=b,
-caption={Setting the TCP agent's windows option},
+caption={Setting the TCP agent's window option},
 label={lst:windowoption},
 showstringspaces=false]
     $tcp set windowOption_ 8
@@ -805,12 +805,96 @@ showstringspaces=false]
 \section{Entry quiz sample questions}
 
 \begin{enumerate}
-    \item Describe briefly the main concept of the OpenFlow recommendation.
-    \item What are the components of an OpenFlow network?
+    \item What are the operational phases of conventional TCP Reno protocol?
+    \item What happens in the Slow Start phase?
+    \item Describe the essence of AIMD mechanism.
+    \item What types of congestion control principles do you aware of?
+    \item Enumerate at least 3 high-speed, packet loss based TCP version.
+    \item How do the delay-based TCP versions operate? What are the differences compared to conventional TCP?
+    \item What type of congestion control mechanism does Scalable TCP utilize?
 \end{enumerate}
 
 \section{Lab exercises}
 
 \subsection{Lab environment}
+
+The lab PCs have Network Simulator 2.33 installed. The source code can be found
+under /home/user/ns-allinone-2.33/ns-2.33 directory and the executable location is also
+appended to \verb!$PATH! variable. 
+A simulation can be started e.g. from a directory named \verb!tcp-measurement! under home directory
+by simply executing:
+
+\begin{lstlisting}[language=bash]
+ns sim.tcl [param1 param2 ...]
+\end{lstlisting}
+
+\subsection{Preparation}
+
+Study the handed out scripts : 
+\href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/NagysebesseguTCPSzimulaciokFeladatok/sim.tcl}{sim.tcl} 
+and \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/NagysebesseguTCPSzimulaciokFeladatok/utils.tcl}{utils.tcl}.
+\verb!utils.tcl! contains utility functions that can be used during this lab after customizing them.
+\verb!sim.tcl! is the skeleton of the main simulation script. During the measurements this script
+has to be extended according to the concrete tasks.
+
+The outputs of the simulations are text files that for example can contain the dynamics of
+the congestion window. E.g. every 0.01 seconds a line is appended to the output file containing 
+two fields where the first field is the timestamp and the second field is the size of the congestion
+window expressed in number of packet size. These output files have to be evaluated. For visualization either \href{http://www.xgraph.org/}{xgraph}
+or \href{http://www.gnuplot.info/}{gnuplot} can be used.
+
+A lab report has to be created that documents the source codes created during this lab and also contains the
+figures and evaluation results.
+
+\subsection{Standalone TCP flows on a simple topology}
+
+Create a simple topology that contains 2 network nodes and 1 link (``dumb-bell topology"). 
+Set the link speed to 1 GBps with one way delay of 50 ms. Set the queue size of the link to 8300 packets with packet size of 1460 bytes (1500 bytes including headers).
+(Use 100Mbps link with 5 ms delay and  83 packets queue for testing the basic operation.)
+Evaluate the operation of standalone TCP flow operation with different TCP implementations -- standalone here means that there is only one flow in the network
+doing unlimited FTP download. T
+The available TCP implementations are: HighSpeed TCP, Scalable TCP, BIC TCP, CUBIC, FAST TCP. Out of these carry-out 
+evaluation of at least \textbf{one} packet loss based and \textbf{one} delay-based protocol.
+During the measurement record the dynamics of the TCP flow congestion window size (cwnd) and the bandwidth(throughput) and 
+the queue depth of the link.
+
+\textbf{Hint:} \hfill \break
+
+To monitor the queue depth a queue monitor object has to be used that can be created using the following code:
+
+\begin{lstlisting}[
+language=tcl,
+showstringspaces=false]
+    set qmon [$ns monitor-queue $n1 $n2 ""]
+    print-queue $queue_measurement_interval $qfp
+\end{lstlisting}
+
+This will result in monitoring the queue depth in every queue measurement interval. (Check the procedure's code in \verb!utils.tcl! file!)
+
+For monitoring different flows a flow monitor object has to be used that can monitor the behavior of individual flows based on the appropriate IDs.
+A flow monitor can be created like:
+
+\begin{lstlisting}[
+language=tcl,
+showstringspaces=false]
+    set fmon [$ns makeflowmon Fid]
+    $ns attach-fmon [$ns link $n1 $n2] $fmon
+\end{lstlisting}
+
+
+In order to record TCP flows congestion windows and throughput the \verb!print-cwnd! and \verb!print-thput! procedures can be used(see \verb!utils.tcl!).
+Notice that in case of  \verb!print-cwnd! the source TCP agent has to be specified while in case of \verb!print-thput! the flow ID has to be given!.
+For measuring the throughput of a flow the counters have to be reset by using the \verb!lastKBytes($flow_id)! command.
+
+A useful helper procedure is \verb!timeackReport! that can be used for periodic feedback on
+ the transmission progress status of each flow.
+
+
+
+\subsection{Evaluating TCP flow contention on a simple topology}
+
+\subsubsection{Packet loss based variants}
+
+\subsubsection{Packet loss and delay-based variants}
 
 \end{document}
