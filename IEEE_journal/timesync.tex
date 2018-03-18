@@ -29,6 +29,9 @@
 \usepackage{bytefield}
 
 \usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 
 % \renewcommand\note[1]{} % uncomment this line to hide notes
 
@@ -430,23 +433,47 @@ basis. Under such short period of time even low quality, non-temperature control
 drift.
 As a result, this update period is adequate for the network monitoring use case.
 
-The receiver module (i.e., in the FPGA-based Clock Card in Figure~\ref{fig:TymeSinchArch}) de-multiplexes the data and the time information from the payload of the received frame. It also
-verifies that the received frame's CRC-8 value matches the calculated one. If no errors were detected then it feeds the
-time information into a module that performs time synchronization using a closed loop control.
+The receiver module (i.e., in the FPGA-based Clock Card in Figure~\ref{fig:TymeSinchArch}) de-multiplexes the data and the time information from the payload of the received frame. 
+It also verifies that the received frame's CRC-8 value matches the calculated one. If no errors were detected then it feeds the
+time information into a module that performs time synchronization executing the pseudo-code in algorithm~\ref{alg:clockdisc}
 
-This closed loop control has a simple proportional controller as illustrated by Figure~\ref{fig:closed-loop}. The clock
-module
+\begin{algorithm} % enter the algorithm environment
+\caption{Receiver local time disciple algorithm} % give the algorithm a caption
+\label{alg:clockdisc} % and a label for \ref{} commands later in the document
+\begin{algorithmic} % enter the algorithmic environment
+    \STATE $Increment \Leftarrow 1/f_{clk}$
+    \STATE $Delay_{static} \Leftarrow x$ 
+    \STATE $T_{local} \Leftarrow 0$
+    \FOR{Each rising edge of system clock}
+        \IF{Received valid timestamp from Master}
+            \STATE $T_{local} \Leftarrow T_{recv} + Increment + Delay_{static}$
+        \ELSE
+            \STATE $T_{local} \Leftarrow T_{local} + Increment$
+        \ENDIF
+    \ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+The clock module
 is incrementing a clock counter with an increment in each system clock period. Since the oscillator frequency was not
-configurable in the
-existing system, the clock has to be disciplined through adjusting the time increment itself.
-Even though the increment is adjusted proportionally to the error signal, it is a integral controller due to nature of
-the time increment process that adds the current time increment to the time counter on each clock cycle
--- i.e. the integral of a function of the error signal over time.
+configurable in the existing system, the clock has to be disciplined through adjusting the time increment itself. The $Delay_{static}$ constant can be measured
+for a given configuration and adjusted accordingly.
 
-In theory an I controller within a closed loop system can eliminate the error signal -- i.e. the time difference --
-completely.
-With this design the solution contains a digital time distribution bus and a module that realizes the
-closed control loop as shown by Figure~\ref{fig:closed-loop}.
+To concede that this system can have nanosecond synchronization let's execute the algorithm: at timepoint $T_n$ when the client recieves a timestamp the local clock will be in sync with
+the master clock -- given that the $Delay_{static}$ constant was determined correctly. Desynchronization arises due to errors in the master and client clock oscillator frequency. 
+To ensure that the desired level of synchronization is reached it has to be shown that the master and client clock won't diverge more than one nanoseconds 
+under time interval $(T_n,T_{n+1})$  -- since by definition at $T_{n+1}$ the clocks will be in sync again -- and also periodically. Given a worst case calculation the
+following equation must hold:
+\begin{equation}\label{eq:synch}
+\begin{aligned} 
+\lvert \frac{1}{(1+\epsilon)f_{clk}}N - \frac{1}{(1-\epsilon)f_{clk}}N  \rvert  \lesssim 1 ns \\
+\frac{N}{f_{clk}} \lvert \frac{-2\epsilon}{1 - \epsilon ^2} \rvert \lesssim 1 ns \\
+T_{ts} \lvert \frac{-2\epsilon}{1 - \epsilon ^2} \rvert \lesssim 1 ns , where \\
+N = \frac{T_{ts}}{T_{clk}}
+\end{aligned}
+\end{equation}
+
+In equation~\ref{eq:synch} $\epsilon$ stands for the precision of the oscillator, $f_{clk}$  is the system clock frequency and $T_{ts}$ is the timestamp frame time on the internal synchronization bus. In theory equation~\ref{eq:synch} can be satisfied for arbitrary $\epsilon$ if $T_{ts}$ can be adjusted freely. Substituting parameters from the concrete implementation with $T_{ts} = 2T_{frame}$ = \SI{11.52}{\micro\second} and $\epsilon$ = 50ppm results in $1.15 ns \lesssim 1 ns$ which is approximately satisfying. From a practical point of view doubling the clock frequency would have been a small gain in accuracy marginally.
 
 \subsection{Implementation}
 
