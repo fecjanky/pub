@@ -402,7 +402,7 @@ The parameters of the physical signalling are:
 \begin{figure*}[!htb]
     \centering
     \includegraphics[width=0.8\textwidth]{figures_raw/time_control_loop.png}
-    \caption{Internal clock control loop}
+    \caption{Internal clock module diagram}
     \label{fig:closed-loop}
 \end{figure*}
 
@@ -454,8 +454,8 @@ time information into a module that performs time synchronization executing the 
 \end{algorithmic}
 \end{algorithm}
 
-The clock module
-is incrementing a clock counter with an increment in each system clock period. Since the oscillator frequency was not
+The client clock module -- as shown in Figure~\ref{fig:closed-loop} --
+is incrementing a clock counter with an increment value in each system clock period. Since the oscillator frequency was not
 configurable in the existing system, the clock has to be disciplined through adjusting the time increment itself. The $Delay_{static}$ constant can be measured
 for a given configuration and adjusted accordingly.
 
