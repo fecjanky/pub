@@ -401,7 +401,7 @@ The parameters of the physical signalling are:
 
 \begin{figure*}[!htb]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures_raw/time_control_loop.png}
+    \includegraphics[width=0.7\textwidth]{figures_raw/time_control_loop.png}
     \caption{Internal clock module diagram}
     \label{fig:closed-loop}
 \end{figure*}
@@ -455,25 +455,34 @@ time information into a module that performs time synchronization executing the 
 \end{algorithm}
 
 The client clock module -- as shown in Figure~\ref{fig:closed-loop} --
-is incrementing a clock counter with an increment value in each system clock period. Since the oscillator frequency was not
-configurable in the existing system, the clock has to be disciplined through adjusting the time increment itself. The $Delay_{static}$ constant can be measured
-for a given configuration and adjusted accordingly.
+is incrementing a clock counter with an increment value -- corresponding to the nominal clock frequency in the internal time representation -- in each system clock period. The clock module frequency can be adjusted through modifying the time increment itself.
+The $Delay_{static}$ constant can be measured for a given configuration and adjusted accordingly. The algorithm is illustrated by a sample waveform of the master and slave entity  in Figure~\ref{fig:internalbus}. Informally if the skew is less than the desired precision under one synchronization period -- i.e. when the valid time is transmitted by the master entity -- then the phase of time progresses in sync on the two entities.
 
-To concede that this system can have nanosecond synchronization let's execute the algorithm: at timepoint $T_n$ when the client recieves a timestamp the local clock will be in sync with
-the master clock -- given that the $Delay_{static}$ constant was determined correctly. Desynchronization arises due to errors in the master and client clock oscillator frequency. 
-To ensure that the desired level of synchronization is reached it has to be shown that the master and client clock won't diverge more than one nanoseconds 
-under time interval $(T_n,T_{n+1})$  -- since by definition at $T_{n+1}$ the clocks will be in sync again -- and also periodically. Given a worst case calculation the
-following equation must hold:
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures_raw/internalbustiming.png}
+    \caption{Illustration of timing on the internal synchronization bus}
+    \label{fig:internalbus}
+\end{figure}
+
+To concede that this system can have nanosecond synchronization let us execute the algorithm: let $T_n$ be the n\textsuperscript{th} time point where synchronization occurs between the master and the slave entity. At time point $T_n$ when the client receives a timestamp the local clock will be in sync with
+the master clock -- given that the $Delay_{static}$ constant was determined correctly. De-synchronization arises due to errors in the master and client clock oscillator frequency. 
+To ensure that the desired level of synchronization is reached it has to be shown that the master and client clock would not diverge more than one nanoseconds 
+under time interval $(T_n,T_{n+1})$  -- since by definition at $T_{n+1}$ the clocks will be in sync again and this process is periodic. Given a worst case calculation the
+following equation must hold true:
 \begin{equation}\label{eq:synch}
 \begin{aligned} 
-\lvert \frac{1}{(1+\epsilon)f_{clk}}N - \frac{1}{(1-\epsilon)f_{clk}}N  \rvert  \lesssim 1 ns \\
-\frac{N}{f_{clk}} \lvert \frac{-2\epsilon}{1 - \epsilon ^2} \rvert \lesssim 1 ns \\
-T_{ts} \lvert \frac{-2\epsilon}{1 - \epsilon ^2} \rvert \lesssim 1 ns , where \\
+\bigg\lvert \frac{1}{(1+\epsilon)f_{clk}}N - \frac{1}{(1-\epsilon)f_{clk}}N  \bigg\rvert  \lesssim 1 ns \\
+\frac{N}{f_{clk}} \bigg\lvert \frac{-2\epsilon}{1 - \epsilon ^2} \bigg\rvert \lesssim 1 ns \\
+T_{ts} \bigg\lvert \frac{-2\epsilon}{1 - \epsilon ^2} \bigg\rvert \lesssim 1 ns , where \\
 N = \frac{T_{ts}}{T_{clk}}
 \end{aligned}
 \end{equation}
 
-In equation~\ref{eq:synch} $\epsilon$ stands for the precision of the oscillator, $f_{clk}$  is the system clock frequency and $T_{ts}$ is the timestamp frame time on the internal synchronization bus. In theory equation~\ref{eq:synch} can be satisfied for arbitrary $\epsilon$ if $T_{ts}$ can be adjusted freely. Substituting parameters from the concrete implementation with $T_{ts} = 2T_{frame}$ = \SI{11.52}{\micro\second} and $\epsilon$ = 50ppm results in $1.15 ns \lesssim 1 ns$ which is approximately satisfying. From a practical point of view doubling the clock frequency would have been a small gain in accuracy marginally.
+In equation~\ref{eq:synch} $\epsilon$ stands for the precision of the oscillator, $f_{clk}$  is the system clock frequency and $T_{ts}$ is the timestamp frame time on the internal synchronization bus. In theory equation~\ref{eq:synch} can be satisfied for arbitrary $\epsilon$ if $T_{ts}$ can be adjusted freely. Substituting parameters from the concrete implementation with $T_{ts} = 2T_{frame}$ = \SI{11.52}{\micro\second} and $\epsilon$ = 50 ppm results in $1.15 ns \lesssim 1 ns$ which is approximately satisfying. From a practical point of view doubling the clock frequency would have been a small gain in accuracy marginally.
+
+
+It is important to note that this accuracy and precision is only achieved over the \emph{internal} time synchronization bus. If the external subsystem -- that is completely orthogonal to the internal subsystem -- synchronizes to its reference with \SI{}{\micro\second} accuracy then this results in the same accuracy for the monitoring probe vs. external reference relation. Even though the synchronicity will be still at the \SI{}{\nano\second} level in the monitoring probe vs. monitoring probe relation inside the same monitoring node driven by the same master.
 
 \subsection{Implementation}
 
@@ -535,30 +544,31 @@ requirements of the external time synchronization part.
 As for the internal synchronization part, it is by design accurate as it is a message synchronous bus system with no
 disturbances -- even under real-life (but normal) operating conditions. As a
 consequence, the clock accuracy over that bus is determined by the bit width (in time duration) and the refresh rate of the digital
-time-stamp transmitted over the bus. 
-The proof for that error of the oscillators can be neglected under the refresh time period can be deduced from 
-calculating the skew of the clock periods under a timestamp update period: 
+time-stamp transmitted over the bus.(See details in Section~\ref{sec:Internal-Impl})
+%The proof for that error of the oscillators can be neglected under the refresh time period can be deduced from 
+%calculating the skew of the clock periods under a timestamp update period: 
 
-\begin{equation}\label{eq:clkerr}
-CLK_{skew} = \lfloor  \lvert \frac{2 \times T_{frame}}{T_{sys}} \times E_{oscillator} \rvert \rfloor
-\end{equation}
+%\begin{equation}\label{eq:clkerr}
+%CLK_{skew} = \lfloor  \lvert \frac{2 \times T_{frame}}{T_{sys}} \times E_{oscillator} \rvert \rfloor
+%\end{equation}
+%
+%\begin{equation}
+% T_{sys} = 1/f_{sys}
+%\end{equation}
 
-\begin{equation}
- T_{sys} = 1/f_{sys}
-\end{equation}
+%Where T\textsubscript{frame} (frame time over the internal synchornization bus) is \SI{5.76}{\micro\second}, and the typical values of the system clock parameters are
+%f\textsubscript{sys} (system clock frequency) is \SI{125}{\mega\hertz} and E\textsubscript{oscillator} (relative frequency error) is $\pm$ 50 ppm.
+%Substituting these values into \eqref{eq:clkerr} gives that the skew in terms of clock cycles is $\lfloor 0.072 \rfloor = 0$ clock periods. This is the expected behavior of the %high-precision hardware-based time synchronization for monitoring systems.
 
-Where T\textsubscript{frame} (frame time over the internal synchornization bus) is \SI{5.76}{\micro\second}, and the typical values of the system clock parameters are
-f\textsubscript{sys} (system clock frequency) is \SI{125}{\mega\hertz} and E\textsubscript{oscillator} (relative frequency error) is $\pm$ 50 ppm.
-Substituting these values into \eqref{eq:clkerr} gives that the skew in terms of clock cycles is $\lfloor 0.072 \rfloor = 0$ clock periods. This is the expected behavior of the high-precision hardware-based time synchronization for monitoring systems.
-
-Based on the considerations above, the accuracy simply equals to the resolution of the digital timestamp given by \eqref{eq:resolution}.
-\begin{equation}\label{eq:resolution}
-Resolution = 2^{-N/2} \SI{}{\second}
-\end{equation}
+%Based on the considerations above, the accuracy simply equals to the resolution of the digital timestamp given by \eqref{eq:resolution}.
+%\begin{equation}\label{eq:resolution}
+%Resolution = 2^{-N/2} \SI{}{\second}
+%\end{equation}
 
 As it was described in Section~\ref{sec:Internal-Impl}, the
-timestamp is 64 bits wide. Since it uses the NTP binary fractional representation 
-with N=64, the theoretical accuracy is \SI{232.83}{\pico\second}. This satisfies the criteria of any monitoring system with 1, 10 or even 100 Gbit/s Ethernet, since packet interarrival time even of the latter case is 6.72ns \cite{6ns_interarrival} -- over one magnitude greater than the theoretical accuracy of the presented, implemented and verified time synchronization method.
+timestamp is 64 bits wide -- since it uses the NTP binary fractional representation. 
+%with N=64, the theoretical accuracy is \SI{232.83}{\pico\second}. 
+The $\sim$\SI{1}{\nano\second} accuracy over the internal synchronization bus satisfies the criteria of any monitoring system with 1, 10 or even 100 Gbit/s Ethernet, since packet interarrival time even of the latter case is 6.72ns \cite{6ns_interarrival} -- almost one magnitude greater than the theoretical accuracy of the presented, implemented and verified time synchronization method.
 
 As a real-life verification, the above described time-synchronization system has been put into operation at Magyar Telekom. The system hardware (with its FPGA firmware) has been installed beside the SGA-7N network monitoring system, and showed the expected result. The system provides accurate time information to the monitoring cards ever since, and it is planned to be expanded for covering all related monitoring cards, network-wide.
 
