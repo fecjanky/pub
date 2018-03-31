@@ -108,9 +108,9 @@ Magyar tudósok körútja 2., 1117 Budapest, Hungary (phone: +36704213213; e-mai
 
 \begin{abstract}
     \boldmath
-    Distributed network monitoring solutions face various challenges with the increase of line speed, the extending variety of protocols, and new services with complex KPIs. This paper addresses one part of the first challenge: faster line speed necessitates time-stamping with higher granularity and higher precision than ever. Proper, system-wide time-stamping is inevitable for network monitoring and traffic analysis point of view. It is hard to find feasible time synchronization solutions for those systems that has nation-wide, physically distributed probes.
+    Distributed network monitoring solutions face various challenges with the increase of line speed, the extending variety of protocols, and new services with complex KPIs. This paper addresses one part of the first challenge: faster line speed necessitates time-stamping with higher granularity and higher precision than ever. Proper, system-wide time-stamping is inevitable for network monitoring and traffic analysis point of view. It is hard to find feasible time synchronization solutions for those systems that have nation-wide, physically distributed probes.
     
-    Current networking equipment reside in server rooms, and have many legacy nodes. Access to GPS signals are complicated in these places, and Precision Time Protocol (PTP) is not seem to be supported by all network nodes in the near future -- so high precision time-stamping is indeed a current problem. This paper suggests a novel, practical solution to overcome the obstacles. 
+    Current networking equipment reside in server rooms, and have many legacy nodes. Access to GPS signal is complicated in these places, and Precision Time Protocol (PTP) does not seem to be supported by all network nodes in the near future -- so high precision time-stamping is indeed a current problem. This paper suggests a novel, practical solution to overcome the obstacles. 
     
     The core idea is that in real-life, distributed network monitoring systems operate with a few, finite number of probe-clusters, and their site should have a precise clock provided by PTP or GPS somewhere in the building. The distribution of time information within a site is still troublesome, even within a server rack. This paper presents a closed control loop solution implemented in an FPGA-based device in order to minimize the jitter, and compensate the calculated delay.
     
@@ -123,10 +123,10 @@ Magyar tudósok körútja 2., 1117 Budapest, Hungary (phone: +36704213213; e-mai
 % no keywords
 \section{Introduction}\label{sec:Intro}
 
-Network monitoring has a well-established practice at telecommunication operators. There are fundamentally different solutions available -- depending on what kind of data are initially available and how it is gathered. The least flexible solutions are based on the functional networking elements: they can provide pre-digested reports, statistical counters, and occasionally (when not under heavy load), even detailed information on the actual messages. Some operators use standalone protocol analyzers, which do not suffer from the temporal, load-related bottlenecks -- rather, they have spatial data capture issues: only a segment of the network is visible at any given time. On the other hand, complete traffic information can be gathered by network-wide traffic monitoring. These latter solutions are based on passive, distributed probes; central processing entities; and client software -- also distributed -- at the operating personnel. This paper discusses a peculiar problem of such systems: effective time synchronization among the entities.
+Network monitoring has a well-established practice at telecommunication operators. There are fundamentally different solutions available -- depending on what kind of data are initially available and how they are gathered. The least flexible solutions are based on the functional networking elements: they can provide pre-digested reports, statistical counters, and occasionally (when not under heavy load), even detailed information on the actual messages. Some operators use standalone protocol analyzers, which do not suffer from the temporal, load-related bottlenecks -- rather, they have spatial data capture issues: only a segment of the network is visible at any given time. On the other hand, complete traffic information can be gathered by network-wide traffic monitoring. These latter solutions are based on passive, distributed probes; central processing entities; and client software -- also distributed -- at the operating personnel. This paper discusses a peculiar problem of such systems: effective time synchronization among the entities.
 
-Network traffic analysis requires the understanding of the order of the messages appearing in the network, even if they appear at different interfaces. This makes high resolution and high precision timestamping the basic requirement, beside lossless message capture. 
-While there are standardized network protocols available for tackling this issue, there are practical obstacles in their network-wide usage. Although the Network Time Protocol (NTP) is widely available \cite{NTP_book}, it cannot be used as a general purpose synchronization protocol. In fact, the message transfer delay between NTP clients and servers are not compensated, hence the different nodes end up setting their local time to a clock value with a random delay. The typical order of the forwarding delay in current core routers is in the 0.5-5 microseconds range, depending on the traffic volume -- among other factors. Since the minimum packet interarrival-time is 0.672 microsecond even at a 1Gbit\/s link (and 67.2 nanoseconds for a 10Gbit\/s link), such delays cannot be left without compensation for time synchronization.
+Network traffic analysis requires the understanding of the order of the messages appearing in the network, even if they appear at different interfaces. This makes high resolution and high precision time-stamping the basic requirement, beside lossless message capture. 
+While there are standardized network protocols available for tackling this issue, there are practical obstacles in their network-wide usage. Although the Network Time Protocol (NTP) is widely available \cite{NTP_book}, it cannot be used as a general purpose synchronization protocol. In fact, the message transfer delay between NTP clients and servers is not compensated, hence the different nodes end up setting their local time to a clock value with a random delay. The typical order of the forwarding delay in current core routers is in the 0.5-5 microseconds range, depending on the traffic volume -- among other factors. Since the minimum packet interarrival-time is 0.672 microsecond even at a 1 Gbps link (and 67.2 nanoseconds for a 10 Gbps link), such delays cannot be left without compensation for time synchronization.
 
 Precision Time Protocol (PTP), on the other hand covers the delay-compensation issue well \cite{PTP_standard}. Unfortunately, PTP is not at all wide-spread, even after 10 years of commercialization for PTPv2. The concept, however, necessitates that all network nodes in the path have PTPv2 capability. Otherwise -- even if one node cannot compute and share its delay data --, compensation of time information is not possible.
 
@@ -136,7 +136,7 @@ We can suppose that at least one machine at each monitoring site has the possibi
 
 This paper presents a solution for the time synchronization issues of systems with FPGA-based monitoring probes. What makes FPGA a key player here is that hardware-acceleration removes the jitter of operating system and protocol-stack delay from the equation. The delay of handling time information within an FPGA is constant, we can calculate with it precisely -- and compensate this delay for the time-stamp.
 
-In this paper we focus of the time synchronization challenges of a monitoring site. The implemented solution is based on the practical pre-requisite that each site has a reference clock available for the monitoring system. This paper suggests an FPGA-based clock synchronization method for the distributed monitoring equipment, more precisely, its interface cards.
+In this paper we focus on the time synchronization challenges of a monitoring site. The implemented solution is based on the practical pre-requisite that each site has a reference clock available for the monitoring system. This paper suggests an FPGA-based clock synchronization method for the distributed monitoring equipment, more precisely, its interface cards.
 
 \begin{figure*}[!htb]
     \centering
@@ -148,14 +148,14 @@ In this paper we focus of the time synchronization challenges of a monitoring si
 \section{Network Monitoring supported by FPGA-based Probes}\label{sec:NetMon}
 \subsection{The Generic Concept of Distributed Network Monitoring}
 
-The distributed network monitoring architecture depicted by Figure~\ref{fig:network_monitoring} supports local, probe-based pre-processing (timestamping, requirement-based packet chunking, filtering criteria-based distribution) and central, deep analysis (correlation of messages and transactions, data record compilation, statistics generation), even on-the-fly. The time-based ordering and interleaving of messages are enabled by the hardware-accelerated timestamping, providing nanosecond-range resolution with sub-microsecond precision. The information stored locally at the distributed Monitoring Probes can be accessed by client applications of the operator. Besides, the Monitoring Probes send pre-digested data to the Servers for correlation (creating e.g. Call Data Records, CDRs), as well as periodic reports containing their calculated statistics \cite{Tatai_mobile_analysis}.
+The distributed network monitoring architecture depicted by Figure~\ref{fig:network_monitoring} supports local, probe-based pre-processing (time-stamping, requirement-based packet chunking, filtering criteria-based distribution) and central, deep analysis (correlation of messages and transactions, data record compilation, statistics generation), even on-the-fly. The time-based ordering and interleaving of messages are enabled by the hardware-accelerated time-stamping, providing nanosecond-range resolution with sub-microsecond precision. The information stored locally at the distributed Monitoring Probes can be accessed by client applications of the operator. Besides, the Monitoring Probes send pre-digested data to the Servers for correlation (creating e.g. Call Data Records, CDRs), as well as periodic reports containing their calculated statistics \cite{Tatai_mobile_analysis}.
 
 Since user data and control data are often carried over the same channels, their division requires message analysis on network- or transaction-level (e.g., IP- or TCP-level). The changing traffic patterns force the operators to look for new tools to process even the user traffic. The first step towards this is the compilation of XDRs (eXtended Data Records) based on control- and user-plane messages and transactions. These often contain message-level timestamps, as well. Based on these data, the deep traffic analysis tools provide valuable information towards business-intelligence and network optimization. Besides, all nodes can be configured to report directly to the NOC (Network Operations Center).
 
 Operators use the network-wide, passive monitoring for fault detection, service quality assurance, and resource planning, among others \cite{LTE_monitoring}. Besides lossless data capture, network monitoring covers further functions, as well:
 \begin{itemize}
 \renewcommand\labelitemi{--}
-\item precise timestamping, ordering;
+\item precise time-stamping, ordering;
 \item compilation, search and fetch of Call Data Records (CDRs) and Extended Data Records (XDRs);
 \item calculation and reporting of Key Performance Indicators, KPIs;
 \item Call Tracing at various complexity levels;
@@ -168,13 +168,13 @@ System elements of the described generic architecture can be implemented in many
 
 \subsection{FPGA-based packet processing}
 
-There are many features that make FPGAs useful in packet processing tasks \cite{NetFPGA}. The main concept itself allows \emph{parallel processing} of the input data. Different, simultaneous tasks can be carried out at each clock cycle on the same data, which in this case is the packet header \cite{XILINX_PacketProc}, \cite{Weirong_Scalable_PacketProc_FPGA}. Besides, the \emph{input word length} is much greater for FPGAs (getting 90 bytes) than for modern CPUs (64 bits). Furthermore, FPGA are set up in hardware-defined languages, and they are indeed \emph{reconfigurable} hardware: their internal wiring can be changed within milliseconds. These features enable FPGA-based hardware platforms to become high performance networking devices, e.g., network monitors, switches, routers, firewalls or intrusion detection systems \cite{IM_2015_FPGA}. Nevertheless, as a network monitoring system, it supports distributed and lossless packet level monitoring of Ethernet links for 1 or 10 Gbit\/s.
+There are many features that make FPGAs useful in packet processing tasks \cite{NetFPGA}. The main concept itself allows \emph{parallel processing} of the input data. Different, simultaneous tasks can be carried out at each clock cycle on the same data, which in this case is the packet header \cite{XILINX_PacketProc}, \cite{Weirong_Scalable_PacketProc_FPGA}. Besides, the \emph{input word length} is much greater for FPGAs (getting 90 bytes) than for modern CPUs (64 bits). Furthermore, FPGA are set up in hardware-defined languages, and they are indeed \emph{reconfigurable} hardware: their internal wiring can be changed within milliseconds. These features enable FPGA-based hardware platforms to become high performance networking devices, e.g., network monitors, switches, routers, firewalls or intrusion detection systems \cite{IM_2015_FPGA}. Nevertheless, as a network monitoring system, it supports distributed and lossless packet level monitoring of Ethernet links for 1 or 10 Gbps.
 
-Beside providing sufficient resources for switching and routing at 1 or 10 Gbit\/s, the design of SGA-GPLANAR \cite{GPLANAR} and SGA-10GED \cite{10GED} used in SGA-7N includes some special, network monitoring-related requirements, namely 
+Beside providing sufficient resources for switching and routing at 1 or 10 Gbps, the design of SGA-GPLANAR \cite{GPLANAR} and SGA-10GED \cite{10GED} used in SGA-7N includes some special, network monitoring-related requirements, namely 
 \begin{itemize}
 \renewcommand\labelitemi{--}
 \item lossless packet capture,
-\item 64-bit timestamping with sub-microsecond resolution,
+\item 64-bit time-stamping with sub-microsecond resolution,
 \item header-only capture: configurable depth of decoding,
 \item on-the-fly packet parsing by hardware \cite{Low_Latency_Header_Parser},
 \item parameterized packet/flow generator for mass testing \cite{Olaszi_Complex_Load_Testing_of_Mobile_PS_and_CS_Core},\cite{Soos_Mesterproba}.
@@ -183,12 +183,12 @@ Beside providing sufficient resources for switching and routing at 1 or 10 Gbit\
 Various applications then require other supported functionalities. As an example, the high-speed monitoring application \cite{C-GEP_HPSR} consists of the following sub-modules:
 \begin{itemize}
 \renewcommand\labelitemi{--}
-\item timestamping every frame upon reception;
+\item time-stamping every frame upon reception;
 \item packet decoding from layer 2  up to the application layer;
 \item packet filtering with a reconfigurable rule-set to decide what we do with a given packet;
 \item packet chunking: packets can be truncated depending on the matching rule;
 \item packet distribution: to distribute packets by different criteria: IP flows, fragment steering, steering based on mobile core network parameters, etc.;
-\item packet headering: monitoring information is stored in a specified header format.
+\item packet encapsulation: monitoring information is stored in a specified header format.
 \end{itemize}
 
 These features and capabilities make the FPGA a suitable enabler of hardware acceleration within the Monitors.
@@ -225,7 +225,7 @@ When speaking about time synchronization, the following properties describe a cl
 The biggest challenge of all -- as usual -- is to adapt to the existing monitoring framework described in
 \ref{sec:NetMon}
 with minimal modifications to the existing solution, while satisfying all the precision and accuracy related requirements.
-As mentioned before, the platform for proof-of-concept is the SGA-7N monitoring system, which utilizes FPGA-based monitoring cards. These are capable of capturing on high-speed network interfaces -- with fine-grained timestamping capabilities --, and they have their own, existing time-keeping facilities.
+As mentioned before, the platform for proof-of-concept is the SGA-7N monitoring system, which utilizes FPGA-based monitoring cards. These are capable of capturing on high-speed network interfaces -- with fine-grained time-stamping capabilities --, and they have their own, existing time-keeping facilities.
 
 In order to tackle all the above mentioned issues with a solution fitting into the network monitoring architecture, we suggested to create a new FPGA-based card that implements these functions:
 \begin{itemize}
@@ -285,8 +285,8 @@ In order to achieve the best synchronization between PTPv2 clocks, the protocol 
 Since PTPv2 is not widely available in current networks, we concluded in either selecting NTP or PTPv1, due to their simplicity. PTPv1 has way more modes of operation when compared to NTP. Still, these two protocols are operating based on semantically the same principle when determining the round
 trip time and offset
 compared to a reference clock entity. Although there are significant differences originated from their packet structure, the
-timestamp format and also the epoch that could result in more complex implementation if PTPv1 would be chosen.
-Still, the NTP timestamp format includes a 32-bit unsigned seconds field spanning 136 years and a 32-bit fraction field resolving 232
+time-stamp format and also the epoch that could result in more complex implementation if PTPv1 would be chosen.
+Still, the NTP time-stamp format includes a 32-bit unsigned seconds field spanning 136 years and a 32-bit fraction field resolving 232
 picoseconds the prime epoch, or base date of era 0, is 0 h 1 January 1900 UTC -- i.e., when all bits are zero.
 
 Based on the requirements, the above considerations, and the Occam principle, the design decision led to selecting \emph{NTP protocol to be used} for synchronizing the
@@ -353,11 +353,11 @@ This chain of modules with the feedback is another realization of a closed loop 
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=0.5\textwidth]{figures_raw/TimeSynch_distribution.png}
-    \caption{Time synchronization within a monitoring site -- methods for external and internal subsystems differ to allow high precision and accuracy in timestamping}
+    \caption{Time synchronization within a monitoring site -- methods for external and internal subsystems differ to allow high precision and accuracy in time-stamping}
     \label{fig:TymeSinchArch}
 \end{figure}
 
-Since timestamping is done by the monitoring interface cards, the time synchronization information has to be spread around all interface cards of all monitoring units within the site. This time synchronization is an internal matter of the monitoring system. The relationship between ``external'' and ``internal'' time synchronization is shown by Figure~\ref{fig:TymeSinchArch}.
+Since time-stamping is done by the monitoring interface cards, the time synchronization information has to be spread around all interface cards of all monitoring units within the site. This time synchronization is an internal matter of the monitoring system. The relationship between ``external'' and ``internal'' time synchronization is shown by Figure~\ref{fig:TymeSinchArch}.
 
 The internal time information synchronization function is responsible for having all clocks in all monitoring functions
 to be completely synchronized \emph{within a monitoring node}. Since this is an internal component, the amount of perturbation
@@ -374,8 +374,8 @@ Internally to each monitoring probe, all FPGA boards that implement a monitoring
 consequence, ground level
 isolation is necessary over the bus. For reducing the physical layer complexity,
 a point-to-point bus system has been designed. In order to be able to maximize the number of clients connected the
-bus, it utilizes an asynchronous serial communication using 2 wires. The communication protocol executed by the driver
-module (the internal time synch distribution module in Figure~\ref{fig:TymeSinchArch})
+bus, it utilizes an asynchronous serial communication using 2 wires that provides uni-directional communication -- with this system bi-directional communication would require 4 wires. The communication protocol executed by the driver
+module (the internal time synch. distribution module in Figure~\ref{fig:TymeSinchArch})
 multiplexes arbitrary data units and the time information over the bus into frames -- equipped with error detection
 code --
 in an alternating pattern. That results in periodic transmission of valid time information.
@@ -395,7 +395,7 @@ The parameters of the physical signalling are:
         & \wordbox{1}{time/data} \\
         & \bitbox{18}{time/data} & \bitbox{8}{CRC-8}
     \end{bytefield}
-    \caption{High-Speed Timestamp Interface frame format}
+    \caption{High-Speed Time-stamp Interface frame format}
     \label{fig:HiSTI-frame}
 \end{figure}
 
@@ -445,7 +445,7 @@ time information into a module that performs time synchronization executing the 
     \STATE $Delay_{static} \Leftarrow x$ 
     \STATE $T_{local} \Leftarrow 0$
     \FOR{Each rising edge of system clock}
-        \IF{Received valid timestamp from Master}
+        \IF{Received valid time-stamp from Master}
             \STATE $T_{local} \Leftarrow T_{recv} + Increment + Delay_{static}$
         \ELSE
             \STATE $T_{local} \Leftarrow T_{local} + Increment$
@@ -465,7 +465,7 @@ The $Delay_{static}$ constant can be measured for a given configuration and adju
     \label{fig:internalbus}
 \end{figure}
 
-To concede that this system can have nanosecond synchronization let us execute the algorithm: let $T_n$ be the n\textsuperscript{th} time point where synchronization occurs between the master and the slave entity. At time point $T_n$ when the client receives a timestamp the local clock will be in sync with
+To concede that this system can have nanosecond synchronization let us execute the algorithm: let $T_n$ be the n\textsuperscript{th} time point where synchronization occurs between the master and the slave entity. At time point $T_n$ when the client receives a time-stamp the local clock will be in sync with
 the master clock -- given that the $Delay_{static}$ constant was determined correctly. De-synchronization arises due to errors in the master and client clock oscillator frequency. 
 To ensure that the desired level of synchronization is reached it has to be shown that the master and client clock would not diverge more than one nanoseconds 
 under time interval $(T_n,T_{n+1})$  -- since by definition at $T_{n+1}$ the clocks will be in sync again and this process is periodic. Given a worst case calculation the
@@ -479,7 +479,7 @@ N = \frac{T_{ts}}{T_{clk}}
 \end{aligned}
 \end{equation}
 
-In equation~\ref{eq:synch} $\epsilon$ stands for the precision of the oscillator, $f_{clk}$  is the system clock frequency and $T_{ts}$ is the timestamp frame time on the internal synchronization bus. In theory equation~\ref{eq:synch} can be satisfied for arbitrary $\epsilon$ if $T_{ts}$ can be adjusted freely. Substituting parameters from the concrete implementation with $T_{ts} = 2T_{frame}$ = \SI{11.52}{\micro\second} and $\epsilon$ = 50 ppm results in $1.15 ns \lesssim 1 ns$ which is approximately satisfying. From a practical point of view doubling the clock frequency would have been a small gain in accuracy marginally.
+In equation~\ref{eq:synch} $\epsilon$ stands for the precision of the oscillator, $f_{clk}$  is the system clock frequency and $T_{ts}$ is the time-stamp frame time on the internal synchronization bus. In theory equation~\ref{eq:synch} can be satisfied for arbitrary $\epsilon$ if $T_{ts}$ can be adjusted freely. Substituting parameters from the concrete implementation with $T_{ts} = 2T_{frame}$ = \SI{11.52}{\micro\second} and $\epsilon$ = 50 ppm results in $1.15 ns \lesssim 1 ns$ which is approximately satisfying. From a practical point of view doubling the clock frequency would have been a small gain in accuracy marginally.
 
 
 It is important to note that this accuracy and precision is only achieved over the \emph{internal} time synchronization bus. If the external subsystem -- that is completely orthogonal to the internal subsystem -- synchronizes to its reference with \SI{}{\micro\second} accuracy then this results in the same accuracy for the monitoring probe vs. external reference relation. Even though the synchronicity will be still at the \SI{}{\nano\second} level in the monitoring probe vs. monitoring probe relation inside the same monitoring node driven by the same master.
@@ -490,7 +490,7 @@ The realized system with all internal components is shown by Figure~\ref{fig:rea
 synchronization -- as presented in Section~\ref{sec:External-Impl} -- is done by the SGA Clock card -- visible in the
 bottom right part. Similarly, the internal time synchronization -- described in Section~\ref{sec:Internal-Impl} --
 is performed over the local bus with agent modules. These modules run in all the FPGA-based monitoring cards acting as slaves at the
-high-speed timestamp interfaces; all are driven by the SGA Clock card acting as a master.
+high-speed time-stamp interfaces; all are driven by the SGA Clock card acting as a master.
 
 \begin{figure}[H]
     \centering
@@ -546,7 +546,7 @@ disturbances -- even under real-life (but normal) operating conditions. As a
 consequence, the clock accuracy over that bus is determined by the bit width (in time duration) and the refresh rate of the digital
 time-stamp transmitted over the bus.(See details in Section~\ref{sec:Internal-Impl})
 %The proof for that error of the oscillators can be neglected under the refresh time period can be deduced from 
-%calculating the skew of the clock periods under a timestamp update period: 
+%calculating the skew of the clock periods under a time-stamp update period: 
 
 %\begin{equation}\label{eq:clkerr}
 %CLK_{skew} = \lfloor  \lvert \frac{2 \times T_{frame}}{T_{sys}} \times E_{oscillator} \rvert \rfloor
@@ -556,31 +556,31 @@ time-stamp transmitted over the bus.(See details in Section~\ref{sec:Internal-Im
 % T_{sys} = 1/f_{sys}
 %\end{equation}
 
-%Where T\textsubscript{frame} (frame time over the internal synchornization bus) is \SI{5.76}{\micro\second}, and the typical values of the system clock parameters are
+%Where T\textsubscript{frame} (frame time over the internal synchronization bus) is \SI{5.76}{\micro\second}, and the typical values of the system clock parameters are
 %f\textsubscript{sys} (system clock frequency) is \SI{125}{\mega\hertz} and E\textsubscript{oscillator} (relative frequency error) is $\pm$ 50 ppm.
 %Substituting these values into \eqref{eq:clkerr} gives that the skew in terms of clock cycles is $\lfloor 0.072 \rfloor = 0$ clock periods. This is the expected behavior of the %high-precision hardware-based time synchronization for monitoring systems.
 
-%Based on the considerations above, the accuracy simply equals to the resolution of the digital timestamp given by \eqref{eq:resolution}.
+%Based on the considerations above, the accuracy simply equals to the resolution of the digital time-stamp given by \eqref{eq:resolution}.
 %\begin{equation}\label{eq:resolution}
 %Resolution = 2^{-N/2} \SI{}{\second}
 %\end{equation}
 
 As it was described in Section~\ref{sec:Internal-Impl}, the
-timestamp is 64 bits wide -- since it uses the NTP binary fractional representation. 
+time-stamp is 64 bits wide -- since it uses the NTP binary fractional representation. 
 %with N=64, the theoretical accuracy is \SI{232.83}{\pico\second}. 
-The $\sim$\SI{1}{\nano\second} accuracy over the internal synchronization bus satisfies the criteria of any monitoring system with 1, 10 or even 100 Gbit/s Ethernet, since packet interarrival time even of the latter case is 6.72ns \cite{6ns_interarrival} -- almost one magnitude greater than the theoretical accuracy of the presented, implemented and verified time synchronization method.
+The $\sim$\SI{1}{\nano\second} accuracy over the internal synchronization bus satisfies the criteria of any monitoring system with 1, 10 or even 100 Gbit/s Ethernet, since packet inter-arrival time even of the latter case is 6.72ns \cite{6ns_interarrival} -- almost one magnitude greater than the theoretical accuracy of the presented, implemented and verified time synchronization method.
 
 As a real-life verification, the above described time-synchronization system has been put into operation at Magyar Telekom. The system hardware (with its FPGA firmware) has been installed beside the SGA-7N network monitoring system, and showed the expected result. The system provides accurate time information to the monitoring cards ever since, and it is planned to be expanded for covering all related monitoring cards, network-wide.
 
 \section{Conclusion}
 
-In this paper, we introduced a general time synchronization solution for a high performance, lossless network monitoring system called SGA-7N that is based on a reconfigurable architecture. The probes of the system are called ``Monitors'', which consists of three main building blocks: a high performance Field Programmable Gate Array (FPGA)-based custom hardware platform, a firmware dedicated for network monitoring, and the probe software. The reconfigurable property of the FPGA chip enables to turn the Monitor hardware platform into a high performance networking device -- among others, a network monitoring probe. Beside supporting distributed and lossless packet level monitoring of Ethernet links for 1 or 10 Gbit\/s of the described system, the FPGA serves as the base platform of the time synchronization solution for the interface cards of the Monitors.
+In this paper, we introduced a general time synchronization solution for a high performance, lossless network monitoring system called SGA-7N that is based on a reconfigurable architecture. The probes of the system are called ``Monitors'', which consists of three main building blocks: a high performance Field Programmable Gate Array (FPGA)-based custom hardware platform, a firmware dedicated for network monitoring, and the probe software. The reconfigurable property of the FPGA chip enables to turn the Monitor hardware platform into a high performance networking device -- among others, a network monitoring probe. Beside supporting distributed and lossless packet level monitoring of Ethernet links for 1 or 10 Gbps of the described system, the FPGA serves as the base platform of the time synchronization solution for the interface cards of the Monitors.
 
 Time synchronization of the network monitoring nodes are crucial, since the analysis depends highly on the proper message sequence, which is determined mainly by the timestamps. Using GPS, or PTPv2 in all nodes is not feasible for various reasons, hence this paper proposes a hybrid approach, implemented by utilizing the deterministic processing time of FPGAs.
 
-First, each monitoring site has to have a reference clock that is synchronized with other reference clocks at other sites. Naturally, the monitoring system has to be synchronized to the reference clock available at the physical site. In this paper we call it external time synchronization, and it is solved by an FPGA-based, NTP implementation that use data filtering and has a clock discipline module in order to output monotonous clock information. This avoids timestamps jumping backwards, or jumping forward too much within one step, hence the clock if the monitoring system becomes well-regulated. Each interface at the monitoring node has to get synchronized with this clock information. In this paper we call it internal time synchronization, and it is implemented through a proprietary, rapid protocol. Its sender, (or master) part works in a distributor-card residing at the main reference clock machine of the monitoring system, whereas the receiver (or slave) parts are realized within the FPGA of the monitoring cards.
+First, each monitoring site has to have a reference clock that is synchronized with other reference clocks at other sites. Naturally, the monitoring system has to be synchronized to the reference clock available at the physical site. In this paper we call it external time synchronization, and it is solved by an FPGA-based, NTP implementation that use data filtering and has a clock discipline module in order to output monotonous clock information. This avoids timestamps jumping backwards, or jumping forward too much within one step, hence the clock if the monitoring system becomes well-regulated. Each interface at the monitoring node has to get synchronized with this clock information. In this paper we call it internal time synchronization, and it is implemented through a proprietary time-synchronization protocol. Its sender, (or master) part works in a distributor-card residing at the main reference clock machine of the monitoring system, whereas the receiver (or slave) parts are realized within the FPGA of the monitoring cards.
 
-As presented in the paper, the overall system shows sub-nanosecond accuracy and stability, meeting the requirements of 10 Gbit\/s, or even 100 Gbit\/s Ethernet-based packet monitoring. The presented solution is already installed in the network-wide, real-life monitoring at Magyar Telekom.
+As presented in the paper, the overall system shows sub-nanosecond accuracy and stability, meeting the requirements of 10 Gbps, or even 100 Gbps Ethernet-based packet monitoring. The presented solution is already installed in the network-wide, real-life monitoring at Magyar Telekom.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
