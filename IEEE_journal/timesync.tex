@@ -478,8 +478,8 @@ T_{ts} \bigg\lvert \frac{-2\epsilon}{1 - \epsilon ^2} \bigg\rvert \lesssim 1 ns 
 N = \frac{T_{ts}}{T_{clk}}
 \end{aligned}
 \end{equation}
-
-In equation~\ref{eq:synch} $\epsilon$ stands for the precision of the oscillator, $f_{clk}$  is the system clock frequency and $T_{ts}$ is the time-stamp frame time on the internal synchronization bus. In theory equation~\ref{eq:synch} can be satisfied for arbitrary $\epsilon$ if $T_{ts}$ can be adjusted freely. Substituting parameters from the concrete implementation with $T_{ts} = 2T_{frame}$ = \SI{11.52}{\micro\second} and $\epsilon$ = 50 ppm results in $1.15 ns \lesssim 1 ns$ which is approximately satisfying. From a practical point of view doubling the clock frequency would have been a small gain in accuracy marginally.
+In equation~\ref{eq:synch} $\epsilon$ stands for the precision of the oscillator, $f_{clk}$  is the system clock frequency and $T_{ts}$ is the time-stamp frame time on the internal synchronization bus. In theory equation~\ref{eq:synch} can be satisfied for arbitrary $\epsilon$ if $T_{ts}$ can be adjusted freely. Substituting parameters from the concrete implementation with $T_{ts} = 2T_{frame}$ = \SI{11.52}{\micro\second} and $\epsilon$ = 50 ppm results in $1.15 ns \lesssim 1 ns$ which is approximately satisfying.
+%From a practical point of view doubling the clock frequency would have been a small gain in accuracy marginally.
 
 
 It is important to note that this accuracy and precision is only achieved over the \emph{internal} time synchronization bus. If the external subsystem -- that is completely orthogonal to the internal subsystem -- synchronizes to its reference with \SI{}{\micro\second} accuracy then this results in the same accuracy for the monitoring probe vs. external reference relation. Even though the synchronicity will be still at the \SI{}{\nano\second} level in the monitoring probe vs. monitoring probe relation inside the same monitoring node driven by the same master.
@@ -541,10 +541,10 @@ the first order stability of the
 device is \SI{-0.7}{1/\nano\second}. This precision and stability are considered adequate for satisfying the
 requirements of the external time synchronization part.
 
-As for the internal synchronization part, it is by design accurate as it is a message synchronous bus system with no
-disturbances -- even under real-life (but normal) operating conditions. As a
-consequence, the clock accuracy over that bus is determined by the bit width (in time duration) and the refresh rate of the digital
-time-stamp transmitted over the bus.(See details in Section~\ref{sec:Internal-Impl})
+As for the internal synchronization part, it is by design has accuracy and precision in the magnitude of \SI{1}{\nano\second} -- see Section~\ref{sec:Internal-Impl} for details.% accurate as it is a message synchronous bus system with no
+%disturbances -- even under real-life (but normal) operating conditions. As a
+%consequence, the clock accuracy over that bus is determined by the bit width (in time duration) and the refresh rate of the digital
+%time-stamp transmitted over the bus.(See details in Section~\ref{sec:Internal-Impl})
 %The proof for that error of the oscillators can be neglected under the refresh time period can be deduced from 
 %calculating the skew of the clock periods under a time-stamp update period: 
 
@@ -565,8 +565,8 @@ time-stamp transmitted over the bus.(See details in Section~\ref{sec:Internal-Im
 %Resolution = 2^{-N/2} \SI{}{\second}
 %\end{equation}
 
-As it was described in Section~\ref{sec:Internal-Impl}, the
-time-stamp is 64 bits wide -- since it uses the NTP binary fractional representation. 
+%As it was described in Section~\ref{sec:Internal-Impl}, the
+%time-stamp is 64 bits wide -- since it uses the NTP binary fractional representation. 
 %with N=64, the theoretical accuracy is \SI{232.83}{\pico\second}. 
 The $\sim$\SI{1}{\nano\second} accuracy over the internal synchronization bus satisfies the criteria of any monitoring system with 1, 10 or even 100 Gbit/s Ethernet, since packet inter-arrival time even of the latter case is 6.72ns \cite{6ns_interarrival} -- almost one magnitude greater than the theoretical accuracy of the presented, implemented and verified time synchronization method.
 
@@ -576,7 +576,8 @@ As a real-life verification, the above described time-synchronization system has
 
 In this paper, we introduced a general time synchronization solution for a high performance, lossless network monitoring system called SGA-7N that is based on a reconfigurable architecture. The probes of the system are called ``Monitors'', which consists of three main building blocks: a high performance Field Programmable Gate Array (FPGA)-based custom hardware platform, a firmware dedicated for network monitoring, and the probe software. The reconfigurable property of the FPGA chip enables to turn the Monitor hardware platform into a high performance networking device -- among others, a network monitoring probe. Beside supporting distributed and lossless packet level monitoring of Ethernet links for 1 or 10 Gbps of the described system, the FPGA serves as the base platform of the time synchronization solution for the interface cards of the Monitors.
 
-Time synchronization of the network monitoring nodes are crucial, since the analysis depends highly on the proper message sequence, which is determined mainly by the timestamps. Using GPS, or PTPv2 in all nodes is not feasible for various reasons, hence this paper proposes a hybrid approach, implemented by utilizing the deterministic processing time of FPGAs.
+Time synchronization of the network monitoring nodes are crucial, since the analysis depends highly on the proper message sequence, which is determined mainly by the timestamps.
+% Using GPS, or PTPv2 in all nodes is not feasible for various reasons, hence this paper proposes a hybrid approach, implemented by utilizing the deterministic processing time of FPGAs.
 
 First, each monitoring site has to have a reference clock that is synchronized with other reference clocks at other sites. Naturally, the monitoring system has to be synchronized to the reference clock available at the physical site. In this paper we call it external time synchronization, and it is solved by an FPGA-based, NTP implementation that use data filtering and has a clock discipline module in order to output monotonous clock information. This avoids timestamps jumping backwards, or jumping forward too much within one step, hence the clock if the monitoring system becomes well-regulated. Each interface at the monitoring node has to get synchronized with this clock information. In this paper we call it internal time synchronization, and it is implemented through a proprietary time-synchronization protocol. Its sender, (or master) part works in a distributor-card residing at the main reference clock machine of the monitoring system, whereas the receiver (or slave) parts are realized within the FPGA of the monitoring cards.
 
