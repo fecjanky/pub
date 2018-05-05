@@ -1,0 +1,88 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\usepackage{caption}
+
+\usepackage{listings}
+
+\usepackage{color}
+
+% *** GRAPHICS RELATED PACKAGES ***
+%\usepackage[pdftex]{graphicx}
+\usepackage{graphicx}
+%\usepackage[dvips]{graphicx}
+% to place figures on a fixed position
+\usepackage{float}
+
+\usepackage[margin=1in]{geometry}
+
+\title{Big Data systems and technologies - syllabus for demonstrators}
+\author{}
+\date{}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Tips}
+
+\begin{itemize}
+\item Kafka: the host name has to be updated in \textbf{server.properties} file for a working communication
+\item Kafka: Start JVM with extra options: \textbf{export \_JAVA\_OPTIONS="­Djava.net.preferIPv4Stack=true" }
+\item RabbitMQ: An IPv4 listening address had to be specified in file \textbf{/etc/rabbitmq/rabbitmq.config} instead of an IPv6
+\item RabbitMQ: Remote login without authorization is not allowed. Configure user/pass `guest/guest' for remote login
+\end{itemize}
+
+\section{Message generation script}
+%
+\begin{lstlisting}[language=bash,breaklines=true]
+#!/bin/bash
+#parameters:
+# paramters:
+# $1 - host
+# $2 - count
+# $3 - size
+# $4 - port
+# $5 - topic
+for i in $(seq 1 1 $2)
+do
+echo "{MSG:\"$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $3 | head -n 1)\"}" | /home/user/kafka/bin/kafka-console-producer.sh --broker-list $1:$4 --topic $5 > /dev/null
+done;
+
+\end{lstlisting}
+
+\section{Message receiver script}
+
+\begin{lstlisting}[language=bash,breaklines=true]
+#!/bin/bash
+#parameters:
+# paramters:
+# $1 - host
+# $2 - port
+# $3 - topic
+
+/home/user/kafka/bin/kafka-console-consumer.sh --zookeper $1:$2 --topic $3 | \
+awk '{print strftime("%Y-%m-%d%r") , $0 }'
+
+\end{lstlisting}
+%
+
+\section{Responsible person for this lab, and previous demonstrator}
+Dr. Toka László 
+
+\section{Previous experiences}
+Usually the students reach the point after installation of the required softwares and writing the publisher/consumer scripts. There is no time for testing the transmission/network/many-to-many functionalities.
+
+\section{TODOs}
+\begin{itemize}
+\item prepare an image with the installed softwares, and potentially hand out the scripts for them.
+\end{itemize}
+
+\end{document}
