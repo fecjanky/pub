@@ -187,9 +187,9 @@ second part of the video can be requested from the name /parc.com/george/videos/
 
 \subsection{Lab report}
 
-Please create and send a lab report as instructed by the lab demonstrator. For taking screen-shots, you can use the xfce4-screenshooter application, but it is 
+Please create and send a lab report as instructed by the lab demonstrator. For taking screen-shots, you can use the \verb!xfce4-screenshooter! application, but it is 
 recommended to copy-paste the output of the terminal window into the report, because this way it is
-easier to highlight the more harsh parts. You can use draw.io to create nice network topologies.
+easier to highlight the more harsh parts. You can use \verb!draw.io! to create nice network topologies.
 
 
 \subsection{Task: Getting familiar with mini-ccnx}
@@ -212,7 +212,7 @@ file is relatively easy to understand, but contains some basic mistakes:
 such item as [nodes]. The syntax of the item [hosts] is identical to the one described for [nodes].
 The [routers] part is almost identical to the [nodes] part, but the application doesn't need to be 
 given, so after the name come the forwarding rules.
-\item The item [preferences] can be produced with the miniccnxedit command, but the command
+\item The item [preferences] can be produced with the \verb!miniccnxedit! command, but the command
 cannot really be used for anything else. Here's an example:
 
 \begin{lstlisting}[language=Ini,breaklines]
@@ -240,12 +240,12 @@ marks:
 \end{itemize}
 
 The task is to create a h1-s1-h2 network seen in the tutorial with the forwarding rules seen there! Run the
-ccndump mininet command, and interpret its output!
+\verb!ccndump mininet! command, and interpret its output!
 
 \subsection{Task: Two node network, ccnping}
 
 Let's look at the round-trip time between h1 and h2 using the commands \verb!ccnping! and \verb!ccnpingserver!.
-If necessary, modify the miniccnx.conf file, so the system can start with the appropriate routing logs.
+If necessary, modify the \verb!miniccnx.conf! file, so the system can start with the appropriate routing logs.
 
 Compare the outputs of the \verb!ccndstatus! program with h1,s1,h2 computers, before, during and after running
 the \verb!ping! commands. How can the new, modified or missing entries explained? (The entries that didn't
@@ -269,11 +269,11 @@ In this task we investigate the effect mobility has on ccn traffic. The goal is 
 to the \verb!pingserver! running on h1 - similarly to Figure~\ref{fig:CCN-topo} - to reach h1 through different nodes after
 some time. Unfortunately, mini-ccnx doesn't support moving nodes. That's why the best option is to
 connect h2 to s2 through s4. S4 should also be connected to s3. Then, we can produce the configuration
-seen in Figure~\ref{fig:CCN-topo} using mininet' link command. It isn't pretty, but it does the job.
+seen in Figure~\ref{fig:CCN-topo} using \verb!mininet!'s link command. It isn't pretty, but it does the job.
 
 \subsection{Task: Investigating multi-transfer with the commands ccnpeek and ccnpoke}
 
-Let's look at the way these commands work. Create a mininet topology, through which we can show that
+Let's look at the way these commands work. Create a \verb!mininet! topology, through which we can show that
 in the case of multi-transfer, the network doesn't send packets of no use. Let's show what happens
 when a destination host already received the requested content when the other destination host sends
 its request into the network. Let's also check what happens if the second request comes before the
