@@ -1,0 +1,290 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{url}
+\usepackage{hyperref}
+
+\usepackage{color}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+\usepackage{caption}
+
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue},
+  captionpos=b,
+  breaklines=true,
+  backgroundcolor=\color{lightgray},
+  columns=fullflexible,
+}
+
+\usepackage{color}
+
+% *** GRAPHICS RELATED PACKAGES ***
+%\usepackage[pdftex]{graphicx}
+\usepackage{graphicx}
+%\usepackage[dvips]{graphicx}
+% to place figures on a fixed position
+\usepackage{float}
+
+\usepackage[margin=1in]{geometry}
+
+\title{OpenFlow \& POX – syllabus}
+\author{}
+\date{}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction to lab environment}
+
+During the lab exercise the one group will use 2 PCs. At least on one of the two machines an Ubuntu image tailored for Mininet 2.1 version has to be run in VirtualBox that contains
+all necessary software tools for executing the lab exercises. KDE desktop environment is also pre-installed therefore it can be used in standalone mode but the VMs NIC is operated in 
+bridged mode and gets an IP dynamically from the lab's subnet (192.168.213.x) therefore SSH access is available from the other PC. On that it's recommended to run the latest Debian Live
+image and then use the command in Listing \ref{lst:sshlogin} to log in remotely to the VM:
+
+\begin{lstlisting}[language=bash,frame=single,breaklines,caption={SSH login command},label=lst:sshlogin]
+ssh -Y mininet@192.168.213.x
+\end{lstlisting}
+
+The login credentials are : \verb!mininet/mininet! ,root privileges can be obtained by using \verb!sudo!
+
+The following tools will be used during the exercises:
+\begin{itemize}
+\item POX OpenFlow controller
+\item Mininet
+\item Wireshark
+\item ping,iperf,tcpdump
+\item OpenFlow switches(reference switch,Open vSwitch)
+\item dpctl
+\item python (help:\url{https://docs.python.org/2/tutorial/})
+\end{itemize}
+
+\section{POX controller basics}
+
+POX is an OpenFlow controller purely implemented in Python that provides a well established programming environment for developing controller applications using the Python programming
+language. It is an extremely valuable toolkit for rapid prototyping and for educational purposes. One of its only drawback is that it is currently only supports OpenFlow v1.0. Several built-in applications are 
+readily available to use and instantly deployable using Mininet. During the first part of the lab the task
+is to familiarize with the POX controller and programming environment. For this the following Wiki page has to be studied individually
+
+\begin{itemize}
+\item \url{https://noxrepo.github.io/pox-doc/html/}
+\end{itemize}
+
+The following sections have to be studied with care:
+\begin{itemize}
+\item    Installing POX
+\item    Invoking POX
+\item    Components in POX
+\begin{itemize}
+\item        Stock components (just high-level overview, details are not essential)
+\item        Developing your own Components 
+\end{itemize}
+\item    POX APIs
+\begin{itemize}
+\item        Working with POX: The POX Core object
+\begin{itemize}
+\item            Registering Components
+\item            Dependency and Event Management 
+\end{itemize}
+\item        Working with Addresses: pox.lib.addresses
+\item        The Event System: pox.lib.revent
+\begin{itemize}
+\item            Handling Events
+\begin{itemize}
+\item                Event Handlers
+\item                Listening To an Event
+\item                Automatically Setting Listeners 
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+The following sections can be used as a reference for solving task 2 and 3:
+
+\begin{itemize}
+\item OpenFlow in POX
+\begin{itemize}
+\item    Communicating with Datapaths (Switches)
+\begin{itemize}
+\item        (Connection Objects)
+\item        (The OpenFlow Nexus – core.openflow) 
+\end{itemize}
+\item    OpenFlow Events: Responding to Switches
+\begin{itemize}
+\item        \textbf{ConnectionUp}
+\item        PortStatus
+\item         \textbf{PacketIn}
+\end{itemize}
+\item     \textbf{OpenFlow Messages}
+\begin{itemize}
+\item        ofp\_packet\_out - Sending packets from the switch
+\item         \textbf{ofp\_flow\_mod - Flow table modification}
+\begin{itemize}
+\item             \textbf{Example: Installing a table entry}
+\item            Example: Clearing tables on all switches 
+\end{itemize}
+\end{itemize}
+\item     \textbf{Match Structure}
+\begin{itemize}
+\item        Partial Matches and Wildcards
+\item        (ofp\_match Methods)
+\item         \textbf{Defining a match from an existing packet}
+\item        Example: Matching Web Traffic 
+\end{itemize}
+\item    OpenFlow Actions
+\begin{itemize}
+\item         \textbf{Output}
+\item         \textbf{Set Ethernet source or destination address}
+\item         \textbf{Set IP source or destination address}
+\item         \textbf{Example: Sending a FlowMod}
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+\appendix
+
+\section{Entry quiz sample questions}
+
+\begin{enumerate}
+    \item Describe briefly the main concept of the OpenFlow recommendation.
+    \item What are the components of an OpenFlow network?
+    \item Which main kinds of OpenFlow switches do you know? (Not concrete types...)
+    \item What do you know about Open vSwitch?
+    \item What is the structure of an OpenFlow flow table entry ?
+    \item Which protocol fields can be used for flow entry matching in a OpenFlow v1.0 switch?Enumerate at least 6
+          different fields!
+    \item Describe the process of packet forwarding in the network when the OpenFlow switch's flow table is empty and
+          NOX is used as OpenFlow controller.
+    \item What is the purpose of NOX in an OpenFlow network?
+    \item What are the most notable events that can be used in a NOX application?
+    \item What types of programming interface does NOX have?
+    \item What is Mininet? What is the purpose/usage of it?
+    \item What types of network equipments can be used in a Mininet program?
+\end{enumerate}
+
+\section{Lab exercises}
+
+\subsection{Task: POX installation and setup} \label{task:POX}
+
+After studying the firs set of recommended topics on the POX wiki execute the following tasks and answer the
+questions:
+
+\begin{itemize}
+\item    Install the latest version of the POX controller from github(dart branch)! (Older versions can be removed from the VM)
+\item    How can you run multiple POX components simultaneously?
+\item    How can one specify startup parameters for the components? Is that always possible?
+\item    What is the purpose of the built-in \emph{proto.arp\_responder} component? 
+\item    What is the purpose of the \emph{launch} function?
+\item    Is inter module communication possible between POX modules? If yes, how?
+\item    What is the purpose of the \emph{core} object?
+\item    How does event handling work in POX? 
+\end{itemize}
+
+\subsection{Task: Proactive routing} \label{task:ProactiveRouting}
+
+\begin{itemize}
+\item The task is to write such a POX application that will establish network routes on the given network topology in a way that network operates in the most
+efficient way.
+\item Preparations:
+\begin{itemize}
+\item        Download the source files \href{https://qosip.tmit.bme.hu/foswiki/pub/Meres/OpenFlowMScFeladatokPOX/meres.tgz}{meres.tgz}
+\item        topo.py : Mininet topology
+\item        portstat.py, feladat2.py, feladat3a.py, feladat3b-pelda.py, feladat3c.py : copy these to the POX ext subdirectory
+\item        a pox/pox/proto/arp\_responder.py file: set fm.priority value to 0x9000 in ARPResponder class \_handle\_ConnectionUp method
+\item        a pox/pox/openflow/libopenflow\_01.py file: set the OFP\_DEFAULT\_MISS\_SEND\_LEN value to 512 
+\end{itemize}
+
+\item Using mininet implement the network topology as specified by the lab demonstrator! For this use the supplied topology file (topo.py) and use the following
+options when starting mininet:
+\begin{itemize}
+\item       \verb!--mac! (to ensure non-random MAC addresses)
+\item       \verb!--switch=user! (starting a user-space switch)
+\item       \verb!--controller=remote! (to indicate that we use the POX controller)
+\item       \verb!--custom topo.py! (specifying the topology file)
+\item       \verb!--link=tc! (for using bandwidth limited links)
+\end{itemize}
+
+\item Study and understand the  skeleton file handout (feladat2.py) then using the skeleton implement a POX application that satisfies the following
+specification:
+\begin{itemize}
+\item        preloads the routing rules to the switches (proactive)
+\item        The routing decision is made based on the destination MAC addresses of the packets, for this 
+\begin{itemize}
+\item            you can assume that the MAC addresses are known constants (see Mininet)
+\item            there is a data structure(db) that describes that on a given switch which output port has to be used for a given destination MAC address
+\item            1st hint: the arp\_responder module initialization is done using a python dictionary (db\_arp) inside the init function, it is worth checking out the implementation
+\item            2nd hint: The MAC (and also the IP) addresses are easily convertible using the EthAddr(...) and the IPAddr(...) functions (pox.lib.addresses) 
+\end{itemize}
+\item        All hosts have to be reachable from any of the hosts
+\item        The network should operate as efficient as possible
+\item        Maximize the throughput while there are simultaneous transmission between hosts H1-H3 and H2-H4 
+\end{itemize}
+
+\item For testing use and document the following procedures:
+\begin{itemize}
+\item        Measure RTT for each host pairs!
+\item        Measure the maximum TCP throughput between hosts H1-H3 and H2-H4 with simultaneous traffic! What is the speed result?
+\item        What flow entries were present in the switch's flow table during the measurements?
+\end{itemize}
+\end{itemize}
+
+\subsection{Task: Load balancer} \label{task:loadbalancer}
+
+\begin{itemize}
+\item In this exercise different versions of a load balancer application has to be implemented. The same topology will be used as in the previous task where
+the H3 and H4 will be two instances of a web server among which we'd like to spread the load. The difference between the implementations is that
+based on which  packet information will we make the routing decision between the web servers.
+
+\item    Start the network topology that was given in the previous task using Mininet!
+
+\item    Study and understand the skeleton file handouts (feladat3a.py, feladat3b-pelda.py,feladat3c.py), and using those implement the following POX
+load balancer applications(these will only affect switch S7 behavior. All other switches and routes should preconfigured similarly to the previous task):
+\begin{itemize}
+\item        Hint:
+\begin{itemize}
+\item            We assume that the H3 and H4 web servers are reachable using a specific IP address from the Internet
+\item            As a consequence we not only have to make a routing decision on switch S7 but sometimes the IP and MAC addresses need to be replaced(special action in the flow\_mod message) 
+\end{itemize}
+\item        RoundRobin (feladat3a.py)
+\begin{itemize}
+\item            The incoming flows are evenly distributed between H3 and H4 in an alternating pattern
+\end{itemize}
+\item        FromFile (feladat3b-pelda.py)
+\begin{itemize}
+\item            this module is just for demonstration purposes only but it worths to study the \_handle\_PacketIn function
+\item            The incoming flow is load balanced based on the load of H3 and H4 web servers
+\item            The load information is read from a text file(helper functions: \_read\_number\_from\_file, \_least\_loaded\_port) 
+\end{itemize}
+\item        LinkLoad (feladat3c.py)
+\begin{itemize}
+\item            The incoming flow is load balanced based on the current load and port statistics of the corresponding web server ports
+\item            As a help the port statistics module is given and is  executed periodically. As a result the port statistics of every switch 
+port is available to query
+\item            Whenever a port's statistics are updated a \emph{PortStatEvent} is emitted. We have to listen and react to these events
+\item            The public member variables of the \emph{PortStatEvent} are: dpid, port, bw (bandwidth of a given switch output port)
+\item            The following functions have to be extended/implemented:
+\begin{itemize}
+\item                \_handle\_PortStatEvent
+\item                \_handle\_ConnectionUp
+\item                \_handle\_PacketIn 
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\item    Testing
+\begin{itemize}
+\item    Thoroughly test and document the operation of both load balancing application(RoundRobin and LinkLoad)! 
+\end{itemize}
+\end{itemize}
+
+
+\end{document}
